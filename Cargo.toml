@@ -1,0 +1,11 @@
+[package]
+name = "the-game"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = "0.15.2"
+bevy_rapier2d = "0.28.0"
+
+[profile.dev.package.bevy_rapier2d]
+opt-level = 3
