@@ -1,26 +1,40 @@
 mod movement;
+mod app_states;
+mod main_menu;
 
+use app_states::AppState;
 use bevy::{prelude::*, render::camera::ScalingMode};
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{ActiveEvents, Collider, ExternalForce, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
+use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_menu_buttons};
 use movement::*;
 
 const FLOOR_STARTING_POSITION: Vec3 = Vec3::new(0.0, 0.0, 1.0);
 const LEFT_WALL_STARTING_POSITION: Vec3 = Vec3::new(-600.0, -200.0, 1.0);
 const RIGHT_WALL_STARTING_POSITION: Vec3 = Vec3::new(600.0, -200.0, 1.0);
 
-const BALL_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
+const CWEAMPUF_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
 // We set the z-value of the ball to 1 so it renders on top in the case of overlapping sprites.
-const BALL_STARTING_POSITION: Vec3 = Vec3::new(0.0, 150.0, 1.0);
-pub const BALL_DIAMETER: f32 = 30.;
+const CWEAMPUF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 150.0, 1.0);
+pub const CWEAMPUF_DIAMETER: f32 = 30.;
 const CAMERA_TRANSFORM: Vec3 = Vec3::new(0.0, 3.0, 0.0);
 const CAMERA_DECAY_RATE: f32 = 10.;
 
 fn main() {
-    App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(125.0))
-        .add_systems(Startup, (
-            setup, 
+    let mut app = App::new();
+
+    app.add_plugins(DefaultPlugins)
+       .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(125.0));
+
+    app.init_state::<AppState>();
+
+    app.add_systems(OnEnter(AppState::MainMenu), spawn_main_menu_buttons)
+        .add_systems(Update, (
+            button_visuals_handler,
+            button_interactions_handler
+        ).run_if(in_state(AppState::MainMenu)))
+        .add_systems(OnExit(AppState::MainMenu), clean_resources)
+        .add_systems(OnEnter(AppState::InGame), (
+            setup_cweampuf, 
             setup_floor
         ))
         .add_systems(Update, (
@@ -28,17 +42,18 @@ fn main() {
             cweampuf_jump,
             cweampuf_dash,
             cweampuf_camera_adjustment
-        ))
+        ).run_if(in_state(AppState::InGame)))
+        
         .add_systems(FixedUpdate, (
             dash_reset,
             jump_reset,
             velocity_limiter,
             stunlock_reset,
-        ))
+        ).run_if(in_state(AppState::InGame)))
         .run();
 }
 
-fn setup(
+fn setup_cweampuf(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -51,8 +66,8 @@ fn setup(
     commands.spawn((
         RigidBody::Dynamic,
         Mesh2d(meshes.add(Circle::default())),
-        MeshMaterial2d(materials.add(BALL_COLOR)),
-        Transform::from_translation(BALL_STARTING_POSITION).with_scale(Vec2::splat(BALL_DIAMETER).extend(1.)),
+        MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
+        Transform::from_translation(CWEAMPUF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUF_DIAMETER).extend(1.)),
         Cweampuf,
         Velocity {
             linvel: Vec2::new(0.0, 0.0),
@@ -93,7 +108,7 @@ fn setup_floor (
         .spawn(RigidBody::Fixed)
         .insert((
             Mesh2d(meshes.add(Rectangle::new(floor_width, floor_height))),
-            MeshMaterial2d(materials.add(BALL_COLOR)),
+            MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
             Transform::from_translation(FLOOR_STARTING_POSITION)
         ))
         .insert(Collider::cuboid(floor_width / 2.0, floor_height / 2.0))
@@ -108,7 +123,7 @@ fn setup_floor (
         .spawn(RigidBody::Fixed)
         .insert((
             Mesh2d(meshes.add(Rectangle::new(left_wall_width, left_wall_height))),
-            MeshMaterial2d(materials.add(BALL_COLOR)),
+            MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
             Transform::from_translation(LEFT_WALL_STARTING_POSITION)
         ))
         .insert(Collider::cuboid(left_wall_width / 2.0, left_wall_height / 2.0))
@@ -120,7 +135,7 @@ fn setup_floor (
         .spawn(RigidBody::Fixed)
         .insert((
             Mesh2d(meshes.add(Rectangle::new(left_wall_width, left_wall_height))),
-            MeshMaterial2d(materials.add(BALL_COLOR)),
+            MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
             Transform::from_translation(RIGHT_WALL_STARTING_POSITION)
         ))
         .insert(Collider::cuboid(left_wall_width / 2.0, left_wall_height / 2.0))
@@ -160,6 +175,18 @@ fn cweampuf_camera_adjustment(
     }
 
     camera_transform.translation.smooth_nudge(&(cweampuf.translation + offset + CAMERA_TRANSFORM), CAMERA_DECAY_RATE, time.delta_secs());
+}
+
+fn clean_resources(
+    mut commands: Commands, 
+    query: Query<Entity, (With<Node>, Without<Camera2d>)>,
+    camera: Single<Entity, With<Camera2d>>
+) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+
+    commands.entity(*camera).despawn();
 }
 
 #[derive(Component)]

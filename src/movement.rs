@@ -1,7 +1,7 @@
 use bevy::{ecs::observer::TriggerTargets, math::bounding::{Aabb2d, BoundingCircle, BoundingVolume}, prelude::*};
 use bevy_rapier2d::prelude::{Collider, CollisionEvent, Velocity};
 
-use crate::{Cweampuf, FloorCollider, BALL_DIAMETER};
+use crate::{Cweampuf, FloorCollider, CWEAMPUF_DIAMETER};
 
 const CWEAMPUF_SPEED: f32 = 500.0;
 const MAX_CWEAMPUF_VERTICAL_VELOCITY: f32 = 800.0;
@@ -230,7 +230,7 @@ fn detect_floor_and_wall_collision(cweampuf_entity: Entity,
                 jumper.is_double_jump_available = true;
 
                 if let Some(cuboid) = collider.as_cuboid() {
-                    let cweampuf_bounds = BoundingCircle::new(cweampuf_transform.translation.truncate(), BALL_DIAMETER / 2.);
+                    let cweampuf_bounds = BoundingCircle::new(cweampuf_transform.translation.truncate(), CWEAMPUF_DIAMETER / 2.);
                     let collider_bounds = Aabb2d::new(collider_transform.translation.truncate(),
                                                               cuboid.half_extents());
 
