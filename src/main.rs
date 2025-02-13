@@ -8,13 +8,11 @@ use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{ActiveE
 use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_menu_buttons};
 use movement::*;
 
-const FLOOR_STARTING_POSITION: Vec3 = Vec3::new(0.0, 0.0, 1.0);
-const LEFT_WALL_STARTING_POSITION: Vec3 = Vec3::new(-600.0, -200.0, 1.0);
-const RIGHT_WALL_STARTING_POSITION: Vec3 = Vec3::new(600.0, -200.0, 1.0);
-
 const CWEAMPUF_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
 // We set the z-value of the ball to 1 so it renders on top in the case of overlapping sprites.
 const CWEAMPUF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 150.0, 1.0);
+const CWEAMPUF_JUMP_IMPULSE: f32 = 800.;
+const CWEAMPUF_DASH_IMPULSE: f32 = 650.;
 pub const CWEAMPUF_DIAMETER: f32 = 30.;
 const CAMERA_TRANSFORM: Vec3 = Vec3::new(0.0, 3.0, 0.0);
 const CAMERA_DECAY_RATE: f32 = 10.;
@@ -33,17 +31,17 @@ fn main() {
             button_interactions_handler
         ).run_if(in_state(AppState::MainMenu)))
         .add_systems(OnExit(AppState::MainMenu), clean_resources)
+
         .add_systems(OnEnter(AppState::InGame), (
             setup_cweampuf, 
             setup_floor
         ))
         .add_systems(Update, (
-            cweampuf_move,
-            cweampuf_jump,
             cweampuf_dash,
+            cweampuf_jump,
+            cweampuf_move,
             cweampuf_camera_adjustment
-        ).run_if(in_state(AppState::InGame)))
-        
+        ).chain().run_if(in_state(AppState::InGame)))
         .add_systems(FixedUpdate, (
             dash_reset,
             jump_reset,
@@ -76,8 +74,8 @@ fn setup_cweampuf(
         GravityScale(1.5),
         Friction::coefficient(0.7),
         Collider::ball(0.5),
-        Jumper { jump_impulse: 800., is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false, is_double_jump_available: true},
-        Dasher { dash_impulse: 650., dash_cooldown: 1., time_passed_since_dash: 0. },
+        Jumper { jump_impulse: CWEAMPUF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false, is_double_jump_available: true},
+        Dasher { dash_impulse: CWEAMPUF_DASH_IMPULSE, dash_cooldown: 1., time_passed_since_dash: 0. },
         LockedAxes::ROTATION_LOCKED,
         Movable { facing_right: true, hugging_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },
         ExternalForce::default(),
@@ -101,47 +99,19 @@ fn setup_floor (
     mut materials: ResMut<Assets<ColorMaterial>>,
     //asset_server: Res<AssetServer>,
 ) {
-    let floor_width = 1400.;
-    let floor_height = 100.;
-
-    commands
+    for floor in STARTING_ROOM_LAYOUT {
+        commands
         .spawn(RigidBody::Fixed)
         .insert((
-            Mesh2d(meshes.add(Rectangle::new(floor_width, floor_height))),
+            Mesh2d(meshes.add(Rectangle::new(floor.size.x, floor.size.y))),
             MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
-            Transform::from_translation(FLOOR_STARTING_POSITION)
+            Transform::from_translation(floor.position)
         ))
-        .insert(Collider::cuboid(floor_width / 2.0, floor_height / 2.0))
+        .insert(Collider::cuboid(floor.size.x / 2.0, floor.size.y / 2.0))
         .insert(Friction::coefficient(0.7))
         .insert(ActiveEvents::COLLISION_EVENTS)
         .insert(FloorCollider {entity_index: 0});
-
-    let left_wall_width = 100.;
-    let left_wall_height = 2000.;
-
-    commands
-        .spawn(RigidBody::Fixed)
-        .insert((
-            Mesh2d(meshes.add(Rectangle::new(left_wall_width, left_wall_height))),
-            MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
-            Transform::from_translation(LEFT_WALL_STARTING_POSITION)
-        ))
-        .insert(Collider::cuboid(left_wall_width / 2.0, left_wall_height / 2.0))
-        .insert(Friction::coefficient(0.7))
-        .insert(ActiveEvents::COLLISION_EVENTS)
-        .insert(FloorCollider {entity_index: 0});
-
-    commands
-        .spawn(RigidBody::Fixed)
-        .insert((
-            Mesh2d(meshes.add(Rectangle::new(left_wall_width, left_wall_height))),
-            MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
-            Transform::from_translation(RIGHT_WALL_STARTING_POSITION)
-        ))
-        .insert(Collider::cuboid(left_wall_width / 2.0, left_wall_height / 2.0))
-        .insert(Friction::coefficient(0.7))
-        .insert(ActiveEvents::COLLISION_EVENTS)
-        .insert(FloorCollider {entity_index: 0});
+    }
 }
 
 fn cweampuf_camera_adjustment(
@@ -174,7 +144,36 @@ fn cweampuf_camera_adjustment(
         offset.y = camera_movable.camera_offset * direction;
     }
 
-    camera_transform.translation.smooth_nudge(&(cweampuf.translation + offset + CAMERA_TRANSFORM), CAMERA_DECAY_RATE, time.delta_secs());
+    let mut min_x = f32::MAX;
+    let mut min_y = f32::MAX;
+    let mut max_x = f32::MIN;
+    let mut max_y = f32::MIN;
+
+    for layout in STARTING_ROOM_LAYOUT {
+        if layout.position.x > max_x {
+            max_x = layout.position.x;
+        }
+        if layout.position.y > max_y {
+            max_y = layout.position.y;
+        }
+        if layout.position.x < min_x {
+            min_x = layout.position.x;
+        }
+        if layout.position.y < min_y {
+            min_y = layout.position.y;
+        }
+    }
+
+    max_x -= 960.;
+    max_y -= 540.;
+    min_x += 960.;
+    min_y += 540.;
+
+    let mut new_camera_position = cweampuf.translation + offset + CAMERA_TRANSFORM;
+    new_camera_position.x = new_camera_position.x.clamp(min_x, max_x);
+    new_camera_position.y = new_camera_position.y.clamp(min_y, max_y);
+
+    camera_transform.translation.smooth_nudge(&new_camera_position, CAMERA_DECAY_RATE, time.delta_secs());
 }
 
 fn clean_resources(
@@ -202,4 +201,23 @@ struct CameraUpDownMovalbe {
     look_up_down_invoke_threshold: f32,
     look_up_down_duration: f32,
     camera_offset: f32,
+}
+
+const STARTING_ROOM_LAYOUT: [FloorInfo; 11] = [
+    FloorInfo { position: Vec3::new(-450.0, 550.0, 1.0), size: Vec2::new(100.0, 1400.0) },
+    FloorInfo { position: Vec3::new(500.0, -400.0, 1.0), size: Vec2::new(2000.0, 500.0) },
+    FloorInfo { position: Vec3::new(2000.0, -200.0, 1.0), size: Vec2::new(1000.0, 900.0) },
+    FloorInfo { position: Vec3::new(2650.0, 0.0, 1.0), size: Vec2::new(300.0, 1600.0) },
+    FloorInfo { position: Vec3::new(625.0, -40.0, 1.0), size: Vec2::new(150.0, 100.0) },
+    FloorInfo { position: Vec3::new(1025.0, 130.0, 1.0), size: Vec2::new(150.0, 100.0) },
+    FloorInfo { position: Vec3::new(1900.0, 500.0, 1.0), size: Vec2::new(150.0, 100.0) },
+    FloorInfo { position: Vec3::new(1700.0, 650.0, 1.0), size: Vec2::new(150.0, 100.0) },
+    FloorInfo { position: Vec3::new(2300.0, 365.0, 1.0), size: Vec2::new(150.0, 100.0) },
+    FloorInfo { position: Vec3::new(2300.0, 750.0, 1.0), size: Vec2::new(400.0, 100.0) },
+    FloorInfo { position: Vec3::new(2450.0, 1300.0, 1.0), size: Vec2::new(700.0, 500.0) },
+];
+
+struct FloorInfo {
+    position: Vec3,
+    size: Vec2
 }
