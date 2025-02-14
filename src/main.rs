@@ -1,10 +1,12 @@
 mod movement;
 mod app_states;
 mod main_menu;
+mod cutscene;
 
 use app_states::AppState;
 use bevy::{prelude::*, render::camera::ScalingMode};
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{ActiveEvents, Collider, ExternalForce, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
+use cutscene::{cutscene_event_reader, cutscene_player, spawn_cutscene_resources, CutsceneEvent};
 use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_menu_buttons};
 use movement::*;
 
@@ -25,14 +27,22 @@ fn main() {
 
     app.init_state::<AppState>();
 
-    app.add_systems(OnEnter(AppState::MainMenu), spawn_main_menu_buttons)
+    app.add_event::<CutsceneEvent>();
+
+    app.add_systems(OnEnter(AppState::MainMenu), (spawn_camera, spawn_main_menu_buttons))
         .add_systems(Update, (
             button_visuals_handler,
             button_interactions_handler
         ).run_if(in_state(AppState::MainMenu)))
         .add_systems(OnExit(AppState::MainMenu), clean_resources)
 
+        .add_systems(OnEnter(AppState::Cutscene), (spawn_camera, spawn_cutscene_resources))
+        .add_systems(FixedUpdate, cutscene_event_reader)
+        .add_systems(FixedUpdate, (cutscene_player).run_if(in_state(AppState::Cutscene)))
+        .add_systems(OnExit(AppState::Cutscene), clean_resources)
+
         .add_systems(OnEnter(AppState::InGame), (
+            spawn_camera,
             setup_cweampuf, 
             setup_floor
         ))
@@ -57,9 +67,6 @@ fn setup_cweampuf(
     mut materials: ResMut<Assets<ColorMaterial>>,
     //asset_server: Res<AssetServer>,
 ) {
-    let mut projection = OrthographicProjection::default_2d();
-    projection.scaling_mode = ScalingMode::AutoMin { min_width: 1920., min_height: 1080. };
-
     // Cweampuf
     commands.spawn((
         RigidBody::Dynamic,
@@ -81,16 +88,7 @@ fn setup_cweampuf(
         ExternalForce::default(),
     ));
     
-    // Camera
-    commands.spawn((
-        Camera2d,
-        Camera{
-            ..default()
-        },
-        Transform::from_translation(CAMERA_TRANSFORM),
-        CameraUpDownMovalbe { look_up_down_duration: 0., look_up_down_invoke_threshold: 0.3, camera_offset: 360. },
-        projection
-    ));
+
 }
 
 fn setup_floor (
@@ -174,6 +172,25 @@ fn cweampuf_camera_adjustment(
     new_camera_position.y = new_camera_position.y.clamp(min_y, max_y);
 
     camera_transform.translation.smooth_nudge(&new_camera_position, CAMERA_DECAY_RATE, time.delta_secs());
+}
+
+fn spawn_camera (
+    mut commands: Commands, 
+
+) {
+    let mut projection = OrthographicProjection::default_2d();
+    projection.scaling_mode = ScalingMode::AutoMin { min_width: 1920., min_height: 1080. };
+
+    // Camera
+    commands.spawn((
+        Camera2d,
+        Camera{
+            ..default()
+        },
+        Transform::from_translation(CAMERA_TRANSFORM),
+        CameraUpDownMovalbe { look_up_down_duration: 0., look_up_down_invoke_threshold: 0.3, camera_offset: 360. },
+        projection
+    ));
 }
 
 fn clean_resources(

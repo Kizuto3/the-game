@@ -1,6 +1,6 @@
-use bevy::{color::{palettes::css::RED, Color}, prelude::*, render::camera::ScalingMode};
+use bevy::{color::{palettes::css::RED, Color}, prelude::*};
 
-use crate::app_states::AppState;
+use crate::cutscene::{CutsceneEvent, CutsceneInfo};
 
 const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
@@ -43,14 +43,19 @@ pub fn button_visuals_handler(
 
 pub fn button_interactions_handler(
     mut interaction_query: Query<(&Interaction, &ButtonAction), (Changed<Interaction>, With<Button>)>,
-    mut state: ResMut<NextState<AppState>>,
-    mut exit: EventWriter<AppExit>
+    mut exit: EventWriter<AppExit>,
+    mut cutscene: EventWriter<CutsceneEvent>
 ) {
     for (interaction, action) in &mut interaction_query {
         if let Interaction::Pressed = *interaction  {
             match action {
                 ButtonAction::StartGame => {
-                    state.set(AppState::InGame);
+                    cutscene.send(CutsceneEvent::Started(vec![
+                        CutsceneInfo { text: "Hello".to_string(), background: "".to_string(), bgm: "".to_string() },
+                        CutsceneInfo { text: "Am".to_string(), background: "".to_string(), bgm: "".to_string() },
+                        CutsceneInfo { text: "I".to_string(), background: "".to_string(), bgm: "".to_string() },
+                        CutsceneInfo { text: "Working".to_string(), background: "".to_string(), bgm: "".to_string() },
+                    ]));
                 },
                 ButtonAction::Quit => {
                     exit.send(AppExit::Success);
@@ -64,16 +69,6 @@ pub fn spawn_main_menu_buttons(
     mut commands: Commands,
     asset_server: Res<AssetServer>
 ) {    
-    let mut projection = OrthographicProjection::default_2d();
-    projection.scaling_mode = ScalingMode::AutoMin { min_width: 1920., min_height: 1080. };
-
-    commands.spawn((
-        Camera2d,
-        Camera{
-            ..default()
-        }, 
-        projection));
-
     commands
         .spawn(Node {
             width: Val::Percent(10.0),
