@@ -2,6 +2,9 @@ use bevy::ecs::event::{Event, EventReader};
 use bevy::prelude::*;
 
 use crate::app_states::AppState;
+use crate::level::transition_states::TransitionState;
+use crate::level::{manually_transition_to_level, Level, LevelLayout, LevelTransitionEvent};
+use crate::CWEAMPUF_STARTING_POSITION;
 
 #[derive(Event)]
 pub enum CutsceneEvent {
@@ -29,6 +32,9 @@ pub fn cutscene_event_reader(
     mut cutscene_events: EventReader<CutsceneEvent>,
     mut state: ResMut<NextState<AppState>>,
     mut commands: Commands,
+    current_level_layout: Query<Entity, With<LevelLayout>>,
+    mut transition_events: EventWriter<LevelTransitionEvent>,
+    mut transition_state: ResMut<NextState<TransitionState>>,
 ) {
     for cutscene in cutscene_events.read() {
         if let CutsceneEvent::Started(infos) = cutscene {
@@ -37,17 +43,21 @@ pub fn cutscene_event_reader(
         }
         if let CutsceneEvent::Stopped = cutscene {
             state.set(AppState::InGame);
+            manually_transition_to_level(&current_level_layout, &mut transition_events, &mut transition_state, &mut commands, Level::StartingRoom, CWEAMPUF_STARTING_POSITION);
         }
     }
 }
 
 pub fn cutscene_player(
     keyboard_input: Res<ButtonInput<KeyCode>>, 
+    mouse_input: Res<ButtonInput<MouseButton>>, 
     mut cutscene_events: EventWriter<CutsceneEvent>, 
     mut text_query: Query<&mut Text, With<CutsceneText>>,
     mut current_cutscene: Single<&mut Cutscene, With<Cutscene>>
 ) {
-    if current_cutscene.current_index == 0 || keyboard_input.any_just_pressed([KeyCode::Space, KeyCode::Enter]) {
+    if current_cutscene.current_index == 0 || 
+       keyboard_input.any_just_pressed([KeyCode::Space, KeyCode::Enter]) ||
+       mouse_input.any_just_pressed([MouseButton::Left, MouseButton::Right]) {
         {
             let current_cutscene_info = match current_cutscene.infos.get(current_cutscene.current_index) {
                 Some(info) => info,
@@ -73,7 +83,7 @@ pub fn spawn_cutscene_resources(
     commands
         .spawn(Node {
             width: Val::Percent(100.0),
-            height: Val::Percent(35.0),
+            height: Val::Percent(100.0),
             align_items: AlignItems::Default,
             justify_content: JustifyContent::Center,
             ..default()

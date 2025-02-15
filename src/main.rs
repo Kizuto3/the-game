@@ -2,11 +2,13 @@ mod movement;
 mod app_states;
 mod main_menu;
 mod cutscene;
+mod level;
 
 use app_states::AppState;
 use bevy::{prelude::*, render::camera::ScalingMode};
-use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{ActiveEvents, Collider, ExternalForce, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
+use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collider, ExternalForce, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
 use cutscene::{cutscene_event_reader, cutscene_player, spawn_cutscene_resources, CutsceneEvent};
+use level::{despawn_current_level, level_layout::FloorCollider, level_transition_collision_reader, level_transition_event_reader, spawn_new_level, transition_states::TransitionState, LevelLayout, LevelTransitionEvent};
 use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_menu_buttons};
 use movement::*;
 
@@ -26,38 +28,46 @@ fn main() {
        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(125.0));
 
     app.init_state::<AppState>();
+    app.init_state::<TransitionState>();
 
     app.add_event::<CutsceneEvent>();
+    app.add_event::<LevelTransitionEvent>();
 
-    app.add_systems(OnEnter(AppState::MainMenu), (spawn_camera, spawn_main_menu_buttons))
+    app.add_systems(Startup, spawn_camera)
+
+    // MAIN MENU SYSTEMS
+        .add_systems(OnEnter(AppState::MainMenu), spawn_main_menu_buttons)
         .add_systems(Update, (
             button_visuals_handler,
             button_interactions_handler
         ).run_if(in_state(AppState::MainMenu)))
-        .add_systems(OnExit(AppState::MainMenu), clean_resources)
+        .add_systems(OnExit(AppState::MainMenu), clean_nodes)
 
-        .add_systems(OnEnter(AppState::Cutscene), (spawn_camera, spawn_cutscene_resources))
+    // CUTSCENE SYSTEMS
+        .add_systems(OnEnter(AppState::Cutscene), spawn_cutscene_resources)
         .add_systems(FixedUpdate, cutscene_event_reader)
         .add_systems(FixedUpdate, (cutscene_player).run_if(in_state(AppState::Cutscene)))
-        .add_systems(OnExit(AppState::Cutscene), clean_resources)
+        .add_systems(OnExit(AppState::Cutscene), clean_nodes)
 
-        .add_systems(OnEnter(AppState::InGame), (
-            spawn_camera,
-            setup_cweampuf, 
-            setup_floor
-        ))
+    // LEVEL TRANSITION SYSTEMS
+        .add_systems(OnEnter(TransitionState::Started), (despawn_current_level, spawn_new_level).chain())
+        .add_systems(FixedUpdate, (level_transition_event_reader).run_if(in_state(TransitionState::Started)))
+
+    // GAMEPLAY SYSTEMS
+        .add_systems(OnEnter(AppState::InGame), setup_cweampuf)
         .add_systems(Update, (
             cweampuf_dash,
             cweampuf_jump,
             cweampuf_move,
             cweampuf_camera_adjustment
-        ).chain().run_if(in_state(AppState::InGame)))
+        ).chain().run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)))
         .add_systems(FixedUpdate, (
             dash_reset,
             jump_reset,
             velocity_limiter,
             stunlock_reset,
-        ).run_if(in_state(AppState::InGame)))
+            level_transition_collision_reader
+        ).run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)))
         .run();
 }
 
@@ -87,35 +97,13 @@ fn setup_cweampuf(
         Movable { facing_right: true, hugging_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },
         ExternalForce::default(),
     ));
-    
-
-}
-
-fn setup_floor (
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-    //asset_server: Res<AssetServer>,
-) {
-    for floor in STARTING_ROOM_LAYOUT {
-        commands
-        .spawn(RigidBody::Fixed)
-        .insert((
-            Mesh2d(meshes.add(Rectangle::new(floor.size.x, floor.size.y))),
-            MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
-            Transform::from_translation(floor.position)
-        ))
-        .insert(Collider::cuboid(floor.size.x / 2.0, floor.size.y / 2.0))
-        .insert(Friction::coefficient(0.7))
-        .insert(ActiveEvents::COLLISION_EVENTS)
-        .insert(FloorCollider {entity_index: 0});
-    }
 }
 
 fn cweampuf_camera_adjustment(
     keyboard_input: Res<ButtonInput<KeyCode>>, 
     cweampuf: Single<&Transform, (With<Cweampuf>, Without<Camera2d>)>,
     mut camera: Single<(&mut Transform, &mut CameraUpDownMovalbe), With<Camera2d>>,
+    level_layout_query: Query<&LevelLayout, With<LevelLayout>>,
     time: Res<Time>,
 ) {
     let (camera_transform, camera_movable) = &mut *camera;
@@ -147,18 +135,20 @@ fn cweampuf_camera_adjustment(
     let mut max_x = f32::MIN;
     let mut max_y = f32::MIN;
 
-    for layout in STARTING_ROOM_LAYOUT {
-        if layout.position.x > max_x {
-            max_x = layout.position.x;
-        }
-        if layout.position.y > max_y {
-            max_y = layout.position.y;
-        }
-        if layout.position.x < min_x {
-            min_x = layout.position.x;
-        }
-        if layout.position.y < min_y {
-            min_y = layout.position.y;
+    for level_layout in level_layout_query.iter() {
+        for layout in level_layout.floor_layout.iter() {
+            if layout.position.x > max_x {
+                max_x = layout.position.x;
+            }
+            if layout.position.y > max_y {
+                max_y = layout.position.y;
+            }
+            if layout.position.x < min_x {
+                min_x = layout.position.x;
+            }
+            if layout.position.y < min_y {
+                min_y = layout.position.y;
+            }
         }
     }
 
@@ -175,8 +165,7 @@ fn cweampuf_camera_adjustment(
 }
 
 fn spawn_camera (
-    mut commands: Commands, 
-
+    mut commands: Commands
 ) {
     let mut projection = OrthographicProjection::default_2d();
     projection.scaling_mode = ScalingMode::AutoMin { min_width: 1920., min_height: 1080. };
@@ -193,48 +182,22 @@ fn spawn_camera (
     ));
 }
 
-fn clean_resources(
+fn clean_nodes(
     mut commands: Commands, 
-    query: Query<Entity, (With<Node>, Without<Camera2d>)>,
-    camera: Single<Entity, With<Camera2d>>
+    query: Query<Entity, (With<Node>, Without<Camera2d>)>
 ) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
     }
-
-    commands.entity(*camera).despawn();
 }
 
 #[derive(Component)]
 struct Cweampuf;
 
-#[derive(Component)]
-struct FloorCollider {
-    entity_index: u32
-}
 
 #[derive(Component)]
 struct CameraUpDownMovalbe {
     look_up_down_invoke_threshold: f32,
     look_up_down_duration: f32,
     camera_offset: f32,
-}
-
-const STARTING_ROOM_LAYOUT: [FloorInfo; 11] = [
-    FloorInfo { position: Vec3::new(-450.0, 550.0, 1.0), size: Vec2::new(100.0, 1400.0) },
-    FloorInfo { position: Vec3::new(500.0, -400.0, 1.0), size: Vec2::new(2000.0, 500.0) },
-    FloorInfo { position: Vec3::new(2000.0, -200.0, 1.0), size: Vec2::new(1000.0, 900.0) },
-    FloorInfo { position: Vec3::new(2650.0, 0.0, 1.0), size: Vec2::new(300.0, 1600.0) },
-    FloorInfo { position: Vec3::new(625.0, -40.0, 1.0), size: Vec2::new(150.0, 100.0) },
-    FloorInfo { position: Vec3::new(1025.0, 130.0, 1.0), size: Vec2::new(150.0, 100.0) },
-    FloorInfo { position: Vec3::new(1900.0, 500.0, 1.0), size: Vec2::new(150.0, 100.0) },
-    FloorInfo { position: Vec3::new(1700.0, 650.0, 1.0), size: Vec2::new(150.0, 100.0) },
-    FloorInfo { position: Vec3::new(2300.0, 365.0, 1.0), size: Vec2::new(150.0, 100.0) },
-    FloorInfo { position: Vec3::new(2300.0, 750.0, 1.0), size: Vec2::new(400.0, 100.0) },
-    FloorInfo { position: Vec3::new(2450.0, 1300.0, 1.0), size: Vec2::new(700.0, 500.0) },
-];
-
-struct FloorInfo {
-    position: Vec3,
-    size: Vec2
 }
