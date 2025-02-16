@@ -192,13 +192,13 @@ pub fn stunlock_reset(mut cweampuf_movable: Single<&mut Movable, With<Cweampuf>>
 }
 
 pub fn jump_reset(
-    mut cweampuf: Single<(Entity, &mut Jumper, &mut Movable, &Transform), With<Cweampuf>>,
+    mut cweampuf: Single<(Entity, &mut Jumper, &mut Movable, &Transform, &mut Velocity), With<Cweampuf>>,
     mut colliders: Query<(Entity, &Transform, &Collider, &mut FloorCollider), With<FloorCollider>>,
     mut contact_events: EventReader<CollisionEvent>) {
-    let (cweampuf_entity, cweampuf_jumper, cweampuf_movable, cweampuf_transform) = &mut *cweampuf;
+    let (cweampuf_entity, cweampuf_jumper, cweampuf_movable, cweampuf_transform, cweampuf_velocity) = &mut *cweampuf;
 
     for contact_event in contact_events.read() {
-        detect_floor_and_wall_collision(*cweampuf_entity, cweampuf_jumper, cweampuf_transform, cweampuf_movable, contact_event, &mut colliders);
+        detect_floor_and_wall_collision(*cweampuf_entity, cweampuf_jumper, cweampuf_transform, cweampuf_movable, cweampuf_velocity, contact_event, &mut colliders);
     }
 }
 
@@ -206,6 +206,7 @@ fn detect_floor_and_wall_collision(cweampuf_entity: Entity,
                                    jumper: &mut Jumper, 
                                    cweampuf_transform: &Transform,
                                    cweampuf_movable: &mut Movable,
+                                   cweampuf_velocity: &mut Velocity,
                                    event: &CollisionEvent, 
                                    colliders: &mut Query<(Entity, &Transform, &Collider, &mut FloorCollider), With<FloorCollider>>) {
     if cweampuf_movable.hugging_wall {
@@ -239,6 +240,8 @@ fn detect_floor_and_wall_collision(cweampuf_entity: Entity,
                         floor_collider.entity_index = collider_entity.index();
                         break;
                     }
+
+                    cweampuf_velocity.linvel.y = 0.;
                 }
             }
         }

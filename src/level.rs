@@ -1,14 +1,15 @@
 use bevy::{ecs::observer::TriggerTargets, prelude::*};
 use bevy_rapier2d::prelude::*;
-use level_layout::{cweamcat_lair_layout::{CWEAMCAT_LAIR_LAYOUT, CWEAMCAT_LAIR_TRANSITIONS}, starting_room_layout::{STARTING_ROOM_LAYOUT, STARTING_ROOM_TRANSITIONS}, FloorCollider, FloorInfo, TransitionCollider};
+use level_layout::{cweamcat_lair_layout::{CWEAMCAT_LAIR_LAYOUT, CWEAMCAT_LAIR_TRANSITIONS}, starting_room_layout::{STARTING_ROOM_LAYOUT, STARTING_ROOM_NPC, STARTING_ROOM_TRANSITIONS}, FloorCollider, FloorInfo, TransitionCollider};
 use transition_states::TransitionState;
 
-use crate::Cweampuf;
+use crate::{camera::get_adjusted_camera_position, interactable::Interactable, npc::NPC, Cweampuf};
 
 pub mod transition_states;
 pub mod level_layout;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
+const NPC_COLOR: Color = Color::srgb(0.5, 0.5, 1.0);
 const FLOOR_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
 
 #[derive(Clone, Copy)]
@@ -26,14 +27,19 @@ pub struct LevelTransitionEvent {
 #[derive(Component)]
 pub struct LevelLayout {
     pub floor_layout: Vec<FloorInfo>,
-    pub transition_layout: Vec<TransitionCollider>
+    pub transition_layout: Vec<TransitionCollider>,
+    pub npc_layout: Vec<NPC>
 }
 
 pub fn despawn_current_level(
     mut commands: Commands,
-    query: Query<Entity, (With<FloorCollider>, Without<Camera2d>)>
+    floor_query: Query<Entity, (With<FloorCollider>, Without<Camera2d>)>,
+    interactable_query: Query<Entity, (With<Interactable>, Without<Camera2d>)>
 ) {
-    for entity in query.iter() {
+    for entity in floor_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+    for entity in interactable_query.iter() {
         commands.entity(entity).despawn_recursive();
     }
 }
@@ -69,7 +75,22 @@ pub fn spawn_new_level(
                 Transform::from_translation(transition.floor_info.position)
             ))
             .insert(Collider::cuboid(transition.floor_info.size.x / 2.0, transition.floor_info.size.y / 2.0))
+            .insert(Sensor)
             .insert(ActiveEvents::COLLISION_EVENTS);
+        }
+
+        for npc in &level_layout.npc_layout {
+            commands
+            .spawn(npc.clone())
+            .insert((
+                Mesh2d(meshes.add(Rectangle::new(npc.floor_info.size.x, npc.floor_info.size.y))),
+                MeshMaterial2d(materials.add(NPC_COLOR)),
+                Transform::from_translation(npc.floor_info.position)
+            ))
+            .insert(Collider::cuboid(npc.floor_info.size.x / 2.0, npc.floor_info.size.y / 2.0))
+            .insert(Sensor)
+            .insert(ActiveEvents::COLLISION_EVENTS)
+            .insert(Interactable);
         }
     }
 
@@ -123,18 +144,26 @@ pub fn manually_transition_to_level(
 }
 
 pub fn level_transition_event_reader(
-    mut cweampuf: Single<&mut Transform, With<Cweampuf>>,
+    mut cweampuf: Single<&mut Transform, (With<Cweampuf>, Without<Camera2d>)>,
     transition_colliders: Query<&TransitionCollider, With<TransitionCollider>>,
     mut transition_events: EventReader<LevelTransitionEvent>,
+    mut camera: Single<&mut Transform, With<Camera2d>>,
+    level_layout_query: Query<&LevelLayout, With<LevelLayout>>,
 ) {
     for transition in transition_events.read() {
         if let Some(position) = transition.transition_to_position {
             cweampuf.translation = position;
 
+            let new_camera_position = get_adjusted_camera_position(&cweampuf, &level_layout_query, None);
+            camera.translation = new_camera_position;
+
             return;
         }
         if let Some(transition_collider) = transition_colliders.iter().find(|f| f.exit_index == transition.transition_to_index) {
             cweampuf.translation = transition_collider.safe_position;
+
+            let new_camera_position = get_adjusted_camera_position(&cweampuf, &level_layout_query, None);
+            camera.translation = new_camera_position;
 
             return;
         }
@@ -146,13 +175,15 @@ fn spawn_level(commands: &mut Commands, level: Level) {
         Level::StartingRoom => {
             commands.spawn(LevelLayout {
                 floor_layout: STARTING_ROOM_LAYOUT.to_vec(),
-                transition_layout: STARTING_ROOM_TRANSITIONS.to_vec()
+                transition_layout: STARTING_ROOM_TRANSITIONS.to_vec(),
+                npc_layout: STARTING_ROOM_NPC.to_vec()
             });
         },
         Level::CweamcatLair => {
             commands.spawn(LevelLayout {
                 floor_layout: CWEAMCAT_LAIR_LAYOUT.to_vec(),
-                transition_layout: CWEAMCAT_LAIR_TRANSITIONS.to_vec()
+                transition_layout: CWEAMCAT_LAIR_TRANSITIONS.to_vec(),
+                npc_layout: vec![]
             });
         }
     }

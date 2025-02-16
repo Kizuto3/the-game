@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::level::Level;
+use crate::{level::Level, npc::NPC};
 
 use super::{FloorInfo, TransitionCollider};
 
@@ -19,5 +19,9 @@ pub const STARTING_ROOM_LAYOUT: [FloorInfo; 11] = [
 ];
 
 pub const STARTING_ROOM_TRANSITIONS: [TransitionCollider; 1] = [
-    TransitionCollider { exit_index: 0, safe_position: Vec3::new(2600.0, 850.0, 1.0), transition_to_level: Level::CweamcatLair, floor_info: FloorInfo { position: Vec3::new(2700.0, 900.0, 1.0), size: Vec2::new(100.0, 200.0) }  }
+    TransitionCollider { exit_index: 0, safe_position: Vec3::new(2600.0, 850.0, 1.0), transition_to_level: Level::CweamcatLair, floor_info: FloorInfo { position: Vec3::new(2700.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }  }
+];
+
+pub const STARTING_ROOM_NPC: [NPC; 1] = [
+    NPC { floor_info: FloorInfo { position: Vec3::new(2300.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }, is_active: false  }
 ];
