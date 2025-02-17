@@ -3,6 +3,8 @@ pub mod cweamcat_lair_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
+use crate::{npc::NPC, Cweampuf};
+
 use super::Level;
 
 #[derive(Component)]
@@ -24,3 +26,8 @@ pub struct FloorInfo {
     pub size: Vec2
 }
 
+pub trait LevelInfo {
+    fn get_floor_info(&self, cweampuff: &Cweampuf) -> Vec<FloorInfo>;
+    fn get_transitions_info(&self, cweampuff: &Cweampuf) -> Vec<TransitionCollider>;
+    fn get_npcs(&self, cweampuff: &Cweampuf) -> Vec<NPC>;
+}

@@ -1,27 +1,43 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::Level, npc::NPC};
+use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition}, NPC}};
 
-use super::{FloorInfo, TransitionCollider};
+use super::{FloorInfo, LevelInfo, TransitionCollider};
 
-pub const STARTING_ROOM_LAYOUT: [FloorInfo; 11] = [
-    FloorInfo { position: Vec3::new(-450.0, 550.0, 1.0), size: Vec2::new(100.0, 1400.0) },
-    FloorInfo { position: Vec3::new(500.0, -400.0, 1.0), size: Vec2::new(2000.0, 500.0) },
-    FloorInfo { position: Vec3::new(2000.0, -200.0, 1.0), size: Vec2::new(1000.0, 900.0) },
-    FloorInfo { position: Vec3::new(2650.0, 0.0, 1.0), size: Vec2::new(300.0, 1600.0) },
-    FloorInfo { position: Vec3::new(625.0, -40.0, 1.0), size: Vec2::new(150.0, 100.0) },
-    FloorInfo { position: Vec3::new(1025.0, 130.0, 1.0), size: Vec2::new(150.0, 100.0) },
-    FloorInfo { position: Vec3::new(1900.0, 500.0, 1.0), size: Vec2::new(150.0, 100.0) },
-    FloorInfo { position: Vec3::new(1700.0, 650.0, 1.0), size: Vec2::new(150.0, 100.0) },
-    FloorInfo { position: Vec3::new(2300.0, 365.0, 1.0), size: Vec2::new(150.0, 100.0) },
-    FloorInfo { position: Vec3::new(2300.0, 750.0, 1.0), size: Vec2::new(400.0, 100.0) },
-    FloorInfo { position: Vec3::new(2450.0, 1300.0, 1.0), size: Vec2::new(700.0, 500.0) },
-];
+#[derive(Clone, Copy)]
+pub struct StartingRoomInfo;
 
-pub const STARTING_ROOM_TRANSITIONS: [TransitionCollider; 1] = [
-    TransitionCollider { exit_index: 0, safe_position: Vec3::new(2600.0, 850.0, 1.0), transition_to_level: Level::CweamcatLair, floor_info: FloorInfo { position: Vec3::new(2700.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }  }
-];
+impl LevelInfo for StartingRoomInfo {
+    fn get_floor_info(&self, _cweampuff: &crate::Cweampuf) -> Vec<FloorInfo> {
+        vec![
+            FloorInfo { position: Vec3::new(-450.0, 550.0, 1.0), size: Vec2::new(100.0, 1400.0) },
+            FloorInfo { position: Vec3::new(500.0, -400.0, 1.0), size: Vec2::new(2000.0, 500.0) },
+            FloorInfo { position: Vec3::new(2000.0, -200.0, 1.0), size: Vec2::new(1000.0, 900.0) },
+            FloorInfo { position: Vec3::new(2650.0, 0.0, 1.0), size: Vec2::new(300.0, 1600.0) },
+            FloorInfo { position: Vec3::new(625.0, -40.0, 1.0), size: Vec2::new(150.0, 100.0) },
+            FloorInfo { position: Vec3::new(1025.0, 130.0, 1.0), size: Vec2::new(150.0, 100.0) },
+            FloorInfo { position: Vec3::new(1900.0, 500.0, 1.0), size: Vec2::new(150.0, 100.0) },
+            FloorInfo { position: Vec3::new(1700.0, 650.0, 1.0), size: Vec2::new(150.0, 100.0) },
+            FloorInfo { position: Vec3::new(2300.0, 365.0, 1.0), size: Vec2::new(150.0, 100.0) },
+            FloorInfo { position: Vec3::new(2300.0, 750.0, 1.0), size: Vec2::new(400.0, 100.0) },
+            FloorInfo { position: Vec3::new(2450.0, 1300.0, 1.0), size: Vec2::new(700.0, 500.0) },
+        ]
+    }
 
-pub const STARTING_ROOM_NPC: [NPC; 1] = [
-    NPC { floor_info: FloorInfo { position: Vec3::new(2300.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }, is_active: false  }
-];
+    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuf) -> Vec<TransitionCollider> {
+        vec![
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(2600.0, 850.0, 1.0), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: FloorInfo { position: Vec3::new(2700.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }  }
+        ]
+    }
+
+    fn get_npcs(&self, _cweampuff: &crate::Cweampuf) -> Vec<NPC> {
+        vec![
+            NPC { floor_info: FloorInfo { position: Vec3::new(2300.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }, is_active: false, current_conversation_index: 0,
+                conversation: vec![
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: "Cweampuff".to_string(), text: "Hello!".to_string() },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: "OG Cweampuff".to_string(), text: "Oh! You must be new here".to_string() }
+                ]   
+            }
+        ]
+    }
+}

@@ -1,9 +1,10 @@
 use bevy::{ecs::observer::TriggerTargets, prelude::*};
 use bevy_rapier2d::prelude::*;
-use level_layout::{cweamcat_lair_layout::{CWEAMCAT_LAIR_LAYOUT, CWEAMCAT_LAIR_TRANSITIONS}, starting_room_layout::{STARTING_ROOM_LAYOUT, STARTING_ROOM_NPC, STARTING_ROOM_TRANSITIONS}, FloorCollider, FloorInfo, TransitionCollider};
+use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, FloorInfo, TransitionCollider};
 use transition_states::TransitionState;
 
 use crate::{camera::get_adjusted_camera_position, interactable::Interactable, npc::NPC, Cweampuf};
+use crate::level::level_layout::LevelInfo;
 
 pub mod transition_states;
 pub mod level_layout;
@@ -14,8 +15,8 @@ const FLOOR_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
 
 #[derive(Clone, Copy)]
 pub enum Level {
-    StartingRoom,
-    CweamcatLair,
+    StartingRoom(StartingRoomInfo),
+    CweamcatLair(CweamcatLairInfo),
 }
 
 #[derive(Event)]
@@ -98,7 +99,7 @@ pub fn spawn_new_level(
 }
 
 pub fn level_transition_collision_reader(
-    cweampuf: Single<Entity, With<Cweampuf>>,
+    cweampuf: Single<(Entity, &Cweampuf), With<Cweampuf>>,
     current_level_layout: Query<Entity, With<LevelLayout>>,
     transition_colliders: Query<(Entity, &TransitionCollider), With<TransitionCollider>>,
     mut contact_events: EventReader<CollisionEvent>,
@@ -106,16 +107,17 @@ pub fn level_transition_collision_reader(
     mut transition_state: ResMut<NextState<TransitionState>>,
     mut commands: Commands,
 ) {
+    let (cweampuff_entity, cweampuff) = *cweampuf;
     for contact_event in contact_events.read() {
         if let CollisionEvent::Started(h1, h2, _flags) = contact_event {
             for (collider_entity, transition_collider) in transition_colliders.iter() {
-                if h1.entities().iter().any(|f| *f == collider_entity || *f == *cweampuf) && 
-                   h2.entities().iter().any(|f| *f == collider_entity || *f == *cweampuf) {
+                if h1.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) && 
+                   h2.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) {
                     for layout_entity in current_level_layout.iter() {
                         commands.entity(layout_entity).despawn_recursive();
                     }
 
-                    spawn_level(&mut commands, transition_collider.transition_to_level);
+                    spawn_level(&mut commands, transition_collider.transition_to_level, &cweampuff);
                     transition_state.set(TransitionState::Started);
                     transition_events.send(LevelTransitionEvent { transition_to_index: transition_collider.exit_index, transition_to_position: Option::None });
 
@@ -130,6 +132,7 @@ pub fn manually_transition_to_level(
     current_level_layout: &Query<Entity, With<LevelLayout>>,
     transition_events: &mut EventWriter<LevelTransitionEvent>,
     transition_state: &mut ResMut<NextState<TransitionState>>,
+    cweampuff: &Cweampuf,
     mut commands: &mut Commands,
     level: Level,
     position: Vec3
@@ -138,7 +141,7 @@ pub fn manually_transition_to_level(
         commands.entity(layout_entity).despawn_recursive();
     }
 
-    spawn_level(&mut commands, level);
+    spawn_level(&mut commands, level, &cweampuff);
     transition_state.set(TransitionState::Started);
     transition_events.send(LevelTransitionEvent { transition_to_index: 0, transition_to_position: Some(position) });
 }
@@ -170,20 +173,20 @@ pub fn level_transition_event_reader(
     }
 }
 
-fn spawn_level(commands: &mut Commands, level: Level) {
+fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuf) {
     match level {
-        Level::StartingRoom => {
+        Level::StartingRoom(layout_info) => {
             commands.spawn(LevelLayout {
-                floor_layout: STARTING_ROOM_LAYOUT.to_vec(),
-                transition_layout: STARTING_ROOM_TRANSITIONS.to_vec(),
-                npc_layout: STARTING_ROOM_NPC.to_vec()
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff)
             });
         },
-        Level::CweamcatLair => {
+        Level::CweamcatLair(layout_info) => {
             commands.spawn(LevelLayout {
-                floor_layout: CWEAMCAT_LAIR_LAYOUT.to_vec(),
-                transition_layout: CWEAMCAT_LAIR_TRANSITIONS.to_vec(),
-                npc_layout: vec![]
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff)
             });
         }
     }
