@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition}, NPC}};
+use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, NPC}};
 
 use super::{FloorInfo, LevelInfo, TransitionCollider};
 
@@ -34,8 +34,10 @@ impl LevelInfo for StartingRoomInfo {
         vec![
             NPC { floor_info: FloorInfo { position: Vec3::new(2300.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }, is_active: false, current_conversation_index: 0,
                 conversation: vec![
-                    ConversationEntry { position: ConversationPosition::Left, npc_name: "Cweampuff".to_string(), text: "Hello!".to_string() },
-                    ConversationEntry { position: ConversationPosition::Right, npc_name: "OG Cweampuff".to_string(), text: "Oh! You must be new here".to_string() }
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: "Cweampuff".to_string(), text: "Hello!".to_string(), emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: "OG Cweampuff".to_string(), text: "Oh! You must be new here".to_string(), emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: "OG Cweampuff".to_string(), text: "Hello!".to_string(), emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: "Cweampuff".to_string(), text: "I think I got lost".to_string(), emotion: Emotion::Sad },
                 ]   
             }
         ]

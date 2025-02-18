@@ -12,6 +12,9 @@ use crate::{interactable::{interaction_state::InteractionState, Interactable}, l
 pub struct DialogNode;
 
 #[derive(Component)]
+pub struct DialogTextNode;
+
+#[derive(Component)]
 pub struct DialogText;
 
 #[derive(Component)]
@@ -100,7 +103,7 @@ pub fn spawn_conversation_resources(
             parent
                 .spawn((
                     Node {
-                        width: Val::Percent(100.0),
+                        width: Val::Percent(40.0),
                         height: Val::Percent(35.0),
                         top: Val::Percent(65.0),
                         left: Val::Percent(0.),
@@ -110,6 +113,7 @@ pub fn spawn_conversation_resources(
                         padding: UiRect::all(Val::Px(10.)),
                         ..default()
                     },
+                    DialogTextNode,
                     BorderColor(Color::Srgba(Srgba { red: 0.75, green: 0.75, blue: 0.75, alpha: 1.0 })),
                 ))
                 .with_children(|parent| {
@@ -133,9 +137,8 @@ pub fn spawn_conversation_resources(
                     Node {
                         width: Val::Percent(35.0),
                         height: Val::Percent(65.0),
-                        top: Val::Percent(0.0),
+                        top: Val::Percent(35.0),
                         left: Val::Percent(0.),
-                        border: UiRect::all(Val::Px(10.)),
                         justify_content: JustifyContent::Start,
                         position_type: PositionType::Absolute,
                         ..default()
@@ -150,9 +153,8 @@ pub fn spawn_conversation_resources(
                     Node {
                         width: Val::Percent(35.0),
                         height: Val::Percent(65.0),
-                        top: Val::Percent(0.0),
+                        top: Val::Percent(35.0),
                         left: Val::Percent(65.),
-                        border: UiRect::all(Val::Px(10.)),
                         position_type: PositionType::Absolute,
                         justify_content: JustifyContent::Start,
                         ..default()
@@ -175,6 +177,7 @@ pub fn conversation_input_reader(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut conversation_state: ResMut<NextState<ConversationState>>,
     mut text_query: Query<&mut Text, With<DialogText>>,
+    mut text_node_query: Query<&mut Node, With<DialogTextNode>>,
     mut left_npc_image: Single<&mut ImageNode, (With<LeftCharacterImageNode>, Without<RightCharacterImageNode>)>,
     mut right_npc_image: Single<&mut ImageNode, (With<RightCharacterImageNode>, Without<LeftCharacterImageNode>)>,
     mut npcs_query: Query<&mut NPC, With<NPC>>,
@@ -199,18 +202,28 @@ pub fn conversation_input_reader(
                 **text = current_conversation_info.text.to_string();
             }
 
+            let npc_image_path = format!("npcs/{}/{}.png", current_conversation_info.npc_name, current_conversation_info.emotion);
+
             match current_conversation_info.position {
                 ConversationPosition::Left => {
                     left_npc_image.color = Color::WHITE;
-                    left_npc_image.image = asset_server.load("npcs/Test1.png");
+                    left_npc_image.image = asset_server.load(npc_image_path);
 
-                    right_npc_image.color = Color::Srgba(Srgba::new(1.0, 1.0, 1.0, 0.5) );
+                    right_npc_image.color = Color::Srgba(Srgba::new(1.0, 1.0, 1.0, 0.0) );
+
+                    for mut node in text_node_query.iter_mut() {
+                        node.left = Val::Percent(35.);
+                    }
                 },
                 ConversationPosition::Right => {
                     right_npc_image.color = Color::WHITE;
-                    right_npc_image.image = asset_server.load("npcs/Test2.png");
+                    right_npc_image.image = asset_server.load(npc_image_path);
 
-                    left_npc_image.color = Color::Srgba(Srgba::new(1.0, 1.0, 1.0, 0.5) );
+                    left_npc_image.color = Color::Srgba(Srgba::new(1.0, 1.0, 1.0, 0.0) );
+
+                    for mut node in text_node_query.iter_mut() {
+                        node.left = Val::Percent(25.);
+                    }
                 }
             }
         }
