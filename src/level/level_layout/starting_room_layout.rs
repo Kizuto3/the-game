@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, NPC}};
+use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, Level}, npc::NPC};
 
 use super::{FloorInfo, LevelInfo, TransitionCollider};
 
@@ -26,20 +26,11 @@ impl LevelInfo for StartingRoomInfo {
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuf) -> Vec<TransitionCollider> {
         vec![
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(2600.0, 850.0, 1.0), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: FloorInfo { position: Vec3::new(2700.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }  }
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(2600.0, 820.0, 1.0), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: FloorInfo { position: Vec3::new(2700.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }  }
         ]
     }
 
     fn get_npcs(&self, _cweampuff: &crate::Cweampuf) -> Vec<NPC> {
-        vec![
-            NPC { floor_info: FloorInfo { position: Vec3::new(2300.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }, is_active: false, current_conversation_index: 0,
-                conversation: vec![
-                    ConversationEntry { position: ConversationPosition::Left, npc_name: "Cweampuff".to_string(), text: "Hello!".to_string(), emotion: Emotion::Regular },
-                    ConversationEntry { position: ConversationPosition::Right, npc_name: "OG Cweampuff".to_string(), text: "Oh! You must be new here".to_string(), emotion: Emotion::Regular },
-                    ConversationEntry { position: ConversationPosition::Right, npc_name: "OG Cweampuff".to_string(), text: "Hello!".to_string(), emotion: Emotion::Happy },
-                    ConversationEntry { position: ConversationPosition::Left, npc_name: "Cweampuff".to_string(), text: "I think I got lost".to_string(), emotion: Emotion::Sad },
-                ]   
-            }
-        ]
+        vec![]
     }
 }

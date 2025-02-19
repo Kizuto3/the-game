@@ -149,6 +149,7 @@ pub fn spawn_conversation_resources(
             // RIGHT CHARACTER IMAGE
             parent.spawn((
                     ImageNode::default()
+                        .with_flip_x()
                         .with_mode(NodeImageMode::Auto),
                     Node {
                         width: Val::Percent(35.0),

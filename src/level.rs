@@ -35,8 +35,12 @@ pub struct LevelLayout {
 pub fn despawn_current_level(
     mut commands: Commands,
     floor_query: Query<Entity, (With<FloorCollider>, Without<Camera2d>)>,
+    transitions_query: Query<Entity, (With<Sensor>, Without<Camera2d>)>,
     interactable_query: Query<Entity, (With<Interactable>, Without<Camera2d>)>
 ) {
+    for entity in transitions_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
     for entity in floor_query.iter() {
         commands.entity(entity).despawn_recursive();
     }
