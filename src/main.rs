@@ -52,7 +52,7 @@ fn main() {
     // CUTSCENE SYSTEMS
         .add_systems(OnEnter(AppState::Cutscene), spawn_cutscene_resources)
         .add_systems(FixedUpdate, cutscene_event_reader)
-        .add_systems(FixedUpdate, (cutscene_player).run_if(in_state(AppState::Cutscene)))
+        .add_systems(Update, (cutscene_player).run_if(in_state(AppState::Cutscene)))
         .add_systems(OnExit(AppState::Cutscene), clean_nodes)
 
     // LEVEL TRANSITION SYSTEMS
@@ -61,10 +61,10 @@ fn main() {
 
     // NPC INTERACTION SYSTEMS
         .add_systems(OnEnter(InteractionState::Ready), spawn_interaction_prompt)
-        .add_systems(FixedUpdate, (npc_start_interaction_input_reader).run_if(in_state(InteractionState::Ready)))
+        .add_systems(Update, (npc_start_interaction_input_reader).run_if(in_state(InteractionState::Ready)))
         .add_systems(OnExit(InteractionState::Ready), despawn_interaction_prompt)
         .add_systems(OnEnter(ConversationState::Started), spawn_conversation_resources)
-        .add_systems(FixedUpdate,(conversation_input_reader).run_if(in_state(ConversationState::Started)))
+        .add_systems(Update,(conversation_input_reader).run_if(in_state(ConversationState::Started)))
         .add_systems(OnExit(ConversationState::Started), despawn_conversation_resources)
 
     // GAMEPLAY SYSTEMS

@@ -121,7 +121,7 @@ pub fn spawn_conversation_resources(
                         Text::new(""),
                         TextFont {
                             font: asset_server.load("fonts\\Shadows Into Light.ttf"),
-                            font_size: 33.0,
+                            font_size: 50.0,
                             ..default()
                         },
                         DialogText,
