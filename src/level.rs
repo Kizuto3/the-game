@@ -1,5 +1,7 @@
 use bevy::{ecs::observer::TriggerTargets, prelude::*};
 use bevy_rapier2d::prelude::*;
+use level_layout::cweamcat_house_layout::CweamcatHouseInfo;
+use level_layout::DoorCollider;
 use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, FloorInfo, TransitionCollider};
 use transition_states::TransitionState;
 
@@ -8,15 +10,18 @@ use crate::level::level_layout::LevelInfo;
 
 pub mod transition_states;
 pub mod level_layout;
+pub mod door;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
 const NPC_COLOR: Color = Color::srgb(0.5, 0.5, 1.0);
+const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);
 const FLOOR_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
 
 #[derive(Clone, Copy)]
 pub enum Level {
     StartingRoom(StartingRoomInfo),
     CweamcatLair(CweamcatLairInfo),
+    CweamcatHouse(CweamcatHouseInfo)
 }
 
 #[derive(Event)]
@@ -29,7 +34,8 @@ pub struct LevelTransitionEvent {
 pub struct LevelLayout {
     pub floor_layout: Vec<FloorInfo>,
     pub transition_layout: Vec<TransitionCollider>,
-    pub npc_layout: Vec<NPC>
+    pub npc_layout: Vec<NPC>,
+    pub door_layout: Vec<DoorCollider>
 }
 
 pub fn despawn_current_level(
@@ -93,6 +99,20 @@ pub fn spawn_new_level(
                 Transform::from_translation(npc.floor_info.position)
             ))
             .insert(Collider::cuboid(npc.floor_info.size.x / 2.0, npc.floor_info.size.y / 2.0))
+            .insert(Sensor)
+            .insert(ActiveEvents::COLLISION_EVENTS)
+            .insert(Interactable);
+        }
+
+        for door in &level_layout.door_layout {
+            commands
+            .spawn(door.clone())
+            .insert((
+                Mesh2d(meshes.add(Rectangle::new(door.floor_info.size.x, door.floor_info.size.y))),
+                MeshMaterial2d(materials.add(DOOR_COLOR)),
+                Transform::from_translation(door.floor_info.position)
+            ))
+            .insert(Collider::cuboid(door.floor_info.size.x / 2.0, door.floor_info.size.y / 2.0))
             .insert(Sensor)
             .insert(ActiveEvents::COLLISION_EVENTS)
             .insert(Interactable);
@@ -183,14 +203,24 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuf) {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff)
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff)
             });
         },
         Level::CweamcatLair(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff)
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff)
+            });
+        }
+        Level::CweamcatHouse(layout_info) => {
+            commands.spawn(LevelLayout {
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff)
             });
         }
     }

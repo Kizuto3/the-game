@@ -1,8 +1,8 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::{level_layout::starting_room_layout::StartingRoomInfo, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, NPC}};
+use crate::{level::{level_layout::{cweamcat_house_layout::CweamcatHouseInfo, starting_room_layout::StartingRoomInfo}, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, NPC}};
 
-use super::{FloorInfo, LevelInfo, TransitionCollider};
+use super::{DoorCollider, FloorInfo, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct CweamcatLairInfo;
@@ -33,6 +33,13 @@ impl LevelInfo for CweamcatLairInfo {
         ]
     }
 
+    fn get_doors(&self, _cweampuff: &crate::Cweampuf) -> Vec<DoorCollider> {
+        vec![
+            DoorCollider { floor_info: FloorInfo { position: Vec3 { x: 1350., y: -50., z: 0.0 }, size: Vec2 { x: 100., y: 200. } },
+                transition_to_level: Level::CweamcatHouse(CweamcatHouseInfo), safe_position: Vec3 { x: 0.0, y: 0.0, z: 1.0 }, is_active: false }
+        ]
+    }
+    
     fn get_npcs(&self, _cweampuff: &crate::Cweampuf) -> Vec<NPC> {
         vec![
             NPC { floor_info: FloorInfo { position: Vec3::new(750.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,

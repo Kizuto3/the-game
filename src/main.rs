@@ -13,7 +13,7 @@ use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collide
 use camera::{cweampuf_camera_adjustment, spawn_camera};
 use cutscene::{cutscene_event_reader, cutscene_player, spawn_cutscene_resources, CutsceneEvent};
 use interactable::{despawn_interaction_prompt, interaction_state::InteractionState, spawn_interaction_prompt};
-use level::{despawn_current_level, level_layout::FloorCollider, level_transition_collision_reader, level_transition_event_reader, spawn_new_level, transition_states::TransitionState, LevelTransitionEvent};
+use level::{despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, level_layout::FloorCollider, level_transition_collision_reader, level_transition_event_reader, spawn_new_level, transition_states::TransitionState, LevelTransitionEvent};
 use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_menu_buttons};
 use movement::*;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, npc_collision_reader, npc_start_interaction_input_reader, spawn_conversation_resources};
@@ -61,7 +61,10 @@ fn main() {
 
     // NPC INTERACTION SYSTEMS
         .add_systems(OnEnter(InteractionState::Ready), spawn_interaction_prompt)
-        .add_systems(Update, (npc_start_interaction_input_reader).run_if(in_state(InteractionState::Ready)))
+        .add_systems(Update, (
+            npc_start_interaction_input_reader, 
+            door_start_interaction_input_reader
+        ).run_if(in_state(InteractionState::Ready)))
         .add_systems(OnExit(InteractionState::Ready), despawn_interaction_prompt)
         .add_systems(OnEnter(ConversationState::Started), spawn_conversation_resources)
         .add_systems(Update,(conversation_input_reader).run_if(in_state(ConversationState::Started)))
@@ -81,7 +84,8 @@ fn main() {
             velocity_limiter,
             stunlock_reset,
             level_transition_collision_reader,
-            npc_collision_reader
+            npc_collision_reader,
+            interactable_door_collision_reader
         ).run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)))
         .run();
 }

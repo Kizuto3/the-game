@@ -1,5 +1,6 @@
 pub mod starting_room_layout;
 pub mod cweamcat_lair_layout;
+pub mod cweamcat_house_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
@@ -20,6 +21,14 @@ pub struct TransitionCollider {
     pub transition_to_level: Level
 }
 
+#[derive(Component, Clone, Copy)]
+pub struct DoorCollider {
+    pub floor_info: FloorInfo,
+    pub transition_to_level: Level,
+    pub safe_position: Vec3,
+    pub is_active: bool
+}
+
 #[derive(Clone, Copy)]
 pub struct FloorInfo {
     pub position: Vec3,
@@ -29,5 +38,6 @@ pub struct FloorInfo {
 pub trait LevelInfo {
     fn get_floor_info(&self, cweampuff: &Cweampuf) -> Vec<FloorInfo>;
     fn get_transitions_info(&self, cweampuff: &Cweampuf) -> Vec<TransitionCollider>;
+    fn get_doors(&self, cweampuff: &Cweampuf) -> Vec<DoorCollider>;
     fn get_npcs(&self, cweampuff: &Cweampuf) -> Vec<NPC>;
 }
