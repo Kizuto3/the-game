@@ -59,7 +59,7 @@ fn main() {
         .add_systems(OnEnter(TransitionState::Started), (despawn_current_level, spawn_new_level).chain())
         .add_systems(FixedUpdate, (level_transition_event_reader).run_if(in_state(TransitionState::Started)))
 
-    // NPC INTERACTION SYSTEMS
+    // INTERACTION SYSTEMS
         .add_systems(OnEnter(InteractionState::Ready), spawn_interaction_prompt)
         .add_systems(Update, (
             npc_start_interaction_input_reader, 
