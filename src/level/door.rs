@@ -3,7 +3,7 @@ use bevy_rapier2d::prelude::CollisionEvent;
 
 use crate::{interactable::{interaction_state::InteractionState, Interactable}, npc::NPC, Cweampuf};
 
-use super::{level_layout::DoorCollider, manually_transition_to_level, transition_states::TransitionState, LevelLayout, LevelTransitionEvent};
+use super::{level_layout::DoorCollider, manually_transition_to_level, transition_states::TransitionState, LevelLayout};
 
 pub fn interactable_door_collision_reader(
     mut doors: Query<(Entity, &mut DoorCollider), (With<Interactable>, Without<NPC>)>,
@@ -44,7 +44,6 @@ pub fn door_start_interaction_input_reader(
     cweampuff: Single<&Cweampuf, With<Cweampuf>>,
     mut commands: Commands,
     current_level_layout: Query<Entity, With<LevelLayout>>,
-    mut transition_events: EventWriter<LevelTransitionEvent>,
     mut transition_state: ResMut<NextState<TransitionState>>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::KeyE) {
@@ -52,6 +51,6 @@ pub fn door_start_interaction_input_reader(
     }
 
     for door in doors.iter().find(|f| f.is_active).iter() {
-        manually_transition_to_level(&current_level_layout, &mut transition_events, &mut transition_state, &cweampuff, &mut commands, door.transition_to_level, door.safe_position);
+        manually_transition_to_level(&current_level_layout, &mut transition_state, &cweampuff, &mut commands, door.transition_to_level, door.safe_position);
     }
 }

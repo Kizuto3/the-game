@@ -24,8 +24,7 @@ pub enum Level {
     CweamcatHouse(CweamcatHouseInfo)
 }
 
-#[derive(Event)]
-pub struct LevelTransitionEvent {
+pub struct LevelTransitionInfo {
     pub transition_to_index: u32,
     pub transition_to_position: Option<Vec3>
 }
@@ -35,7 +34,8 @@ pub struct LevelLayout {
     pub floor_layout: Vec<FloorInfo>,
     pub transition_layout: Vec<TransitionCollider>,
     pub npc_layout: Vec<NPC>,
-    pub door_layout: Vec<DoorCollider>
+    pub door_layout: Vec<DoorCollider>,
+    pub transition_info: LevelTransitionInfo,
 }
 
 pub fn despawn_current_level(
@@ -60,6 +60,8 @@ pub fn spawn_new_level(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut transition_state: ResMut<NextState<TransitionState>>,
+    mut cweampuf: Single<&mut Transform, (With<Cweampuf>, Without<Camera2d>)>,
+    mut camera: Single<&mut Transform, With<Camera2d>>,
     level_layout_query: Query<&LevelLayout, With<LevelLayout>>
 ) {
     for level_layout in level_layout_query.iter() {
@@ -117,33 +119,47 @@ pub fn spawn_new_level(
             .insert(ActiveEvents::COLLISION_EVENTS)
             .insert(Interactable);
         }
+
+        if let Some(position) = level_layout.transition_info.transition_to_position {
+            cweampuf.translation = position;
+
+            let new_camera_position = get_adjusted_camera_position(&cweampuf, &level_layout_query, None);
+            camera.translation = new_camera_position;
+        }
+        else if let Some(transition_collider) = level_layout.transition_layout.iter().find(|f| f.exit_index == level_layout.transition_info.transition_to_index) {
+            cweampuf.translation = transition_collider.safe_position;
+
+            let new_camera_position = get_adjusted_camera_position(&cweampuf, &level_layout_query, None);
+            camera.translation = new_camera_position;
+        }
     }
 
     transition_state.set(TransitionState::Finished);
 }
 
 pub fn level_transition_collision_reader(
-    cweampuf: Single<(Entity, &Cweampuf), With<Cweampuf>>,
+    mut cweampuf: Single<(Entity, &Cweampuf, &mut Velocity), With<Cweampuf>>,
     current_level_layout: Query<Entity, With<LevelLayout>>,
     transition_colliders: Query<(Entity, &TransitionCollider), With<TransitionCollider>>,
     mut contact_events: EventReader<CollisionEvent>,
-    mut transition_events: EventWriter<LevelTransitionEvent>,
     mut transition_state: ResMut<NextState<TransitionState>>,
     mut commands: Commands,
 ) {
-    let (cweampuff_entity, cweampuff) = *cweampuf;
+    let (cweampuff_entity, cweampuff, cweampuff_velocity) = &mut *cweampuf;
     for contact_event in contact_events.read() {
         if let CollisionEvent::Started(h1, h2, _flags) = contact_event {
             for (collider_entity, transition_collider) in transition_colliders.iter() {
-                if h1.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) && 
-                   h2.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) {
+                if h1.entities().iter().any(|f| *f == collider_entity || *f == *cweampuff_entity) && 
+                   h2.entities().iter().any(|f| *f == collider_entity || *f == *cweampuff_entity) {
                     for layout_entity in current_level_layout.iter() {
                         commands.entity(layout_entity).despawn_recursive();
                     }
 
-                    spawn_level(&mut commands, transition_collider.transition_to_level, &cweampuff);
+                    let transition_info = LevelTransitionInfo { transition_to_index: transition_collider.exit_index, transition_to_position: Option::None };
+
+                    cweampuff_velocity.linvel = Vec2::new(0., 0.);
+                    spawn_level(&mut commands, transition_collider.transition_to_level, &cweampuff, transition_info);
                     transition_state.set(TransitionState::Started);
-                    transition_events.send(LevelTransitionEvent { transition_to_index: transition_collider.exit_index, transition_to_position: Option::None });
 
                     return;
                 }
@@ -154,7 +170,6 @@ pub fn level_transition_collision_reader(
 
 pub fn manually_transition_to_level(
     current_level_layout: &Query<Entity, With<LevelLayout>>,
-    transition_events: &mut EventWriter<LevelTransitionEvent>,
     transition_state: &mut ResMut<NextState<TransitionState>>,
     cweampuff: &Cweampuf,
     mut commands: &mut Commands,
@@ -165,46 +180,21 @@ pub fn manually_transition_to_level(
         commands.entity(layout_entity).despawn_recursive();
     }
 
-    spawn_level(&mut commands, level, &cweampuff);
+    let transition_info = LevelTransitionInfo { transition_to_index: 0, transition_to_position: Some(position) };
+
+    spawn_level(&mut commands, level, &cweampuff, transition_info);
     transition_state.set(TransitionState::Started);
-    transition_events.send(LevelTransitionEvent { transition_to_index: 0, transition_to_position: Some(position) });
 }
 
-pub fn level_transition_event_reader(
-    mut cweampuf: Single<&mut Transform, (With<Cweampuf>, Without<Camera2d>)>,
-    transition_colliders: Query<&TransitionCollider, With<TransitionCollider>>,
-    mut transition_events: EventReader<LevelTransitionEvent>,
-    mut camera: Single<&mut Transform, With<Camera2d>>,
-    level_layout_query: Query<&LevelLayout, With<LevelLayout>>,
-) {
-    for transition in transition_events.read() {
-        if let Some(position) = transition.transition_to_position {
-            cweampuf.translation = position;
-
-            let new_camera_position = get_adjusted_camera_position(&cweampuf, &level_layout_query, None);
-            camera.translation = new_camera_position;
-
-            return;
-        }
-        if let Some(transition_collider) = transition_colliders.iter().find(|f| f.exit_index == transition.transition_to_index) {
-            cweampuf.translation = transition_collider.safe_position;
-
-            let new_camera_position = get_adjusted_camera_position(&cweampuf, &level_layout_query, None);
-            camera.translation = new_camera_position;
-
-            return;
-        }
-    }
-}
-
-fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuf) {
+fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuf, transition_info: LevelTransitionInfo) {
     match level {
         Level::StartingRoom(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),
                 npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff)
+                door_layout: layout_info.get_doors(cweampuff),
+                transition_info
             });
         },
         Level::CweamcatLair(layout_info) => {
@@ -212,7 +202,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuf) {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),
                 npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff)
+                door_layout: layout_info.get_doors(cweampuff),
+                transition_info
             });
         }
         Level::CweamcatHouse(layout_info) => {
@@ -220,7 +211,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuf) {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),
                 npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff)
+                door_layout: layout_info.get_doors(cweampuff),
+                transition_info
             });
         }
     }

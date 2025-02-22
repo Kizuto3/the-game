@@ -2,9 +2,10 @@ use bevy::ecs::event::{Event, EventReader};
 use bevy::prelude::*;
 
 use crate::app_states::AppState;
+use crate::fade_in_fade_out::FadeState;
 use crate::level::level_layout::starting_room_layout::StartingRoomInfo;
 use crate::level::transition_states::TransitionState;
-use crate::level::{manually_transition_to_level, Level, LevelLayout, LevelTransitionEvent};
+use crate::level::{manually_transition_to_level, Level, LevelLayout};
 use crate::{Cweampuf, CWEAMPUF_STARTING_POSITION};
 
 #[derive(Event)]
@@ -34,7 +35,6 @@ pub fn cutscene_event_reader(
     mut state: ResMut<NextState<AppState>>,
     mut commands: Commands,
     current_level_layout: Query<Entity, With<LevelLayout>>,
-    mut transition_events: EventWriter<LevelTransitionEvent>,
     mut transition_state: ResMut<NextState<TransitionState>>,
 ) {
     for cutscene in cutscene_events.read() {
@@ -45,37 +45,51 @@ pub fn cutscene_event_reader(
         if let CutsceneEvent::Stopped = cutscene {
             state.set(AppState::InGame);
 
-            manually_transition_to_level(&current_level_layout, &mut transition_events, &mut transition_state, &Cweampuf, &mut commands, Level::StartingRoom(StartingRoomInfo), CWEAMPUF_STARTING_POSITION);
+            manually_transition_to_level(&current_level_layout, &mut transition_state, &Cweampuf, &mut commands, Level::StartingRoom(StartingRoomInfo), CWEAMPUF_STARTING_POSITION);
         }
     }
 }
 
-pub fn cutscene_player(
+pub fn cutscene_input_reader(
     keyboard_input: Res<ButtonInput<KeyCode>>, 
     mouse_input: Res<ButtonInput<MouseButton>>, 
-    mut cutscene_events: EventWriter<CutsceneEvent>, 
-    mut text_query: Query<&mut Text, With<CutsceneText>>,
-    mut current_cutscene: Single<&mut Cutscene, With<Cutscene>>
+    current_cutscene: Single<&Cutscene, With<Cutscene>>,
+    mut next_fade_state: ResMut<NextState<FadeState>>,
+    current_fade_state: Res<State<FadeState>>
 ) {
     if current_cutscene.current_index == 0 || 
        keyboard_input.any_just_pressed([KeyCode::Space, KeyCode::Enter]) ||
        mouse_input.any_just_pressed([MouseButton::Left, MouseButton::Right]) {
-        {
-            let current_cutscene_info = match current_cutscene.infos.get(current_cutscene.current_index) {
-                Some(info) => info,
-                None => {
-                    cutscene_events.send(CutsceneEvent::Stopped);
-                    return;
-                }
-            };
-        
-            for mut text in text_query.iter_mut() {
-                **text = current_cutscene_info.text.to_string();
-            }
-        }
-        
-        current_cutscene.current_index += 1;
+        match current_fade_state.get() {
+            FadeState::FadeIn | FadeState::FadeInFinished | FadeState::FadeOut => return,
+            FadeState::None => next_fade_state.set(FadeState::FadeIn),
+        };
     }
+}
+
+pub fn cutscene_player(
+    mut cutscene_events: EventWriter<CutsceneEvent>, 
+    mut text_query: Query<&mut Text, With<CutsceneText>>,
+    mut current_cutscene: Single<&mut Cutscene, With<Cutscene>>,
+    mut next_fade_state: ResMut<NextState<FadeState>>
+) {    
+    {
+        let current_cutscene_info = match current_cutscene.infos.get(current_cutscene.current_index) {
+            Some(info) => info,
+            None => {
+                cutscene_events.send(CutsceneEvent::Stopped);
+                return;
+            }
+        };
+
+        for mut text in text_query.iter_mut() {
+            **text = current_cutscene_info.text.to_string();
+        }
+    }
+    
+    current_cutscene.current_index += 1;
+
+    next_fade_state.set(FadeState::FadeOut);
 }
 
 pub fn spawn_cutscene_resources(

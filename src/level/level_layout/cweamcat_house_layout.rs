@@ -24,7 +24,7 @@ impl LevelInfo for CweamcatHouseInfo {
     fn get_doors(&self, _cweampuff: &crate::Cweampuf) -> Vec<DoorCollider> {
         vec![
             DoorCollider { floor_info: FloorInfo { position: Vec3 { x: -750., y: -300., z: 0.0 }, size: Vec2 { x: 100., y: 200. } },
-                transition_to_level: Level::CweamcatLair(CweamcatLairInfo), safe_position: Vec3 { x: 135.0, y: -100.0, z: 1.0 }, is_active: false }
+                transition_to_level: Level::CweamcatLair(CweamcatLairInfo), safe_position: Vec3 { x: 1350., y: -125., z: 1.0 }, is_active: false }
         ]
     }
     
