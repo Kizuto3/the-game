@@ -11,7 +11,8 @@ pub enum Emotion {
     #[default]
     Regular,
     Happy,
-    Sad
+    Sad,
+    Surprised
 }
 
 #[derive(Clone)]

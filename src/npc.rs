@@ -1,12 +1,14 @@
 pub mod conversation_state;
 pub mod conversation_entry;
+pub mod dialog_state;
 
 use bevy::{ecs::observer::TriggerTargets, prelude::*, ui::widget::NodeImageMode};
 use bevy_rapier2d::prelude::CollisionEvent;
 use conversation_entry::{ConversationEntry, ConversationPosition};
 use conversation_state::ConversationState;
+use dialog_state::DialogState;
 
-use crate::{interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::FloorInfo, Cweampuf};
+use crate::{fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::FloorInfo, Cweampuf};
 
 #[derive(Component)]
 pub struct DialogNode;
@@ -30,6 +32,7 @@ pub struct NPC {
     pub is_active: bool,
     pub conversation: Vec<ConversationEntry>,
     pub current_conversation_index: usize,
+    pub after_conversation_func: fn(&mut Cweampuf)
 }
 
 pub fn npc_collision_reader(
@@ -133,6 +136,7 @@ pub fn spawn_conversation_resources(
             // LEFT CHARACTER IMAGE
             parent.spawn((
                     ImageNode::default()
+                        .with_color(Color::Srgba(Srgba::new(1.0, 1.0, 1.0, 0.0)))
                         .with_mode(NodeImageMode::Auto),
                     Node {
                         width: Val::Percent(35.0),
@@ -150,6 +154,7 @@ pub fn spawn_conversation_resources(
             parent.spawn((
                     ImageNode::default()
                         .with_flip_x()
+                        .with_color(Color::Srgba(Srgba::new(1.0, 1.0, 1.0, 0.0)))
                         .with_mode(NodeImageMode::Auto),
                     Node {
                         width: Val::Percent(35.0),
@@ -176,17 +181,25 @@ pub fn despawn_conversation_resources(
 
 pub fn conversation_input_reader(
     keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut cweampuff: Single<&mut Cweampuf, With<Cweampuf>>,
     mut conversation_state: ResMut<NextState<ConversationState>>,
     mut text_query: Query<&mut Text, With<DialogText>>,
     mut text_node_query: Query<&mut Node, With<DialogTextNode>>,
     mut left_npc_image: Single<&mut ImageNode, (With<LeftCharacterImageNode>, Without<RightCharacterImageNode>)>,
     mut right_npc_image: Single<&mut ImageNode, (With<RightCharacterImageNode>, Without<LeftCharacterImageNode>)>,
     mut npcs_query: Query<&mut NPC, With<NPC>>,
+    mut next_dialog_state: ResMut<NextState<DialogState>>,
     asset_server: Res<AssetServer>
 ) {
     if let Some(mut npc) = npcs_query.iter_mut().find(|f| f.is_active) {
-        if !keyboard_input.any_just_pressed([KeyCode::KeyE, KeyCode::Space, KeyCode::Enter]) && npc.current_conversation_index != 0 {
+        let continue_conversation = keyboard_input.any_just_pressed([KeyCode::KeyE, KeyCode::Space, KeyCode::Enter]);
+
+        if !continue_conversation && npc.current_conversation_index != 0 {
             return;
+        }
+
+        if continue_conversation {
+            npc.current_conversation_index += 1;
         }
 
         {
@@ -195,32 +208,46 @@ pub fn conversation_input_reader(
                 None => {
                     conversation_state.set(ConversationState::Finished);
                     npc.current_conversation_index = 0;
+                    next_dialog_state.set(DialogState::None);
+                    (npc.after_conversation_func)(&mut cweampuff);
+
+                    println!("Current progression: {:?}", cweampuff.progression);
                     return;
                 }
             };
         
             for mut text in text_query.iter_mut() {
-                **text = current_conversation_info.text.to_string();
+                if npc.current_conversation_index != 0 {
+                    **text = String::new();
+                }
             }
 
             let npc_image_path = format!("npcs/{}/{}.png", current_conversation_info.npc_name, current_conversation_info.emotion);
 
             match current_conversation_info.position {
                 ConversationPosition::Left => {
-                    left_npc_image.color = Color::WHITE;
-                    left_npc_image.image = asset_server.load(npc_image_path);
+                    let new_image_handle = asset_server.load(npc_image_path);
+                    
+                    if new_image_handle != left_npc_image.image {
+                        left_npc_image.color.set_alpha(0.);
+                        left_npc_image.image = new_image_handle;
+                    }
 
-                    right_npc_image.color = Color::Srgba(Srgba::new(1.0, 1.0, 1.0, 0.0) );
+                    next_dialog_state.set(DialogState::LeftCharacterTalking);
 
                     for mut node in text_node_query.iter_mut() {
                         node.left = Val::Percent(35.);
                     }
                 },
                 ConversationPosition::Right => {
-                    right_npc_image.color = Color::WHITE;
-                    right_npc_image.image = asset_server.load(npc_image_path);
-
-                    left_npc_image.color = Color::Srgba(Srgba::new(1.0, 1.0, 1.0, 0.0) );
+                    let new_image_handle = asset_server.load(npc_image_path);
+                    
+                    if new_image_handle != right_npc_image.image {
+                        right_npc_image.color.set_alpha(0.);
+                        right_npc_image.image = new_image_handle;
+                    }
+                    
+                    next_dialog_state.set(DialogState::RightCharacterTalking);
 
                     for mut node in text_node_query.iter_mut() {
                         node.left = Val::Percent(25.);
@@ -228,7 +255,67 @@ pub fn conversation_input_reader(
                 }
             }
         }
-        
-        npc.current_conversation_index += 1;
     }    
+}
+
+pub fn left_character_talking(
+    mut left_npc_image: Single<&mut ImageNode, (With<LeftCharacterImageNode>, Without<RightCharacterImageNode>)>,
+    mut right_npc_image: Single<&mut ImageNode, (With<RightCharacterImageNode>, Without<LeftCharacterImageNode>)>,
+    time: Res<Time>,
+) {
+    let left_npc_alpha = left_npc_image.color.alpha();
+
+    if left_npc_alpha < 1.0 {
+        left_npc_image.color.set_alpha(left_npc_alpha + time.delta_secs() * FADE_DELTA);
+    }
+
+    let right_npc_alpha = right_npc_image.color.alpha();
+
+    if right_npc_alpha > 0.0 {
+        right_npc_image.color.set_alpha(right_npc_alpha - time.delta_secs() * FADE_DELTA * 2.);
+    }
+}
+
+pub fn right_character_talking(
+    mut left_npc_image: Single<&mut ImageNode, (With<LeftCharacterImageNode>, Without<RightCharacterImageNode>)>,
+    mut right_npc_image: Single<&mut ImageNode, (With<RightCharacterImageNode>, Without<LeftCharacterImageNode>)>,
+    time: Res<Time>,
+) {
+    let right_npc_alpha = right_npc_image.color.alpha();
+
+    if right_npc_alpha < 1.0 {
+        right_npc_image.color.set_alpha(right_npc_alpha + time.delta_secs() * FADE_DELTA);
+    }
+
+    let left_npc_alpha = left_npc_image.color.alpha();
+
+    if left_npc_alpha > 0.0 {
+        left_npc_image.color.set_alpha(left_npc_alpha - time.delta_secs() * FADE_DELTA * 2.);
+    }
+}
+
+pub fn dialog_box_text_writer(
+    mut text_query: Query<&mut Text, With<DialogText>>,
+    mut npcs_query: Query<&mut NPC, With<NPC>>,
+    time: Res<Time>,
+) {
+    if let Some(npc) = npcs_query.iter_mut().find(|f| f.is_active) {
+        let current_conversation_info = match npc.conversation.get(npc.current_conversation_index) {
+            Some(info) => info,
+            None => return,
+        };
+    
+        for mut text in text_query.iter_mut() {
+            let mut conversation_text = current_conversation_info.text.to_string();
+
+            let text_length = text.chars().count().max(1);
+            let chars_to_display = (time.delta_secs().ceil() as usize + text_length).min(conversation_text.chars().count());
+
+            let _ = conversation_text.split_off(chars_to_display);
+
+            if conversation_text.chars().count() != text_length {
+                **text = conversation_text;
+            }
+        }
+    }
 }

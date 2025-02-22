@@ -59,7 +59,8 @@ impl LevelInfo for CweamcatLairInfo {
                     ConversationEntry { position: ConversationPosition::Left, npc_name: "Cweampuff".to_string(), text: "Did you find it?".to_string(), emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: "OG Cweampuff".to_string(), text: "Yes! And it seems you are about to meet yours!".to_string(), emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: "OG Cweampuff".to_string(), text: "Step inside the house.\nYour hidden gem is waiting for you.".to_string(), emotion: Emotion::Regular },
-                ]   
+                ],
+                after_conversation_func: (|_cweampuff| { })   
             }
         ]
     }

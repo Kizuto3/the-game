@@ -4,6 +4,7 @@ use bevy::prelude::*;
 use crate::app_states::AppState;
 use crate::fade_in_fade_out::FadeState;
 use crate::level::level_layout::starting_room_layout::StartingRoomInfo;
+use crate::level::progression::Progression;
 use crate::level::transition_states::TransitionState;
 use crate::level::{manually_transition_to_level, Level, LevelLayout};
 use crate::{Cweampuf, CWEAMPUF_STARTING_POSITION};
@@ -45,7 +46,7 @@ pub fn cutscene_event_reader(
         if let CutsceneEvent::Stopped = cutscene {
             state.set(AppState::InGame);
 
-            manually_transition_to_level(&current_level_layout, &mut transition_state, &Cweampuf, &mut commands, Level::StartingRoom(StartingRoomInfo), CWEAMPUF_STARTING_POSITION);
+            manually_transition_to_level(&current_level_layout, &mut transition_state, &Cweampuf {progression: Progression::None}, &mut commands, Level::StartingRoom(StartingRoomInfo), CWEAMPUF_STARTING_POSITION);
         }
     }
 }

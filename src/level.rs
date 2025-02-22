@@ -11,6 +11,7 @@ use crate::level::level_layout::LevelInfo;
 pub mod transition_states;
 pub mod level_layout;
 pub mod door;
+pub mod progression;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
 const NPC_COLOR: Color = Color::srgb(0.5, 0.5, 1.0);
