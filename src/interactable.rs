@@ -24,7 +24,7 @@ pub fn spawn_interaction_prompt(
                 .spawn((
                     Text::new("[E]: Interact"),
                     TextFont {
-                        font: asset_server.load("fonts\\Shadows Into Light.ttf"),
+                        font: asset_server.load("fonts/Shadows Into Light.ttf"),
                         font_size: 50.0,
                         ..default()
                     },

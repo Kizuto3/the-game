@@ -51,10 +51,9 @@ pub fn button_interactions_handler(
             match action {
                 ButtonAction::StartGame => {
                     cutscene.send(CutsceneEvent::Started(vec![
-                        CutsceneInfo { text: "Hello".to_string(), background: "".to_string(), bgm: "".to_string() },
-                        CutsceneInfo { text: "Am".to_string(), background: "".to_string(), bgm: "".to_string() },
-                        CutsceneInfo { text: "I".to_string(), background: "".to_string(), bgm: "".to_string() },
-                        CutsceneInfo { text: "Working".to_string(), background: "".to_string(), bgm: "".to_string() },
+                        CutsceneInfo { text: "This".to_string(), background: "".to_string(), bgm: "".to_string() },
+                        CutsceneInfo { text: "Is".to_string(), background: "".to_string(), bgm: "".to_string() },
+                        CutsceneInfo { text: "A cutscene".to_string(), background: "".to_string(), bgm: "".to_string() },
                     ]));
                 },
                 ButtonAction::Quit => {
@@ -100,7 +99,7 @@ pub fn spawn_main_menu_buttons(
                 .with_child((
                     Text::new("Start"),
                     TextFont {
-                        font: asset_server.load("fonts\\Shadows Into Light.ttf"),
+                        font: asset_server.load("fonts/Shadows Into Light.ttf"),
                         font_size: 33.0,
                         ..default()
                     },
@@ -139,7 +138,7 @@ pub fn spawn_main_menu_buttons(
                 .with_child((
                     Text::new("Quit"),
                     TextFont {
-                        font: asset_server.load("fonts\\Shadows Into Light.ttf"),
+                        font: asset_server.load("fonts/Shadows Into Light.ttf"),
                         font_size: 33.0,
                         ..default()
                     },

@@ -123,7 +123,7 @@ pub fn spawn_conversation_resources(
                     parent.spawn((
                         Text::new(""),
                         TextFont {
-                            font: asset_server.load("fonts\\Shadows Into Light.ttf"),
+                            font: asset_server.load("fonts/Shadows Into Light.ttf"),
                             font_size: 50.0,
                             ..default()
                         },
@@ -211,7 +211,6 @@ pub fn conversation_input_reader(
                     next_dialog_state.set(DialogState::None);
                     (npc.after_conversation_func)(&mut cweampuff);
 
-                    println!("Current progression: {:?}", cweampuff.progression);
                     return;
                 }
             };

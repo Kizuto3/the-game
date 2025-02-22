@@ -111,7 +111,7 @@ pub fn spawn_cutscene_resources(
                     Text::new(""),
                     CutsceneText,
                     TextFont {
-                        font: asset_server.load("fonts\\Shadows Into Light.ttf"),
+                        font: asset_server.load("fonts/Shadows Into Light.ttf"),
                         font_size: 33.0,
                         ..default()
                     },
