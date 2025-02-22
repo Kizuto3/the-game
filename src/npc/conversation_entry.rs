@@ -18,8 +18,8 @@ pub enum Emotion {
 #[derive(Clone)]
 pub struct ConversationEntry {
     pub position: ConversationPosition,
-    pub npc_name: String,
-    pub text: String,
+    pub npc_name: &'static str,
+    pub text: &'static str,
     pub emotion: Emotion
 }
 
