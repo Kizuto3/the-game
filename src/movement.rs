@@ -13,8 +13,7 @@ pub struct Jumper {
     pub jump_impulse: f32,
     pub is_jumping: bool,
     pub is_jump_available: bool,
-    pub is_next_jump_doublejump: bool,
-    pub is_double_jump_available: bool
+    pub is_next_jump_doublejump: bool
 }
 
 #[derive(Component)]
@@ -81,15 +80,12 @@ pub fn cweampuf_move(
 }
 
 pub fn cweampuf_jump(keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut cweampuf_jumper: Single<(&mut Jumper, &mut Velocity, &mut Movable), With<Cweampuf>>) {
-    let (jumper, velocity, movable) = &mut *cweampuf_jumper;
+    mut cweampuf_jumper: Single<(&mut Jumper, &mut Velocity, &mut Movable, &Cweampuf), With<Cweampuf>>) {
+    let (jumper, velocity, movable, cweampuff) = &mut *cweampuf_jumper;
 
     let jump_released = keyboard_input.just_released(KeyCode::Space);
 
     if jump_released {
-        jumper.is_next_jump_doublejump = true && jumper.is_double_jump_available;
-        jumper.is_jumping = true;
-        jumper.is_double_jump_available = false;
         jumper.is_jump_available = true;
     }
 
@@ -104,7 +100,7 @@ pub fn cweampuf_jump(keyboard_input: Res<ButtonInput<KeyCode>>,
         }
     }
 
-    if keyboard_input.pressed(KeyCode::Space) && jumper.is_jump_available && (!jumper.is_jumping || jumper.is_next_jump_doublejump) {
+    if keyboard_input.just_pressed(KeyCode::Space) && jumper.is_jump_available && (!jumper.is_jumping || (jumper.is_next_jump_doublejump && cweampuff.has_double_jump)) {
         velocity.linvel.y = jumper.jump_impulse;
         jumper.is_jumping = true;
         jumper.is_jump_available = false;
@@ -161,6 +157,22 @@ pub fn cweampuf_dash(
     dasher.time_passed_since_dash = 0.;
 }
 
+pub fn reset_abilities(
+    mut cweampuf: Query<(&mut Jumper, &mut Movable, &mut Dasher), With<Cweampuf>>,
+) {
+    for (mut jumper, mut movable, mut dasher) in cweampuf.iter_mut() {
+        jumper.is_jumping = false;
+        jumper.is_next_jump_doublejump = false;
+        jumper.is_jump_available = true;
+    
+        movable.hugging_wall = false;
+        movable.is_stunlocked = false;
+        movable.time_passed_since_stun = movable.stun_duration + 0.1;
+    
+        dasher.time_passed_since_dash = dasher.dash_cooldown + 0.1;
+    }
+}
+
 pub fn velocity_limiter(mut cweampuf: Single<(&mut Velocity, &Movable), With<Cweampuf>>) {
     let (cweampuf_velocity, cweampuf_movable) = &mut *cweampuf;
 
@@ -209,15 +221,20 @@ fn detect_floor_and_wall_collision(cweampuf_entity: Entity,
                                    cweampuf_velocity: &mut Velocity,
                                    event: &CollisionEvent, 
                                    colliders: &mut Query<(Entity, &Transform, &Collider, &mut FloorCollider), With<FloorCollider>>) {
-    if cweampuf_movable.hugging_wall {
-        if let CollisionEvent::Stopped(h1, h2, _flags) = event {
-            for (collider_entity, _collider_transform, _collider, mut floor_collider) in colliders.iter_mut() {
-                if h1.entities().iter().any(|f| *f == collider_entity || *f == cweampuf_entity) && 
-                   h2.entities().iter().any(|f| *f == collider_entity || *f == cweampuf_entity) &&
-                   floor_collider.entity_index != 0 {
+    
+    if let CollisionEvent::Stopped(h1, h2, _flags) = event {
+        for (collider_entity, _collider_transform, _collider, mut floor_collider) in colliders.iter_mut() {
+            if h1.entities().iter().any(|f| *f == collider_entity || *f == cweampuf_entity) && 
+               h2.entities().iter().any(|f| *f == collider_entity || *f == cweampuf_entity) {
+                if cweampuf_movable.hugging_wall && floor_collider.entity_index != 0 {
                     cweampuf_movable.hugging_wall = false;
                     floor_collider.entity_index = 0;
                 }
+                else {
+                    jumper.is_jumping = true;
+                }
+
+                jumper.is_next_jump_doublejump = true;
             }
         }
     }
@@ -228,7 +245,6 @@ fn detect_floor_and_wall_collision(cweampuf_entity: Entity,
                h2.entities().iter().any(|f| *f == collider_entity || *f == cweampuf_entity) {
                 jumper.is_jumping = false;
                 jumper.is_next_jump_doublejump = false;
-                jumper.is_double_jump_available = true;
 
                 if let Some(cuboid) = collider.as_cuboid() {
                     let cweampuf_bounds = BoundingCircle::new(cweampuf_transform.translation.truncate(), CWEAMPUF_DIAMETER / 2.);
@@ -238,10 +254,10 @@ fn detect_floor_and_wall_collision(cweampuf_entity: Entity,
                     if check_wall_collision(cweampuf_bounds, collider_bounds) {
                         cweampuf_movable.hugging_wall = true;
                         floor_collider.entity_index = collider_entity.index();
-                        break;
                     }
-
-                    cweampuf_velocity.linvel.y = 0.;
+                    else {
+                        cweampuf_velocity.linvel.y = 0.;
+                    }
                 }
             }
         }

@@ -51,9 +51,9 @@ pub fn button_interactions_handler(
             match action {
                 ButtonAction::StartGame => {
                     cutscene.send(CutsceneEvent::Started(vec![
-                        CutsceneInfo { text: "This".to_string(), background: "".to_string(), bgm: "".to_string() },
-                        CutsceneInfo { text: "Is".to_string(), background: "".to_string(), bgm: "".to_string() },
-                        CutsceneInfo { text: "A cutscene".to_string(), background: "".to_string(), bgm: "".to_string() },
+                        CutsceneInfo { text: "This", background: "", bgm: "" },
+                        CutsceneInfo { text: "Is", background: "", bgm: "" },
+                        CutsceneInfo { text: "A cutscene", background: "", bgm: "" },
                     ]));
                 },
                 ButtonAction::Quit => {

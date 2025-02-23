@@ -1,10 +1,11 @@
 use std::fmt::Display;
 
-#[derive(Clone, Copy, Default, Debug)]
+#[derive(Clone, Copy, Default, Debug, PartialEq, PartialOrd)]
 pub enum Progression {
     #[default]
     None, 
     MetMilk,
+    HasCherish,
 }
 
 impl Display for Progression {

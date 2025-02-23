@@ -10,7 +10,7 @@ mod fade_in_fade_out;
 
 use app_states::AppState;
 use bevy::prelude::*;
-use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collider, ExternalForce, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
+use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collider, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
 use camera::{cweampuf_camera_adjustment, spawn_camera};
 use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, spawn_cutscene_resources, CutsceneEvent};
 use fade_in_fade_out::{despawn_fade_in_fade_out_node, fade_in, fade_out, set_fade_in_state, set_fade_out_state, spawn_fade_in_fade_out_node, FadeInFadeOutNode, FadeState};
@@ -67,7 +67,7 @@ fn main() {
 
     // LEVEL TRANSITION SYSTEMS
         .add_systems(OnEnter(TransitionState::Started), set_fade_in_state)
-        .add_systems(OnEnter(TransitionState::Finished), set_fade_out_state)
+        .add_systems(OnEnter(TransitionState::Finished), (set_fade_out_state, reset_abilities).chain())
         .add_systems(OnEnter(FadeState::FadeInFinished), (despawn_current_level, spawn_new_level).run_if(in_state(TransitionState::Started)).chain())
 
     // INTERACTION SYSTEMS
@@ -116,7 +116,7 @@ fn setup_cweampuf(
         Mesh2d(meshes.add(Circle::default())),
         MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
         Transform::from_translation(CWEAMPUF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUF_DIAMETER).extend(1.)),
-        Cweampuf { progression: Progression::None },
+        Cweampuf { progression: Progression::None, has_double_jump: false },
         Velocity {
             linvel: Vec2::new(0.0, 0.0),
             angvel: 0.,
@@ -124,11 +124,10 @@ fn setup_cweampuf(
         GravityScale(1.5),
         Friction::coefficient(0.7),
         Collider::ball(0.5),
-        Jumper { jump_impulse: CWEAMPUF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false, is_double_jump_available: true},
+        Jumper { jump_impulse: CWEAMPUF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false },
         Dasher { dash_impulse: CWEAMPUF_DASH_IMPULSE, dash_cooldown: 1., time_passed_since_dash: 0. },
         LockedAxes::ROTATION_LOCKED,
         Movable { facing_right: true, hugging_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },
-        ExternalForce::default(),
     ));
 }
 
@@ -143,5 +142,6 @@ fn clean_nodes(
 
 #[derive(Component)]
 struct Cweampuf {
-    progression: Progression
+    progression: Progression,
+    has_double_jump: bool
 }

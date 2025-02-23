@@ -10,6 +10,11 @@ use dialog_state::DialogState;
 
 use crate::{fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::FloorInfo, Cweampuf};
 
+pub const CWEAMPUFF: &str = "cweampuff";
+pub const OG_CWEAMPUFF: &str = "og cweampuff";
+pub const MILK_ASLEEP: &str = "milk_asleep";
+pub const MINAWAN: &str = "minawan";
+
 #[derive(Component)]
 pub struct DialogNode;
 

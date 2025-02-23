@@ -17,9 +17,9 @@ pub enum CutsceneEvent {
 
 #[derive(Clone)]
 pub struct CutsceneInfo {
-    pub text: String,
-    pub background: String,
-    pub bgm: String
+    pub text: &'static str,
+    pub background: &'static str,
+    pub bgm: &'static str
 }
 
 #[derive(Component)]
@@ -46,7 +46,7 @@ pub fn cutscene_event_reader(
         if let CutsceneEvent::Stopped = cutscene {
             state.set(AppState::InGame);
 
-            manually_transition_to_level(&current_level_layout, &mut transition_state, &Cweampuf {progression: Progression::None}, &mut commands, Level::StartingRoom(StartingRoomInfo), CWEAMPUF_STARTING_POSITION);
+            manually_transition_to_level(&current_level_layout, &mut transition_state, &Cweampuf {progression: Progression::None, has_double_jump: false}, &mut commands, Level::StartingRoom(StartingRoomInfo), CWEAMPUF_STARTING_POSITION);
         }
     }
 }
