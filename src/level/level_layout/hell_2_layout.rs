@@ -8,7 +8,7 @@ use super::{DoorCollider, FloorInfo, LevelInfo, TransitionCollider};
 pub struct Hell2Info;
 
 impl LevelInfo for Hell2Info {
-    fn get_floor_info(&self, _cweampuff: &crate::Cweampuf) -> Vec<FloorInfo> {
+    fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<FloorInfo> {
         vec![
             FloorInfo { position: Vec3::new(-300.0, 1600.0, 1.0), size: Vec2::new(600.0, 300.0) },
             FloorInfo { position: Vec3::new(2100.0, 1600.0, 1.0), size: Vec2::new(3600.0, 300.0) },
@@ -32,17 +32,17 @@ impl LevelInfo for Hell2Info {
         ]
     }
 
-    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuf) -> Vec<TransitionCollider> {
+    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<TransitionCollider> {
         vec![
             TransitionCollider { exit_index: 0, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::Hell1(Hell1Info), floor_info: FloorInfo { position: Vec3::new(150.0, 1700.0, 2.0), size: Vec2::new(300.0, 200.0) }  }
         ]
     }
 
-    fn get_npcs(&self, _cweampuff: &crate::Cweampuf) -> Vec<NPC> {        
+    fn get_npcs(&self, _cweampuff: &crate::Cweampuff) -> Vec<NPC> {        
         vec![]
     }
     
-    fn get_doors(&self, _cweampuff: &crate::Cweampuf) -> Vec<DoorCollider> {
+    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Vec<DoorCollider> {
         vec![]
     }
 }

@@ -8,7 +8,7 @@ use super::{DoorCollider, FloorInfo, LevelInfo, TransitionCollider};
 pub struct Hell1Info;
 
 impl LevelInfo for Hell1Info {
-    fn get_floor_info(&self, _cweampuff: &crate::Cweampuf) -> Vec<FloorInfo> {
+    fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<FloorInfo> {
         vec![
             FloorInfo { position: Vec3::new(-300.0, 1600.0, 1.0), size: Vec2::new(600.0, 300.0) },
             FloorInfo { position: Vec3::new(1600.0, 1600.0, 1.0), size: Vec2::new(2600.0, 300.0) },
@@ -25,14 +25,14 @@ impl LevelInfo for Hell1Info {
         ]
     }
 
-    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuf) -> Vec<TransitionCollider> {
+    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<TransitionCollider> {
         vec![
             TransitionCollider { exit_index: 0, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::Hell2(Hell2Info), floor_info: FloorInfo { position: Vec3::new(2800.0, -300.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
             TransitionCollider { exit_index: 1, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: FloorInfo { position: Vec3::new(150.0, 1700.0, 2.0), size: Vec2::new(300.0, 200.0) }  }
         ]
     }
 
-    fn get_npcs(&self, cweampuff: &crate::Cweampuf) -> Vec<NPC> {
+    fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Vec<NPC> {
         if cweampuff.progression <= Progression::MetMilk {
             return vec![
                 NPC { 
@@ -75,7 +75,7 @@ impl LevelInfo for Hell1Info {
         vec![]
     }
     
-    fn get_doors(&self, _cweampuff: &crate::Cweampuf) -> Vec<DoorCollider> {
+    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Vec<DoorCollider> {
         vec![]
     }
 }

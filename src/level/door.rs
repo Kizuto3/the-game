@@ -1,21 +1,21 @@
 use bevy::{ecs::observer::TriggerTargets, prelude::*};
 use bevy_rapier2d::prelude::CollisionEvent;
 
-use crate::{interactable::{interaction_state::InteractionState, Interactable}, npc::NPC, Cweampuf};
+use crate::{interactable::{interaction_state::InteractionState, Interactable}, npc::NPC, Cweampuff};
 
 use super::{level_layout::DoorCollider, manually_transition_to_level, transition_states::TransitionState, LevelLayout};
 
 pub fn interactable_door_collision_reader(
     mut doors: Query<(Entity, &mut DoorCollider), (With<Interactable>, Without<NPC>)>,
-    cweampuf: Single<Entity, With<Cweampuf>>,
+    cweampuff: Single<Entity, With<Cweampuff>>,
     mut contact_events: EventReader<CollisionEvent>,
     mut interaction_state: ResMut<NextState<InteractionState>> 
 ) {
     for event in contact_events.read() {
         if let CollisionEvent::Stopped(h1, h2, _flags) = event {
             for (door_entity, mut door) in doors.iter_mut() {
-                if h1.entities().iter().any(|f| *f == door_entity || *f == *cweampuf) && 
-                   h2.entities().iter().any(|f| *f == door_entity || *f == *cweampuf) {
+                if h1.entities().iter().any(|f| *f == door_entity || *f == *cweampuff) && 
+                   h2.entities().iter().any(|f| *f == door_entity || *f == *cweampuff) {
                     door.is_active = false;
                     interaction_state.set(InteractionState::NotReady);
 
@@ -26,8 +26,8 @@ pub fn interactable_door_collision_reader(
     
         if let CollisionEvent::Started(h1, h2, _flags) = event {
             for (door_entity, mut door) in doors.iter_mut() {
-                if h1.entities().iter().any(|f| *f == door_entity || *f == *cweampuf) && 
-                   h2.entities().iter().any(|f| *f == door_entity || *f == *cweampuf) {
+                if h1.entities().iter().any(|f| *f == door_entity || *f == *cweampuff) && 
+                   h2.entities().iter().any(|f| *f == door_entity || *f == *cweampuff) {
                     door.is_active = true;
                     interaction_state.set(InteractionState::Ready);
 
@@ -41,7 +41,7 @@ pub fn interactable_door_collision_reader(
 pub fn door_start_interaction_input_reader(
     keyboard_input: Res<ButtonInput<KeyCode>>, 
     doors: Query<&DoorCollider, (With<Interactable>, Without<NPC>)>,
-    cweampuff: Single<&Cweampuf, With<Cweampuf>>,
+    cweampuff: Single<&Cweampuff, With<Cweampuff>>,
     mut commands: Commands,
     current_level_layout: Query<Entity, With<LevelLayout>>,
     mut transition_state: ResMut<NextState<TransitionState>>,

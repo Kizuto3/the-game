@@ -1,6 +1,6 @@
 use bevy::{prelude::*, render::camera::ScalingMode};
 
-use crate::{level::LevelLayout, Cweampuf};
+use crate::{level::LevelLayout, Cweampuff};
 
 const CAMERA_TRANSFORM: Vec3 = Vec3::new(0.0, 3.0, 0.0);
 const CAMERA_DECAY_RATE: f32 = 10.;
@@ -31,9 +31,9 @@ pub fn spawn_camera (
     ));
 }
 
-pub fn cweampuf_camera_adjustment(
+pub fn cweampuff_camera_adjustment(
     keyboard_input: Res<ButtonInput<KeyCode>>, 
-    cweampuf: Single<&Transform, (With<Cweampuf>, Without<Camera2d>)>,
+    cweampuff: Single<&Transform, (With<Cweampuff>, Without<Camera2d>)>,
     mut camera: Single<(&mut Transform, &mut CameraUpDownMovalbe), With<Camera2d>>,
     level_layout_query: Query<&LevelLayout, With<LevelLayout>>,
     time: Res<Time>,
@@ -62,13 +62,13 @@ pub fn cweampuf_camera_adjustment(
         offset.y = camera_movable.camera_offset * direction;
     }
 
-    let new_camera_position = get_adjusted_camera_position(&cweampuf, &level_layout_query, Some(&offset));
+    let new_camera_position = get_adjusted_camera_position(&cweampuff, &level_layout_query, Some(&offset));
 
     camera_transform.translation.smooth_nudge(&new_camera_position, CAMERA_DECAY_RATE, time.delta_secs());
 }
 
 pub fn get_adjusted_camera_position(
-    cweampuf_transform: &Transform,
+    cweampuff_transform: &Transform,
     level_layout_query: &Query<&LevelLayout, With<LevelLayout>>,
     offset: Option<&Vec3>
 ) -> Vec3 {
@@ -99,7 +99,7 @@ pub fn get_adjusted_camera_position(
     min_x += 960.;
     min_y += 540.;
 
-    let mut new_camera_position = cweampuf_transform.translation + CAMERA_TRANSFORM;
+    let mut new_camera_position = cweampuff_transform.translation + CAMERA_TRANSFORM;
 
     if let Some(offset) = offset {
         new_camera_position += offset;

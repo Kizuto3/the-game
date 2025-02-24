@@ -11,7 +11,7 @@ mod fade_in_fade_out;
 use app_states::AppState;
 use bevy::prelude::*;
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collider, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
-use camera::{cweampuf_camera_adjustment, spawn_camera};
+use camera::{cweampuff_camera_adjustment, spawn_camera};
 use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, spawn_cutscene_resources, CutsceneEvent};
 use fade_in_fade_out::{despawn_fade_in_fade_out_node, fade_in, fade_out, set_fade_in_state, set_fade_out_state, spawn_fade_in_fade_out_node, FadeInFadeOutNode, FadeState};
 use interactable::{despawn_interaction_prompt, interaction_state::InteractionState, spawn_interaction_prompt};
@@ -20,12 +20,12 @@ use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_
 use movement::*;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
 
-const CWEAMPUF_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
+const CWEAMPUFF_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
 // We set the z-value of the ball to 1 so it renders on top in the case of overlapping sprites.
-const CWEAMPUF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 150.0, 1.0);
-const CWEAMPUF_JUMP_IMPULSE: f32 = 800.;
-const CWEAMPUF_DASH_IMPULSE: f32 = 650.;
-pub const CWEAMPUF_DIAMETER: f32 = 30.;
+const CWEAMPUFF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 150.0, 1.0);
+const CWEAMPUFF_JUMP_IMPULSE: f32 = 800.;
+const CWEAMPUFF_DASH_IMPULSE: f32 = 650.;
+pub const CWEAMPUFF_DIAMETER: f32 = 30.;
 
 fn main() {
     let mut app = App::new();
@@ -85,12 +85,12 @@ fn main() {
         .add_systems(OnExit(ConversationState::Started), despawn_conversation_resources)
 
     // GAMEPLAY SYSTEMS
-        .add_systems(OnEnter(AppState::InGame), setup_cweampuf)
+        .add_systems(OnEnter(AppState::InGame), setup_cweampuff)
         .add_systems(Update, (
-            cweampuf_dash,
-            cweampuf_jump,
-            cweampuf_move,
-            cweampuf_camera_adjustment
+            cweampuff_dash,
+            cweampuff_jump,
+            cweampuff_move,
+            cweampuff_camera_adjustment
         ).chain().run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)).run_if(in_state(FadeState::None)))
         .add_systems(FixedUpdate, (
             dash_reset,
@@ -104,19 +104,19 @@ fn main() {
         .run();
 }
 
-fn setup_cweampuf(
+fn setup_cweampuff(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     //asset_server: Res<AssetServer>,
 ) {
-    // Cweampuf
+    // Cweampuff
     commands.spawn((
         RigidBody::Dynamic,
         Mesh2d(meshes.add(Circle::default())),
-        MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
-        Transform::from_translation(CWEAMPUF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUF_DIAMETER).extend(1.)),
-        Cweampuf { progression: Progression::None, has_double_jump: true, has_wall_jump: false },
+        MeshMaterial2d(materials.add(CWEAMPUFF_COLOR)),
+        Transform::from_translation(CWEAMPUFF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUFF_DIAMETER).extend(1.)),
+        Cweampuff { progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false },
         Velocity {
             linvel: Vec2::new(0.0, 0.0),
             angvel: 0.,
@@ -124,8 +124,8 @@ fn setup_cweampuf(
         GravityScale(1.5),
         Friction::coefficient(0.7),
         Collider::ball(0.5),
-        Jumper { jump_impulse: CWEAMPUF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false },
-        Dasher { dash_impulse: CWEAMPUF_DASH_IMPULSE, dash_cooldown: 1., time_passed_since_dash: 0. },
+        Jumper { jump_impulse: CWEAMPUFF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false },
+        Dasher { dash_impulse: CWEAMPUFF_DASH_IMPULSE, dash_cooldown: 1., time_passed_since_dash: 0. },
         LockedAxes::ROTATION_LOCKED,
         Movable { facing_right: true, hugging_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },
     ));
@@ -141,8 +141,9 @@ fn clean_nodes(
 }
 
 #[derive(Component)]
-struct Cweampuf {
+struct Cweampuff {
     progression: Progression,
     has_double_jump: bool,
     has_wall_jump: bool,
+    has_dash: bool
 }

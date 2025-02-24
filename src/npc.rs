@@ -8,7 +8,7 @@ use conversation_entry::{ConversationEntry, ConversationPosition};
 use conversation_state::ConversationState;
 use dialog_state::DialogState;
 
-use crate::{fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::FloorInfo, Cweampuf};
+use crate::{fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::FloorInfo, Cweampuff};
 
 pub const CWEAMPUFF: &str = "cweampuff";
 pub const OG_CWEAMPUFF: &str = "og cweampuff";
@@ -37,20 +37,20 @@ pub struct NPC {
     pub is_active: bool,
     pub conversation: Vec<ConversationEntry>,
     pub current_conversation_index: usize,
-    pub after_conversation_func: fn(&mut Cweampuf)
+    pub after_conversation_func: fn(&mut Cweampuff)
 }
 
 pub fn npc_collision_reader(
     mut npcs: Query<(Entity, &mut NPC), (With<NPC>, With<Interactable>)>,
-    cweampuf: Single<Entity, With<Cweampuf>>,
+    cweampuff: Single<Entity, With<Cweampuff>>,
     mut contact_events: EventReader<CollisionEvent>,
     mut npc_interaction_state: ResMut<NextState<InteractionState>> 
 ) {
     for event in contact_events.read() {
         if let CollisionEvent::Stopped(h1, h2, _flags) = event {
             for (npc_entity, mut npc) in npcs.iter_mut() {
-                if h1.entities().iter().any(|f| *f == npc_entity || *f == *cweampuf) && 
-                   h2.entities().iter().any(|f| *f == npc_entity || *f == *cweampuf) {
+                if h1.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) && 
+                   h2.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) {
                     npc.is_active = false;
                     npc_interaction_state.set(InteractionState::NotReady);
 
@@ -61,8 +61,8 @@ pub fn npc_collision_reader(
     
         if let CollisionEvent::Started(h1, h2, _flags) = event {
             for (npc_entity, mut npc) in npcs.iter_mut() {
-                if h1.entities().iter().any(|f| *f == npc_entity || *f == *cweampuf) && 
-                   h2.entities().iter().any(|f| *f == npc_entity || *f == *cweampuf) {
+                if h1.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) && 
+                   h2.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) {
                     npc.is_active = true;
                     npc_interaction_state.set(InteractionState::Ready);
 
@@ -186,7 +186,7 @@ pub fn despawn_conversation_resources(
 
 pub fn conversation_input_reader(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut cweampuff: Single<&mut Cweampuf, With<Cweampuf>>,
+    mut cweampuff: Single<&mut Cweampuff, With<Cweampuff>>,
     mut conversation_state: ResMut<NextState<ConversationState>>,
     mut text_query: Query<&mut Text, With<DialogText>>,
     mut text_node_query: Query<&mut Node, With<DialogTextNode>>,

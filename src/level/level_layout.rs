@@ -6,7 +6,7 @@ pub mod hell_2_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
-use crate::{npc::NPC, Cweampuf};
+use crate::{npc::NPC, Cweampuff};
 
 use super::Level;
 
@@ -38,8 +38,8 @@ pub struct FloorInfo {
 }
 
 pub trait LevelInfo {
-    fn get_floor_info(&self, cweampuff: &Cweampuf) -> Vec<FloorInfo>;
-    fn get_transitions_info(&self, cweampuff: &Cweampuf) -> Vec<TransitionCollider>;
-    fn get_doors(&self, cweampuff: &Cweampuf) -> Vec<DoorCollider>;
-    fn get_npcs(&self, cweampuff: &Cweampuf) -> Vec<NPC>;
+    fn get_floor_info(&self, cweampuff: &Cweampuff) -> Vec<FloorInfo>;
+    fn get_transitions_info(&self, cweampuff: &Cweampuff) -> Vec<TransitionCollider>;
+    fn get_doors(&self, cweampuff: &Cweampuff) -> Vec<DoorCollider>;
+    fn get_npcs(&self, cweampuff: &Cweampuff) -> Vec<NPC>;
 }

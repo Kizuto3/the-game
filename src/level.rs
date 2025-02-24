@@ -7,7 +7,7 @@ use level_layout::DoorCollider;
 use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, FloorInfo, TransitionCollider};
 use transition_states::TransitionState;
 
-use crate::{camera::get_adjusted_camera_position, interactable::Interactable, npc::NPC, Cweampuf};
+use crate::{camera::get_adjusted_camera_position, interactable::Interactable, npc::NPC, Cweampuff};
 use crate::level::level_layout::LevelInfo;
 
 pub mod transition_states;
@@ -65,7 +65,7 @@ pub fn spawn_new_level(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut transition_state: ResMut<NextState<TransitionState>>,
-    mut cweampuf: Single<&mut Transform, (With<Cweampuf>, Without<Camera2d>)>,
+    mut cweampuff: Single<&mut Transform, (With<Cweampuff>, Without<Camera2d>)>,
     mut camera: Single<&mut Transform, With<Camera2d>>,
     level_layout_query: Query<&LevelLayout, With<LevelLayout>>
 ) {
@@ -126,15 +126,15 @@ pub fn spawn_new_level(
         }
 
         if let Some(position) = level_layout.transition_info.transition_to_position {
-            cweampuf.translation = position;
+            cweampuff.translation = position;
 
-            let new_camera_position = get_adjusted_camera_position(&cweampuf, &level_layout_query, None);
+            let new_camera_position = get_adjusted_camera_position(&cweampuff, &level_layout_query, None);
             camera.translation = new_camera_position;
         }
         else if let Some(transition_collider) = level_layout.transition_layout.iter().find(|f| f.exit_index == level_layout.transition_info.transition_to_index) {
-            cweampuf.translation = transition_collider.safe_position;
+            cweampuff.translation = transition_collider.safe_position;
 
-            let new_camera_position = get_adjusted_camera_position(&cweampuf, &level_layout_query, None);
+            let new_camera_position = get_adjusted_camera_position(&cweampuff, &level_layout_query, None);
             camera.translation = new_camera_position;
         }
     }
@@ -143,14 +143,14 @@ pub fn spawn_new_level(
 }
 
 pub fn level_transition_collision_reader(
-    mut cweampuf: Single<(Entity, &Cweampuf, &mut Velocity), With<Cweampuf>>,
+    mut cweampuff: Single<(Entity, &Cweampuff, &mut Velocity), With<Cweampuff>>,
     current_level_layout: Query<Entity, With<LevelLayout>>,
     transition_colliders: Query<(Entity, &TransitionCollider), With<TransitionCollider>>,
     mut contact_events: EventReader<CollisionEvent>,
     mut transition_state: ResMut<NextState<TransitionState>>,
     mut commands: Commands,
 ) {
-    let (cweampuff_entity, cweampuff, cweampuff_velocity) = &mut *cweampuf;
+    let (cweampuff_entity, cweampuff, cweampuff_velocity) = &mut *cweampuff;
     for contact_event in contact_events.read() {
         if let CollisionEvent::Started(h1, h2, _flags) = contact_event {
             for (collider_entity, transition_collider) in transition_colliders.iter() {
@@ -176,7 +176,7 @@ pub fn level_transition_collision_reader(
 pub fn manually_transition_to_level(
     current_level_layout: &Query<Entity, With<LevelLayout>>,
     transition_state: &mut ResMut<NextState<TransitionState>>,
-    cweampuff: &Cweampuf,
+    cweampuff: &Cweampuff,
     mut commands: &mut Commands,
     level: Level,
     position: Vec3
@@ -191,7 +191,7 @@ pub fn manually_transition_to_level(
     transition_state.set(TransitionState::Started);
 }
 
-fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuf, transition_info: LevelTransitionInfo) {
+fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, transition_info: LevelTransitionInfo) {
     match level {
         Level::StartingRoom(layout_info) => {
             commands.spawn(LevelLayout {
