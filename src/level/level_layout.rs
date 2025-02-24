@@ -37,9 +37,19 @@ pub struct FloorInfo {
     pub size: Vec2
 }
 
+#[derive(Component, Clone, Copy)]
+pub struct JumpPad {
+    pub floor_info: FloorInfo
+}
+
+pub enum FloorModification {
+    JumpPad(JumpPad)
+}
+
 pub trait LevelInfo {
     fn get_floor_info(&self, cweampuff: &Cweampuff) -> Vec<FloorInfo>;
     fn get_transitions_info(&self, cweampuff: &Cweampuff) -> Vec<TransitionCollider>;
     fn get_doors(&self, cweampuff: &Cweampuff) -> Vec<DoorCollider>;
     fn get_npcs(&self, cweampuff: &Cweampuff) -> Vec<NPC>;
+    fn get_floor_modifications(&self, cweampuff: &Cweampuff) -> Vec<FloorModification>;
 }

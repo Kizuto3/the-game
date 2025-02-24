@@ -180,7 +180,7 @@ pub fn velocity_limiter(mut cweampuff: Single<(&mut Velocity, &Cweampuff, &Movab
         cweampuff_velocity.linvel.y = -MAX_WALL_DESCEND_VELOCITY;
     }
 
-    cweampuff_velocity.linvel.y = cweampuff_velocity.linvel.y.clamp(-MAX_CWEAMPUFF_VERTICAL_VELOCITY, MAX_CWEAMPUFF_VERTICAL_VELOCITY);
+    cweampuff_velocity.linvel.y = cweampuff_velocity.linvel.y.max(-MAX_CWEAMPUFF_VERTICAL_VELOCITY);
 }
 
 pub fn dash_reset(mut cweampuff: Single<(&mut Dasher, &Cweampuff), With<Cweampuff>>, time: Res<Time>) {

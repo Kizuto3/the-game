@@ -3,7 +3,7 @@ use bevy_rapier2d::prelude::*;
 use level_layout::cweamcat_house_layout::CweamcatHouseInfo;
 use level_layout::hell_1_layout::Hell1Info;
 use level_layout::hell_2_layout::Hell2Info;
-use level_layout::DoorCollider;
+use level_layout::{DoorCollider, FloorModification};
 use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, FloorInfo, TransitionCollider};
 use transition_states::TransitionState;
 
@@ -14,11 +14,13 @@ pub mod transition_states;
 pub mod level_layout;
 pub mod door;
 pub mod progression;
+pub mod floor_modification;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
 const NPC_COLOR: Color = Color::srgb(0.5, 0.5, 1.0);
 const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);
 const FLOOR_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
+const JUMP_PAD_COLOR: Color = Color::srgb(0.2, 0.9, 0.9);
 
 #[derive(Clone, Copy)]
 pub enum Level {
@@ -40,6 +42,7 @@ pub struct LevelLayout {
     pub transition_layout: Vec<TransitionCollider>,
     pub npc_layout: Vec<NPC>,
     pub door_layout: Vec<DoorCollider>,
+    pub floor_modifications: Vec<FloorModification>,
     pub transition_info: LevelTransitionInfo,
 }
 
@@ -125,6 +128,23 @@ pub fn spawn_new_level(
             .insert(Interactable);
         }
 
+        for modification in &level_layout.floor_modifications {
+            match modification {
+                FloorModification::JumpPad(jump_pad) => {
+                    commands
+                        .spawn(jump_pad.clone())
+                        .insert((
+                            Mesh2d(meshes.add(Rectangle::new(jump_pad.floor_info.size.x, jump_pad.floor_info.size.y))),
+                            MeshMaterial2d(materials.add(JUMP_PAD_COLOR)),
+                            Transform::from_translation(jump_pad.floor_info.position)
+                        ))
+                        .insert(Collider::cuboid(jump_pad.floor_info.size.x / 2.0, jump_pad.floor_info.size.y / 2.0))
+                        .insert(Sensor)
+                        .insert(ActiveEvents::COLLISION_EVENTS);
+                }
+            }
+        }
+
         if let Some(position) = level_layout.transition_info.transition_to_position {
             cweampuff.translation = position;
 
@@ -199,6 +219,7 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 transition_layout: layout_info.get_transitions_info(cweampuff),
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
         },
@@ -208,6 +229,7 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 transition_layout: layout_info.get_transitions_info(cweampuff),
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
         }
@@ -217,6 +239,7 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 transition_layout: layout_info.get_transitions_info(cweampuff),
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
         }
@@ -226,6 +249,7 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 transition_layout: layout_info.get_transitions_info(cweampuff),
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
         }
@@ -235,6 +259,7 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 transition_layout: layout_info.get_transitions_info(cweampuff),
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
         }

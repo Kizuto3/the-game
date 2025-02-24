@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, Level}, npc::NPC};
 
-use super::{DoorCollider, FloorInfo, LevelInfo, TransitionCollider};
+use super::{DoorCollider, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct StartingRoomInfo;
@@ -35,6 +35,10 @@ impl LevelInfo for StartingRoomInfo {
     }
     
     fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Vec<DoorCollider> {
+        vec![]
+    }
+
+    fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Vec<FloorModification> {
         vec![]
     }
 }
