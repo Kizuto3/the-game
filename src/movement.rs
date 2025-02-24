@@ -105,7 +105,7 @@ pub fn cweampuf_jump(keyboard_input: Res<ButtonInput<KeyCode>>,
         jumper.is_jumping = true;
         jumper.is_jump_available = false;
     
-        if movable.hugging_wall {
+        if movable.hugging_wall && cweampuff.has_wall_jump {
             let wall_jump_hor_velocity;
     
             if movable.facing_right {
@@ -173,10 +173,10 @@ pub fn reset_abilities(
     }
 }
 
-pub fn velocity_limiter(mut cweampuf: Single<(&mut Velocity, &Movable), With<Cweampuf>>) {
-    let (cweampuf_velocity, cweampuf_movable) = &mut *cweampuf;
+pub fn velocity_limiter(mut cweampuf: Single<(&mut Velocity, &Cweampuf, &Movable), With<Cweampuf>>) {
+    let (cweampuf_velocity, cweampuff, cweampuf_movable) = &mut *cweampuf;
 
-    if cweampuf_movable.hugging_wall && cweampuf_velocity.linvel.y < 0. {
+    if cweampuf_movable.hugging_wall && cweampuff.has_wall_jump && cweampuf_velocity.linvel.y < 0. {
         cweampuf_velocity.linvel.y = -MAX_WALL_DESCEND_VELOCITY;
     }
 
@@ -204,17 +204,18 @@ pub fn stunlock_reset(mut cweampuf_movable: Single<&mut Movable, With<Cweampuf>>
 }
 
 pub fn jump_reset(
-    mut cweampuf: Single<(Entity, &mut Jumper, &mut Movable, &Transform, &mut Velocity), With<Cweampuf>>,
+    mut cweampuf: Single<(Entity, &Cweampuf, &mut Jumper, &mut Movable, &Transform, &mut Velocity), With<Cweampuf>>,
     mut colliders: Query<(Entity, &Transform, &Collider, &mut FloorCollider), With<FloorCollider>>,
     mut contact_events: EventReader<CollisionEvent>) {
-    let (cweampuf_entity, cweampuf_jumper, cweampuf_movable, cweampuf_transform, cweampuf_velocity) = &mut *cweampuf;
+    let (cweampuf_entity, cweampuff, cweampuf_jumper, cweampuf_movable, cweampuf_transform, cweampuf_velocity) = &mut *cweampuf;
 
     for contact_event in contact_events.read() {
-        detect_floor_and_wall_collision(*cweampuf_entity, cweampuf_jumper, cweampuf_transform, cweampuf_movable, cweampuf_velocity, contact_event, &mut colliders);
+        detect_floor_and_wall_collision(*cweampuf_entity, &cweampuff, cweampuf_jumper, cweampuf_transform, cweampuf_movable, cweampuf_velocity, contact_event, &mut colliders);
     }
 }
 
 fn detect_floor_and_wall_collision(cweampuf_entity: Entity, 
+                                   cweampuff: &Cweampuf,
                                    jumper: &mut Jumper, 
                                    cweampuf_transform: &Transform,
                                    cweampuf_movable: &mut Movable,
@@ -232,9 +233,12 @@ fn detect_floor_and_wall_collision(cweampuf_entity: Entity,
                 }
                 else {
                     jumper.is_jumping = true;
+                    jumper.is_next_jump_doublejump = true;
                 }
 
-                jumper.is_next_jump_doublejump = true;
+                if cweampuff.has_wall_jump {
+                    jumper.is_next_jump_doublejump = true;
+                }
             }
         }
     }
@@ -243,9 +247,6 @@ fn detect_floor_and_wall_collision(cweampuf_entity: Entity,
         for (collider_entity, collider_transform, collider, mut floor_collider) in colliders.iter_mut() {
             if h1.entities().iter().any(|f| *f == collider_entity || *f == cweampuf_entity) && 
                h2.entities().iter().any(|f| *f == collider_entity || *f == cweampuf_entity) {
-                jumper.is_jumping = false;
-                jumper.is_next_jump_doublejump = false;
-
                 if let Some(cuboid) = collider.as_cuboid() {
                     let cweampuf_bounds = BoundingCircle::new(cweampuf_transform.translation.truncate(), CWEAMPUF_DIAMETER / 2.);
                     let collider_bounds = Aabb2d::new(collider_transform.translation.truncate(),
@@ -254,9 +255,16 @@ fn detect_floor_and_wall_collision(cweampuf_entity: Entity,
                     if check_wall_collision(cweampuf_bounds, collider_bounds) {
                         cweampuf_movable.hugging_wall = true;
                         floor_collider.entity_index = collider_entity.index();
+
+                        if cweampuff.has_wall_jump {
+                            jumper.is_jumping = false;
+                            jumper.is_next_jump_doublejump = false;
+                        }
                     }
                     else {
                         cweampuf_velocity.linvel.y = 0.;
+                        jumper.is_jumping = false;
+                        jumper.is_next_jump_doublejump = false;
                     }
                 }
             }

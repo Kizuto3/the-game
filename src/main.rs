@@ -116,7 +116,7 @@ fn setup_cweampuf(
         Mesh2d(meshes.add(Circle::default())),
         MeshMaterial2d(materials.add(CWEAMPUF_COLOR)),
         Transform::from_translation(CWEAMPUF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUF_DIAMETER).extend(1.)),
-        Cweampuf { progression: Progression::None, has_double_jump: false },
+        Cweampuf { progression: Progression::None, has_double_jump: true, has_wall_jump: false },
         Velocity {
             linvel: Vec2::new(0.0, 0.0),
             angvel: 0.,
@@ -143,5 +143,6 @@ fn clean_nodes(
 #[derive(Component)]
 struct Cweampuf {
     progression: Progression,
-    has_double_jump: bool
+    has_double_jump: bool,
+    has_wall_jump: bool,
 }
