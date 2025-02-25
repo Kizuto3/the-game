@@ -3,6 +3,7 @@ pub mod cweamcat_lair_layout;
 pub mod cweamcat_house_layout;
 pub mod hell_1_layout;
 pub mod hell_2_layout;
+pub mod hell_3_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 

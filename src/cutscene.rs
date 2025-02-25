@@ -52,7 +52,7 @@ pub fn cutscene_event_reader(
 }
 
 pub fn cutscene_input_reader(
-    keyboard_input: Res<ButtonInput<KeyCode>>, 
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     mouse_input: Res<ButtonInput<MouseButton>>, 
     current_cutscene: Single<&Cutscene, With<Cutscene>>,
     mut next_fade_state: ResMut<NextState<FadeState>>,

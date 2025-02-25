@@ -34,8 +34,8 @@ pub struct Movable {
 
 pub fn cweampuff_move(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut cweampuff_transform_velocity: Single<(&mut Velocity, &mut Movable), With<Cweampuff>>) {
-    let mut direction;
+    mut cweampuff_transform_velocity: Single<(&mut Velocity, &mut Movable), With<Cweampuff>>
+) {
     let (cweampuff_velocity, cweampuff_movable) = &mut *cweampuff_transform_velocity;
 
     if cweampuff_movable.is_stunlocked {
@@ -52,10 +52,9 @@ pub fn cweampuff_move(
             return;
         }
 
-        direction = -1.0;
         cweampuff_movable.facing_right = false;
 
-        let new_velocity = direction * CWEAMPUFF_SPEED;
+        let new_velocity = -CWEAMPUFF_SPEED;
 
         if cweampuff_velocity.linvel.x > new_velocity {
             cweampuff_velocity.linvel.x = new_velocity;
@@ -68,10 +67,9 @@ pub fn cweampuff_move(
             return;
         }
 
-        direction = 1.0;
         cweampuff_movable.facing_right = true;
 
-        let new_velocity = direction * CWEAMPUFF_SPEED;
+        let new_velocity = CWEAMPUFF_SPEED;
 
         if cweampuff_velocity.linvel.x < new_velocity {
             cweampuff_velocity.linvel.x = new_velocity;
@@ -79,8 +77,10 @@ pub fn cweampuff_move(
     }
 }
 
-pub fn cweampuff_jump(keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut cweampuff_jumper: Single<(&mut Jumper, &mut Velocity, &mut Movable, &Cweampuff), With<Cweampuff>>) {
+pub fn cweampuff_jump(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut cweampuff_jumper: Single<(&mut Jumper, &mut Velocity, &mut Movable, &Cweampuff), With<Cweampuff>>
+) {
     let (jumper, velocity, movable, cweampuff) = &mut *cweampuff_jumper;
 
     let jump_released = keyboard_input.just_released(KeyCode::Space);
@@ -95,7 +95,7 @@ pub fn cweampuff_jump(keyboard_input: Res<ButtonInput<KeyCode>>,
 
     if jump_released {
         // Kill current vertical velocity 
-        if velocity.linvel.y > 0.0 {
+        if velocity.linvel.y > 0.0 && velocity.linvel.y < jumper.jump_impulse {
             velocity.linvel.y = 0.;
         }
     }
@@ -129,7 +129,8 @@ pub fn cweampuff_jump(keyboard_input: Res<ButtonInput<KeyCode>>,
 
 pub fn cweampuff_dash(
     keyboard_input: Res<ButtonInput<KeyCode>>, 
-    mut cweampuff_dasher: Single<(&mut Dasher, &mut Velocity, &mut Movable, &Cweampuff), With<Cweampuff>>) {
+    mut cweampuff_dasher: Single<(&mut Dasher, &mut Velocity, &mut Movable, &Cweampuff), With<Cweampuff>>
+) {
     let (dasher, velocity, movable, cweampuff) = &mut *cweampuff_dasher;
 
     if movable.is_stunlocked || !cweampuff.has_dash {
@@ -157,9 +158,7 @@ pub fn cweampuff_dash(
     dasher.time_passed_since_dash = 0.;
 }
 
-pub fn reset_abilities(
-    mut cweampuff: Query<(&mut Jumper, &mut Movable, &mut Dasher), With<Cweampuff>>,
-) {
+pub fn reset_abilities(mut cweampuff: Query<(&mut Jumper, &mut Movable, &mut Dasher), With<Cweampuff>>) {
     for (mut jumper, mut movable, mut dasher) in cweampuff.iter_mut() {
         jumper.is_jumping = false;
         jumper.is_next_jump_doublejump = false;
@@ -167,7 +166,7 @@ pub fn reset_abilities(
     
         movable.hugging_wall = false;
         movable.is_stunlocked = false;
-        movable.time_passed_since_stun = movable.stun_duration + 0.1;
+        movable.time_passed_since_stun = 0.;
     
         dasher.time_passed_since_dash = dasher.dash_cooldown + 0.1;
     }
@@ -216,15 +215,16 @@ pub fn jump_reset(
     }
 }
 
-fn detect_floor_and_wall_collision(cweampuff_entity: Entity, 
-                                   cweampuff: &Cweampuff,
-                                   jumper: &mut Jumper, 
-                                   cweampuff_transform: &Transform,
-                                   cweampuff_movable: &mut Movable,
-                                   cweampuff_velocity: &mut Velocity,
-                                   event: &CollisionEvent, 
-                                   colliders: &mut Query<(Entity, &Transform, &Collider, &mut FloorCollider), With<FloorCollider>>) {
-    
+fn detect_floor_and_wall_collision(
+    cweampuff_entity: Entity, 
+    cweampuff: &Cweampuff,
+    jumper: &mut Jumper, 
+    cweampuff_transform: &Transform,
+    cweampuff_movable: &mut Movable,
+    cweampuff_velocity: &mut Velocity,
+    event: &CollisionEvent, 
+    colliders: &mut Query<(Entity, &Transform, &Collider, &mut FloorCollider), With<FloorCollider>>
+) {
     if let CollisionEvent::Stopped(h1, h2, _flags) = event {
         for (collider_entity, _collider_transform, _collider, mut floor_collider) in colliders.iter_mut() {
             if h1.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) && 
@@ -257,7 +257,7 @@ fn detect_floor_and_wall_collision(cweampuff_entity: Entity,
                     if check_wall_collision(cweampuff_bounds, collider_bounds) {
                         cweampuff_movable.hugging_wall = true;
                         floor_collider.entity_index = collider_entity.index();
-
+                        
                         if cweampuff.has_wall_jump {
                             jumper.is_jumping = false;
                             jumper.is_next_jump_doublejump = false;
