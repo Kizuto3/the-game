@@ -211,7 +211,7 @@ pub fn jump_reset(
     let (cweampuff_entity, cweampuff, cweampuff_jumper, cweampuff_movable, cweampuff_transform, cweampuff_velocity) = &mut *cweampuff;
 
     for contact_event in contact_events.read() {
-        detect_floor_and_wall_collision(*cweampuff_entity, &cweampuff, cweampuff_jumper, cweampuff_transform, cweampuff_movable, cweampuff_velocity, contact_event, &mut colliders);
+        detect_floor_and_wall_collision(*cweampuff_entity, cweampuff, cweampuff_jumper, cweampuff_transform, cweampuff_movable, cweampuff_velocity, contact_event, &mut colliders);
     }
 }
 
