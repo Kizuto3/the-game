@@ -49,11 +49,11 @@ impl LevelInfo for CweamcatHouseInfo {
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Oh... She must be very tired.", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Maybe Old Cweampuff knows something about this.", emotion: Emotion::Regular },
                 ],
-                after_conversation_func: (|cweampuff| { 
+                after_conversation_func: |cweampuff| { 
                     if cweampuff.progression < Progression::MetMilk { 
                         cweampuff.progression = Progression::MetMilk;
                     }
-                })
+                }
             }
         ]))
     }

@@ -153,7 +153,7 @@ pub fn cweampuff_dash(
         dash_impulse = -dash_impulse;
     }
 
-    velocity.linvel = Vec2::new((dash_impulse + velocity.linvel.x).clamp(-MAX_DASH_IMPULSE, MAX_DASH_IMPULSE), vertical_velocity).into();
+    velocity.linvel = Vec2::new((dash_impulse + velocity.linvel.x).clamp(-MAX_DASH_IMPULSE, MAX_DASH_IMPULSE), vertical_velocity);
 
     dasher.time_passed_since_dash = 0.;
 }
@@ -211,7 +211,7 @@ pub fn jump_reset(
     let (cweampuff_entity, cweampuff, cweampuff_jumper, cweampuff_movable, cweampuff_transform, cweampuff_velocity) = &mut *cweampuff;
 
     for contact_event in contact_events.read() {
-        detect_floor_and_wall_collision(*cweampuff_entity, &cweampuff, cweampuff_jumper, cweampuff_transform, cweampuff_movable, cweampuff_velocity, contact_event, &mut colliders);
+        detect_floor_and_wall_collision(*cweampuff_entity, cweampuff, cweampuff_jumper, cweampuff_transform, cweampuff_movable, cweampuff_velocity, contact_event, &mut colliders);
     }
 }
 
@@ -301,5 +301,5 @@ fn check_collision(cweampuff_bounds: BoundingCircle, wall_bounds: Aabb2d) -> Col
         return CollisionType::Floor;
     }
 
-    return CollisionType::Ceiling;
+    CollisionType::Ceiling
 }

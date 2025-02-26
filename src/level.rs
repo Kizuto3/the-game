@@ -92,7 +92,7 @@ pub fn spawn_new_level(
         if let Some(transitions) = &level_layout.transition_layout {
             for transition in transitions {
                 commands
-                    .spawn(transition.clone())
+                    .spawn(*transition)
                     .insert((
                         Mesh2d(meshes.add(Rectangle::new(transition.floor_info.size.x, transition.floor_info.size.y))),
                         MeshMaterial2d(materials.add(TRANSITION_COLOR)),
@@ -125,7 +125,7 @@ pub fn spawn_new_level(
         if let Some(doors) = &level_layout.door_layout {
             for door in doors {
                 commands
-                    .spawn(door.clone())
+                    .spawn(*door)
                     .insert((
                         Mesh2d(meshes.add(Rectangle::new(door.floor_info.size.x, door.floor_info.size.y))),
                         MeshMaterial2d(materials.add(DOOR_COLOR)),
@@ -143,7 +143,7 @@ pub fn spawn_new_level(
                 match modification {
                     FloorModification::JumpPad(jump_pad) => {
                         commands
-                            .spawn(jump_pad.clone())
+                            .spawn(*jump_pad)
                             .insert((
                                 Mesh2d(meshes.add(Rectangle::new(jump_pad.floor_info.size.x, jump_pad.floor_info.size.y))),
                                 MeshMaterial2d(materials.add(JUMP_PAD_COLOR)),
@@ -192,10 +192,10 @@ pub fn level_transition_collision_reader(
                         commands.entity(layout_entity).despawn_recursive();
                     }
 
-                    let transition_info = LevelTransitionInfo { transition_to_index: transition_collider.exit_index, transition_to_position: Option::None };
+                    let transition_info = LevelTransitionInfo { transition_to_index: transition_collider.exit_index, transition_to_position: None };
 
                     cweampuff_velocity.linvel = Vec2::new(0., 0.);
-                    spawn_level(&mut commands, transition_collider.transition_to_level, &cweampuff, transition_info);
+                    spawn_level(&mut commands, transition_collider.transition_to_level, cweampuff, transition_info);
                     transition_state.set(TransitionState::Started);
 
                     return;
@@ -209,7 +209,7 @@ pub fn manually_transition_to_level(
     current_level_layout: &Query<Entity, With<LevelLayout>>,
     transition_state: &mut ResMut<NextState<TransitionState>>,
     cweampuff: &Cweampuff,
-    mut commands: &mut Commands,
+    commands: &mut Commands,
     level: Level,
     position: Vec3
 ) {
@@ -219,7 +219,7 @@ pub fn manually_transition_to_level(
 
     let transition_info = LevelTransitionInfo { transition_to_index: 0, transition_to_position: Some(position) };
 
-    spawn_level(&mut commands, level, &cweampuff, transition_info);
+    spawn_level(commands, level, cweampuff, transition_info);
     transition_state.set(TransitionState::Started);
 }
 

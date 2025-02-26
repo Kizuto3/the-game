@@ -62,7 +62,7 @@ pub fn cutscene_input_reader(
        keyboard_input.any_just_pressed([KeyCode::Space, KeyCode::Enter]) ||
        mouse_input.any_just_pressed([MouseButton::Left, MouseButton::Right]) {
         match current_fade_state.get() {
-            FadeState::FadeIn | FadeState::FadeInFinished | FadeState::FadeOut => return,
+            FadeState::FadeIn | FadeState::FadeInFinished | FadeState::FadeOut => (),
             FadeState::None => next_fade_state.set(FadeState::FadeIn),
         };
     }

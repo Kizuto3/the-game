@@ -49,7 +49,7 @@ impl LevelInfo for CweamcatLairInfo {
     
     fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
         let mut og_cweampuff = NPC { floor_info: FloorInfo { position: Vec3::new(750.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                      conversation: &[], after_conversation_func: (|_cweampuff| { })   
+                                      conversation: &[], after_conversation_func: |_cweampuff| { }
         };
 
         match cweampuff.progression {
