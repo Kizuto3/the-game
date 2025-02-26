@@ -153,7 +153,7 @@ pub fn cweampuff_dash(
         dash_impulse = -dash_impulse;
     }
 
-    velocity.linvel = Vec2::new((dash_impulse + velocity.linvel.x).clamp(-MAX_DASH_IMPULSE, MAX_DASH_IMPULSE), vertical_velocity).into();
+    velocity.linvel = Vec2::new((dash_impulse + velocity.linvel.x).clamp(-MAX_DASH_IMPULSE, MAX_DASH_IMPULSE), vertical_velocity);
 
     dasher.time_passed_since_dash = 0.;
 }
