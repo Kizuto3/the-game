@@ -1,7 +1,7 @@
 use bevy::{ecs::observer::TriggerTargets, math::bounding::{Aabb2d, BoundingCircle, BoundingVolume}, prelude::*};
 use bevy_rapier2d::prelude::{Collider, CollisionEvent, Velocity};
 
-use crate::{Cweampuff, FloorCollider, CWEAMPUFF_DIAMETER};
+use crate::{level::level_layout::CollisionType, Cweampuff, FloorCollider, CWEAMPUFF_DIAMETER};
 
 const CWEAMPUFF_SPEED: f32 = 500.0;
 const MAX_CWEAMPUFF_VERTICAL_VELOCITY: f32 = 800.0;
@@ -229,17 +229,25 @@ fn detect_floor_and_wall_collision(
         for (collider_entity, _collider_transform, _collider, mut floor_collider) in colliders.iter_mut() {
             if h1.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) && 
                h2.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) {
-                if cweampuff_movable.hugging_wall && floor_collider.entity_index != 0 {
-                    cweampuff_movable.hugging_wall = false;
-                    floor_collider.entity_index = 0;
-                }
-                else {
-                    jumper.is_jumping = true;
-                    jumper.is_next_jump_doublejump = true;
-                }
+                if let Some(touching_side) = &floor_collider.currently_touching_side {
+                    match touching_side {
+                        CollisionType::Ceiling => { },
+                        CollisionType::Floor => {
+                            jumper.is_jumping = true;
+                            jumper.is_next_jump_doublejump = true;
+                        },
+                        CollisionType::Wall => {
+                            if cweampuff_movable.hugging_wall {
+                                cweampuff_movable.hugging_wall = false;
 
-                if cweampuff.has_wall_jump {
-                    jumper.is_next_jump_doublejump = true;
+                                if cweampuff.has_wall_jump {
+                                    jumper.is_next_jump_doublejump = true;
+                                }
+                            }
+                        }
+                    };
+
+                    floor_collider.currently_touching_side = None;
                 }
             }
         }
@@ -254,29 +262,44 @@ fn detect_floor_and_wall_collision(
                     let collider_bounds = Aabb2d::new(collider_transform.translation.truncate(),
                                                               cuboid.half_extents());
 
-                    if check_wall_collision(cweampuff_bounds, collider_bounds) {
-                        cweampuff_movable.hugging_wall = true;
-                        floor_collider.entity_index = collider_entity.index();
-                        
-                        if cweampuff.has_wall_jump {
+                    match check_collision(cweampuff_bounds, collider_bounds) {
+                        CollisionType::Wall => {
+                            cweampuff_movable.hugging_wall = true;
+                            floor_collider.currently_touching_side = Some(CollisionType::Wall);
+                            
+                            if cweampuff.has_wall_jump {
+                                jumper.is_jumping = false;
+                                jumper.is_next_jump_doublejump = false;
+                            }
+                        },
+                        CollisionType::Floor => {
+                            floor_collider.currently_touching_side = Some(CollisionType::Floor);
+                            cweampuff_velocity.linvel.y = 0.;
                             jumper.is_jumping = false;
                             jumper.is_next_jump_doublejump = false;
-                        }
-                    }
-                    else {
-                        cweampuff_velocity.linvel.y = 0.;
-                        jumper.is_jumping = false;
-                        jumper.is_next_jump_doublejump = false;
-                    }
+                        },
+                        CollisionType::Ceiling => {
+                            floor_collider.currently_touching_side = Some(CollisionType::Ceiling);
+                            cweampuff_velocity.linvel.y = 0.;
+                        }               
+                    };
                 }
             }
         }
     }
 }
 
-fn check_wall_collision(cweampuff_bounds: BoundingCircle, wall_bounds: Aabb2d) -> bool {
+fn check_collision(cweampuff_bounds: BoundingCircle, wall_bounds: Aabb2d) -> CollisionType {
     let closest = wall_bounds.closest_point(cweampuff_bounds.center());
     let offset = cweampuff_bounds.center() - closest;
 
-    return offset.x.abs() >= offset.y.abs();
+    if offset.x.abs() >= offset.y.abs() {
+        return CollisionType::Wall;
+    }
+
+    if offset.y > 0. {
+        return CollisionType::Floor;
+    }
+
+    return CollisionType::Ceiling;
 }

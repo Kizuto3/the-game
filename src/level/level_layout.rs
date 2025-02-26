@@ -11,9 +11,15 @@ use crate::{npc::NPC, Cweampuff};
 
 use super::Level;
 
-#[derive(Component)]
+pub enum CollisionType {
+    Floor,
+    Wall,
+    Ceiling
+}
+
+#[derive(Component, Default)]
 pub struct FloorCollider {
-    pub entity_index: u32
+    pub currently_touching_side: Option<CollisionType>
 }
 
 #[derive(Component, Clone, Copy)]

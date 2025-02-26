@@ -86,7 +86,7 @@ pub fn spawn_new_level(
             .insert(Collider::cuboid(floor.size.x / 2.0, floor.size.y / 2.0))
             .insert(Friction::coefficient(0.7))
             .insert(ActiveEvents::COLLISION_EVENTS)
-            .insert(FloorCollider {entity_index: 0});
+            .insert(FloorCollider::default());
         }
 
         if let Some(transitions) = &level_layout.transition_layout {
