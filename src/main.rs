@@ -55,15 +55,15 @@ fn main() {
     // CUTSCENE SYSTEMS
         .add_systems(OnEnter(AppState::Cutscene), spawn_cutscene_resources)
         .add_systems(FixedUpdate, cutscene_event_reader)
-        .add_systems(Update, (cutscene_input_reader).run_if(in_state(AppState::Cutscene)))
-        .add_systems(OnEnter(FadeState::FadeInFinished), (cutscene_player).run_if(in_state(AppState::Cutscene)))
+        .add_systems(Update, cutscene_input_reader.run_if(in_state(AppState::Cutscene)))
+        .add_systems(OnEnter(FadeState::FadeInFinished), cutscene_player.run_if(in_state(AppState::Cutscene)))
         .add_systems(OnExit(AppState::Cutscene), clean_nodes)
 
     // FADE IN FADE OUT SYSTEMS
         .add_systems(OnEnter(FadeState::None), despawn_fade_in_fade_out_node)
         .add_systems(OnExit(FadeState::None), spawn_fade_in_fade_out_node)
-        .add_systems(FixedUpdate, (fade_in).run_if(in_state(FadeState::FadeIn)))
-        .add_systems(FixedUpdate, (fade_out).run_if(in_state(FadeState::FadeOut)))
+        .add_systems(FixedUpdate, fade_in.run_if(in_state(FadeState::FadeIn)))
+        .add_systems(FixedUpdate, fade_out.run_if(in_state(FadeState::FadeOut)))
 
     // LEVEL TRANSITION SYSTEMS
         .add_systems(OnEnter(TransitionState::Started), set_fade_in_state)
@@ -78,10 +78,10 @@ fn main() {
         ).run_if(in_state(InteractionState::Ready)))
         .add_systems(OnExit(InteractionState::Ready), despawn_interaction_prompt)
         .add_systems(OnEnter(ConversationState::Started), spawn_conversation_resources)
-        .add_systems(Update,(conversation_input_reader).run_if(in_state(ConversationState::Started)))
-        .add_systems(FixedUpdate, (left_character_talking).run_if(in_state(ConversationState::Started)).run_if(in_state(DialogState::LeftCharacterTalking)))
-        .add_systems(FixedUpdate, (right_character_talking).run_if(in_state(ConversationState::Started)).run_if(in_state(DialogState::RightCharacterTalking)))
-        .add_systems(FixedUpdate, (dialog_box_text_writer).run_if(in_state(ConversationState::Started)))
+        .add_systems(Update,conversation_input_reader.run_if(in_state(ConversationState::Started)))
+        .add_systems(FixedUpdate, left_character_talking.run_if(in_state(ConversationState::Started)).run_if(in_state(DialogState::LeftCharacterTalking)))
+        .add_systems(FixedUpdate, right_character_talking.run_if(in_state(ConversationState::Started)).run_if(in_state(DialogState::RightCharacterTalking)))
+        .add_systems(FixedUpdate, dialog_box_text_writer.run_if(in_state(ConversationState::Started)))
         .add_systems(OnExit(ConversationState::Started), despawn_conversation_resources)
 
     // GAMEPLAY SYSTEMS
