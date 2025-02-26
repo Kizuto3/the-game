@@ -8,7 +8,7 @@ use super::{DoorCollider, FloorInfo, FloorModification, LevelInfo, TransitionCol
 pub struct CweamcatLairInfo;
 
 impl LevelInfo for CweamcatLairInfo {
-    fn get_floor_info(&self, cweampuff: &crate::Cweampuff) -> Vec<FloorInfo> {
+    fn get_floor_info(&self, cweampuff: &crate::Cweampuff) -> Box<[FloorInfo]> {
         let mut floors = vec![
             FloorInfo { position: Vec3::new(-450.0, 350.0, 1.0), size: Vec2::new(300.0, 1000.0) },
             FloorInfo { position: Vec3::new(-450.0, 1250.0, 1.0), size: Vec2::new(300.0, 400.0) },
@@ -30,31 +30,31 @@ impl LevelInfo for CweamcatLairInfo {
             floors.push(FloorInfo { position: Vec3::new(150.0, -350.0, 2.0), size: Vec2::new(300.0, 300.0) });
         }
 
-        return floors;
+        floors.into_boxed_slice()
     }
 
-    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<TransitionCollider> {
-        vec![
+    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
+        Some(Box::from([
             TransitionCollider { exit_index: 0, safe_position: Vec3::new(-350.0, 870.0, 1.0), transition_to_level: Level::StartingRoom(StartingRoomInfo), floor_info: FloorInfo { position: Vec3::new(-500.0, 950.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
             TransitionCollider { exit_index: 1, safe_position: Vec3::new(2200.0, -50.0, 1.0), transition_to_level: Level::Hell1(Hell1Info), floor_info: FloorInfo { position: Vec3::new(2450.0, -350.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
-        ]
+        ]))
     }
 
-    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Vec<DoorCollider> {
-        vec![
+    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
+        Some(Box::from([
             DoorCollider { floor_info: FloorInfo { position: Vec3 { x: 1350., y: -50., z: 0.0 }, size: Vec2 { x: 100., y: 200. } },
                 transition_to_level: Level::CweamcatHouse(CweamcatHouseInfo), safe_position: Vec3 { x: -750.0, y: -375.0, z: 1.0 }, is_active: false }
-        ]
+        ]))
     }
     
-    fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Vec<NPC> {
+    fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
         let mut og_cweampuff = NPC { floor_info: FloorInfo { position: Vec3::new(750.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                      conversation: vec![], after_conversation_func: (|_cweampuff| { })   
+                                      conversation: &[], after_conversation_func: (|_cweampuff| { })   
         };
 
         match cweampuff.progression {
             Progression::None => {
-                og_cweampuff.conversation = vec![
+                og_cweampuff.conversation = &[
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Hello?..", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Oh! Goodness!", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "You startled me!", emotion: Emotion::Regular },
@@ -73,7 +73,7 @@ impl LevelInfo for CweamcatLairInfo {
                 ];
             },
             Progression::MetMilk => {
-                og_cweampuff.conversation = vec![
+                og_cweampuff.conversation = &[
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Old Cweampuff! Old Cweampuff!", emotion: Emotion::Surprised },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I've found her!", emotion: Emotion::Surprised },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "O-ho-ho!", emotion: Emotion::Happy },
@@ -106,12 +106,12 @@ impl LevelInfo for CweamcatLairInfo {
             }
         };
 
-        vec![
+        Some(Box::from([
             og_cweampuff
-        ]
+        ]))
     }
 
-    fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Vec<FloorModification> {
-        vec![]
+    fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[FloorModification]>> {
+        None
     }
 }

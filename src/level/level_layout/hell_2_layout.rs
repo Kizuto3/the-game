@@ -8,8 +8,8 @@ use super::{DoorCollider, FloorInfo, FloorModification, LevelInfo, TransitionCol
 pub struct Hell2Info;
 
 impl LevelInfo for Hell2Info {
-    fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<FloorInfo> {
-        vec![
+    fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Box<[FloorInfo]> {
+        Box::from([
             FloorInfo { position: Vec3::new(-300.0, 1600.0, 1.0), size: Vec2::new(600.0, 300.0) },
             FloorInfo { position: Vec3::new(2100.0, 1600.0, 1.0), size: Vec2::new(3600.0, 300.0) },
             FloorInfo { position: Vec3::new(4050.0, 700.0, 1.0), size: Vec2::new(300.0, 2100.0) },
@@ -29,25 +29,25 @@ impl LevelInfo for Hell2Info {
             FloorInfo { position: Vec3::new(2100.0, 1100.0, 1.0), size: Vec2::new(150.0, 100.0) },
             FloorInfo { position: Vec3::new(2450.0, 1300.0, 1.0), size: Vec2::new(150.0, 300.0) },
             FloorInfo { position: Vec3::new(2800.0, 1100.0, 1.0), size: Vec2::new(150.0, 100.0) },
-        ]
+        ])
     }
 
-    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<TransitionCollider> {
-        vec![
+    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
+        Some(Box::from([
             TransitionCollider { exit_index: 0, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::Hell1(Hell1Info), floor_info: FloorInfo { position: Vec3::new(150.0, 1700.0, 2.0), size: Vec2::new(300.0, 200.0) }  },
             TransitionCollider { exit_index: 1, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::Hell3(Hell3Info), floor_info: FloorInfo { position: Vec3::new(3650.0, -350.0, 2.0), size: Vec2::new(500.0, 200.0) }  }
-        ]
+        ]))
     }
 
-    fn get_npcs(&self, _cweampuff: &crate::Cweampuff) -> Vec<NPC> {        
-        vec![]
+    fn get_npcs(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {        
+        None
     }
     
-    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Vec<DoorCollider> {
-        vec![]
+    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
+        None
     }
 
-    fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Vec<FloorModification> {
-        vec![]
+    fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[FloorModification]>> {
+        None
     }
 }

@@ -35,7 +35,7 @@ pub struct RightCharacterImageNode;
 pub struct NPC {
     pub floor_info: FloorInfo,
     pub is_active: bool,
-    pub conversation: Vec<ConversationEntry>,
+    pub conversation: &'static [ConversationEntry],
     pub current_conversation_index: usize,
     pub after_conversation_func: fn(&mut Cweampuff)
 }

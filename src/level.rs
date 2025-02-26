@@ -40,11 +40,11 @@ pub struct LevelTransitionInfo {
 
 #[derive(Component)]
 pub struct LevelLayout {
-    pub floor_layout: Vec<FloorInfo>,
-    pub transition_layout: Vec<TransitionCollider>,
-    pub npc_layout: Vec<NPC>,
-    pub door_layout: Vec<DoorCollider>,
-    pub floor_modifications: Vec<FloorModification>,
+    pub floor_layout: Box<[FloorInfo]>,
+    pub transition_layout: Option<Box<[TransitionCollider]>>,
+    pub npc_layout: Option<Box<[NPC]>>,
+    pub door_layout: Option<Box<[DoorCollider]>>,
+    pub floor_modifications: Option<Box<[FloorModification]>>,
     pub transition_info: LevelTransitionInfo,
 }
 
@@ -89,60 +89,70 @@ pub fn spawn_new_level(
             .insert(FloorCollider {entity_index: 0});
         }
 
-        for transition in &level_layout.transition_layout {
-            commands
-            .spawn(transition.clone())
-            .insert((
-                Mesh2d(meshes.add(Rectangle::new(transition.floor_info.size.x, transition.floor_info.size.y))),
-                MeshMaterial2d(materials.add(TRANSITION_COLOR)),
-                Transform::from_translation(transition.floor_info.position)
-            ))
-            .insert(Collider::cuboid(transition.floor_info.size.x / 2.0, transition.floor_info.size.y / 2.0))
-            .insert(Sensor)
-            .insert(ActiveEvents::COLLISION_EVENTS);
+        if let Some(transitions) = &level_layout.transition_layout {
+            for transition in transitions {
+                commands
+                    .spawn(transition.clone())
+                    .insert((
+                        Mesh2d(meshes.add(Rectangle::new(transition.floor_info.size.x, transition.floor_info.size.y))),
+                        MeshMaterial2d(materials.add(TRANSITION_COLOR)),
+                        Transform::from_translation(transition.floor_info.position)
+                    ))
+                    .insert(Collider::cuboid(transition.floor_info.size.x / 2.0, transition.floor_info.size.y / 2.0))
+                    .insert(Sensor)
+                    .insert(ActiveEvents::COLLISION_EVENTS);
+            }
         }
 
-        for npc in &level_layout.npc_layout {
-            commands
-            .spawn(npc.clone())
-            .insert((
-                Mesh2d(meshes.add(Rectangle::new(npc.floor_info.size.x, npc.floor_info.size.y))),
-                MeshMaterial2d(materials.add(NPC_COLOR)),
-                Transform::from_translation(npc.floor_info.position)
-            ))
-            .insert(Collider::cuboid(npc.floor_info.size.x / 2.0, npc.floor_info.size.y / 2.0))
-            .insert(Sensor)
-            .insert(ActiveEvents::COLLISION_EVENTS)
-            .insert(Interactable);
+
+        if let Some(npcs) = &level_layout.npc_layout {
+            for npc in npcs {
+                commands
+                    .spawn(npc.clone())
+                    .insert((
+                        Mesh2d(meshes.add(Rectangle::new(npc.floor_info.size.x, npc.floor_info.size.y))),
+                        MeshMaterial2d(materials.add(NPC_COLOR)),
+                        Transform::from_translation(npc.floor_info.position)
+                    ))
+                    .insert(Collider::cuboid(npc.floor_info.size.x / 2.0, npc.floor_info.size.y / 2.0))
+                    .insert(Sensor)
+                    .insert(ActiveEvents::COLLISION_EVENTS)
+                    .insert(Interactable);
+            }
         }
 
-        for door in &level_layout.door_layout {
-            commands
-            .spawn(door.clone())
-            .insert((
-                Mesh2d(meshes.add(Rectangle::new(door.floor_info.size.x, door.floor_info.size.y))),
-                MeshMaterial2d(materials.add(DOOR_COLOR)),
-                Transform::from_translation(door.floor_info.position)
-            ))
-            .insert(Collider::cuboid(door.floor_info.size.x / 2.0, door.floor_info.size.y / 2.0))
-            .insert(Sensor)
-            .insert(ActiveEvents::COLLISION_EVENTS)
-            .insert(Interactable);
+
+        if let Some(doors) = &level_layout.door_layout {
+            for door in doors {
+                commands
+                    .spawn(door.clone())
+                    .insert((
+                        Mesh2d(meshes.add(Rectangle::new(door.floor_info.size.x, door.floor_info.size.y))),
+                        MeshMaterial2d(materials.add(DOOR_COLOR)),
+                        Transform::from_translation(door.floor_info.position)
+                    ))
+                    .insert(Collider::cuboid(door.floor_info.size.x / 2.0, door.floor_info.size.y / 2.0))
+                    .insert(Sensor)
+                    .insert(ActiveEvents::COLLISION_EVENTS)
+                    .insert(Interactable);
+            }
         }
 
-        for modification in &level_layout.floor_modifications {
-            match modification {
-                FloorModification::JumpPad(jump_pad) => {
-                    commands
-                        .spawn(jump_pad.clone())
-                        .insert((
-                            Mesh2d(meshes.add(Rectangle::new(jump_pad.floor_info.size.x, jump_pad.floor_info.size.y))),
-                            MeshMaterial2d(materials.add(JUMP_PAD_COLOR)),
-                            Transform::from_translation(jump_pad.floor_info.position)
-                        ))
-                        .insert(Collider::cuboid(jump_pad.floor_info.size.x / 2.0, jump_pad.floor_info.size.y / 2.0))
-                        .insert(Sensor)
-                        .insert(ActiveEvents::COLLISION_EVENTS);
+        if let Some(modifications) = &level_layout.floor_modifications {
+            for modification in modifications {
+                match modification {
+                    FloorModification::JumpPad(jump_pad) => {
+                        commands
+                            .spawn(jump_pad.clone())
+                            .insert((
+                                Mesh2d(meshes.add(Rectangle::new(jump_pad.floor_info.size.x, jump_pad.floor_info.size.y))),
+                                MeshMaterial2d(materials.add(JUMP_PAD_COLOR)),
+                                Transform::from_translation(jump_pad.floor_info.position)
+                            ))
+                            .insert(Collider::cuboid(jump_pad.floor_info.size.x / 2.0, jump_pad.floor_info.size.y / 2.0))
+                            .insert(Sensor)
+                            .insert(ActiveEvents::COLLISION_EVENTS);
+                    }
                 }
             }
         }
@@ -153,7 +163,7 @@ pub fn spawn_new_level(
             let new_camera_position = get_adjusted_camera_position(&cweampuff, &level_layout_query, None);
             camera.translation = new_camera_position;
         }
-        else if let Some(transition_collider) = level_layout.transition_layout.iter().find(|f| f.exit_index == level_layout.transition_info.transition_to_index) {
+        else if let Some(transition_collider) = level_layout.transition_layout.as_deref().unwrap_or_default().iter().find(|f| f.exit_index == level_layout.transition_info.transition_to_index) {
             cweampuff.translation = transition_collider.safe_position;
 
             let new_camera_position = get_adjusted_camera_position(&cweampuff, &level_layout_query, None);

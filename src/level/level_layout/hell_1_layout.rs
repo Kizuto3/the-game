@@ -8,8 +8,8 @@ use super::{DoorCollider, FloorInfo, FloorModification, LevelInfo, TransitionCol
 pub struct Hell1Info;
 
 impl LevelInfo for Hell1Info {
-    fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<FloorInfo> {
-        vec![
+    fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Box<[FloorInfo]> {
+        Box::from([
             FloorInfo { position: Vec3::new(-300.0, 1600.0, 1.0), size: Vec2::new(600.0, 300.0) },
             FloorInfo { position: Vec3::new(1600.0, 1600.0, 1.0), size: Vec2::new(2600.0, 300.0) },
             FloorInfo { position: Vec3::new(3050.0, 700.0, 1.0), size: Vec2::new(300.0, 2100.0) },
@@ -22,23 +22,23 @@ impl LevelInfo for Hell1Info {
             FloorInfo { position: Vec3::new(400.0, 650.0, 1.0), size: Vec2::new(150.0, 100.0) },
             FloorInfo { position: Vec3::new(1200.0, 850.0, 1.0), size: Vec2::new(150.0, 100.0) },
             FloorInfo { position: Vec3::new(2000.0, 1050.0, 1.0), size: Vec2::new(150.0, 100.0) },
-        ]
+        ])
     }
 
-    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<TransitionCollider> {
-        vec![
+    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
+        Some(Box::from([
             TransitionCollider { exit_index: 0, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::Hell2(Hell2Info), floor_info: FloorInfo { position: Vec3::new(2800.0, -300.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
             TransitionCollider { exit_index: 1, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: FloorInfo { position: Vec3::new(150.0, 1700.0, 2.0), size: Vec2::new(300.0, 200.0) }  }
-        ]
+        ]))
     }
 
-    fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Vec<NPC> {
+    fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
         if cweampuff.progression <= Progression::MetMilk {
-            return vec![
-                NPC { 
+            return Some(Box::from([
+                NPC {
                     floor_info: FloorInfo { position: Vec3::new(2000.0, 0.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                     after_conversation_func: (|cweampuff| { cweampuff.has_double_jump = true; }),
-                    conversation: vec![
+                    conversation: &[
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Wan! Wan!", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wan wan?..", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "WAN! WAN!", emotion: Emotion::Happy },
@@ -69,17 +69,17 @@ impl LevelInfo for Hell1Info {
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "*** Seing how Minawan adores his rising star fills you with excitment! You want jump even when you are in the air ***", emotion: Emotion::Happy },
                     ]
                 }
-            ]
+            ]))
         }
         
-        vec![]
+        None
     }
     
-    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Vec<DoorCollider> {
-        vec![]
+    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
+        None
     }
     
-    fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Vec<FloorModification> {
-        vec![]
+    fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[FloorModification]>> {
+        None
     }
 }

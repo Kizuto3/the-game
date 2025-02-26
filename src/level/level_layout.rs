@@ -48,9 +48,9 @@ pub enum FloorModification {
 }
 
 pub trait LevelInfo {
-    fn get_floor_info(&self, cweampuff: &Cweampuff) -> Vec<FloorInfo>;
-    fn get_transitions_info(&self, cweampuff: &Cweampuff) -> Vec<TransitionCollider>;
-    fn get_doors(&self, cweampuff: &Cweampuff) -> Vec<DoorCollider>;
-    fn get_npcs(&self, cweampuff: &Cweampuff) -> Vec<NPC>;
-    fn get_floor_modifications(&self, cweampuff: &Cweampuff) -> Vec<FloorModification>;
+    fn get_floor_info(&self, cweampuff: &Cweampuff) -> Box<[FloorInfo]>;
+    fn get_transitions_info(&self, cweampuff: &Cweampuff) -> Option<Box<[TransitionCollider]>>;
+    fn get_doors(&self, cweampuff: &Cweampuff) -> Option<Box<[DoorCollider]>>;
+    fn get_npcs(&self, cweampuff: &Cweampuff) -> Option<Box<[NPC]>>;
+    fn get_floor_modifications(&self, cweampuff: &Cweampuff) -> Option<Box<[FloorModification]>>;
 }
