@@ -8,30 +8,30 @@ use super::{DoorCollider, FloorInfo, FloorModification, LevelInfo, TransitionCol
 pub struct CweamcatHouseInfo;
 
 impl LevelInfo for CweamcatHouseInfo {
-    fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<FloorInfo> {
-        vec![
+    fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Box<[FloorInfo]> {
+        Box::from([
             FloorInfo { position: Vec3::new(-1200.0, 0.0, 1.0), size: Vec2::new(400.0, 1500.0) },
             FloorInfo { position: Vec3::new(0.0, 600.0, 1.0), size: Vec2::new(2000.0, 400.0) },
             FloorInfo { position: Vec3::new(1200.0, 0.0, 1.0), size: Vec2::new(400.0, 1500.0) },
             FloorInfo { position: Vec3::new(0.0, -600.0, 1.0), size: Vec2::new(2000.0, 400.0) },
-        ]
+        ])
     }
 
-    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Vec<TransitionCollider> {
-        vec![]
+    fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
+        None
     }
 
-    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Vec<DoorCollider> {
-        vec![
+    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
+        Some(Box::from([
             DoorCollider { floor_info: FloorInfo { position: Vec3 { x: -750., y: -300., z: 0.0 }, size: Vec2 { x: 100., y: 200. } },
                 transition_to_level: Level::CweamcatLair(CweamcatLairInfo), safe_position: Vec3 { x: 1350., y: -125., z: 1.0 }, is_active: false }
-        ]
+        ]))
     }
     
-    fn get_npcs(&self, _cweampuff: &crate::Cweampuff) -> Vec<NPC> {
-        vec![
+    fn get_npcs(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
+        Some(Box::from([
             NPC { floor_info: FloorInfo { position: Vec3::new(750.0, -300.0, 0.0), size: Vec2::new(200.0, 200.0) }, is_active: false, current_conversation_index: 0,
-                conversation: vec![
+                conversation: &[
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK_ASLEEP, text: "...", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wow...", emotion: Emotion::Surprised },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Is that?...", emotion: Emotion::Surprised },
@@ -55,10 +55,10 @@ impl LevelInfo for CweamcatHouseInfo {
                     }
                 })
             }
-        ]
+        ]))
     }
 
-    fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Vec<FloorModification> {
-        vec![]
+    fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[FloorModification]>> {
+        None
     }
 }
