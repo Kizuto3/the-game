@@ -32,6 +32,10 @@ impl LevelInfo for Hell1Info {
         ]))
     }
 
+    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
+        None
+    }
+
     fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
         if cweampuff.progression <= Progression::MetMilk {
             return Some(Box::from([
@@ -72,10 +76,6 @@ impl LevelInfo for Hell1Info {
             ]))
         }
         
-        None
-    }
-    
-    fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
         None
     }
     
