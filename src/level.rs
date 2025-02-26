@@ -209,7 +209,7 @@ pub fn manually_transition_to_level(
     current_level_layout: &Query<Entity, With<LevelLayout>>,
     transition_state: &mut ResMut<NextState<TransitionState>>,
     cweampuff: &Cweampuff,
-    mut commands: &mut Commands,
+    commands: &mut Commands,
     level: Level,
     position: Vec3
 ) {
