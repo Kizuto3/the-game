@@ -92,7 +92,7 @@ pub fn spawn_new_level(
         if let Some(transitions) = &level_layout.transition_layout {
             for transition in transitions {
                 commands
-                    .spawn(transition.clone())
+                    .spawn(*transition)
                     .insert((
                         Mesh2d(meshes.add(Rectangle::new(transition.floor_info.size.x, transition.floor_info.size.y))),
                         MeshMaterial2d(materials.add(TRANSITION_COLOR)),
@@ -125,7 +125,7 @@ pub fn spawn_new_level(
         if let Some(doors) = &level_layout.door_layout {
             for door in doors {
                 commands
-                    .spawn(door.clone())
+                    .spawn(*door)
                     .insert((
                         Mesh2d(meshes.add(Rectangle::new(door.floor_info.size.x, door.floor_info.size.y))),
                         MeshMaterial2d(materials.add(DOOR_COLOR)),
@@ -143,7 +143,7 @@ pub fn spawn_new_level(
                 match modification {
                     FloorModification::JumpPad(jump_pad) => {
                         commands
-                            .spawn(jump_pad.clone())
+                            .spawn(*jump_pad)
                             .insert((
                                 Mesh2d(meshes.add(Rectangle::new(jump_pad.floor_info.size.x, jump_pad.floor_info.size.y))),
                                 MeshMaterial2d(materials.add(JUMP_PAD_COLOR)),
