@@ -301,5 +301,5 @@ fn check_collision(cweampuff_bounds: BoundingCircle, wall_bounds: Aabb2d) -> Col
         return CollisionType::Floor;
     }
 
-    return CollisionType::Ceiling;
+    CollisionType::Ceiling
 }
