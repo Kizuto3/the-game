@@ -4,6 +4,7 @@ use level_layout::cweamcat_house_layout::CweamcatHouseInfo;
 use level_layout::hell_1_layout::Hell1Info;
 use level_layout::hell_2_layout::Hell2Info;
 use level_layout::hell_3_layout::Hell3Info;
+use level_layout::hell_4_layout::Hell4Info;
 use level_layout::{DoorCollider, FloorModification};
 use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, FloorInfo, TransitionCollider};
 use transition_states::TransitionState;
@@ -30,7 +31,8 @@ pub enum Level {
     CweamcatHouse(CweamcatHouseInfo),
     Hell1(Hell1Info),
     Hell2(Hell2Info),
-    Hell3(Hell3Info)
+    Hell3(Hell3Info),
+    Hell4(Hell4Info)
 }
 
 pub struct LevelTransitionInfo {
@@ -195,8 +197,8 @@ pub fn level_transition_collision_reader(
                     let transition_info = LevelTransitionInfo { transition_to_index: transition_collider.exit_index, transition_to_position: None };
 
                     cweampuff_velocity.linvel = Vec2::new(0., 0.);
-                    spawn_level(&mut commands, transition_collider.transition_to_level, cweampuff, transition_info);
                     transition_state.set(TransitionState::Started);
+                    spawn_level(&mut commands, transition_collider.transition_to_level, cweampuff, transition_info);
 
                     return;
                 }
@@ -276,6 +278,16 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
             });
         }
         Level::Hell3(layout_info) => {
+            commands.spawn(LevelLayout {
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
+                transition_info
+            });
+        }
+        Level::Hell4(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),
