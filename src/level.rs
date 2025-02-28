@@ -197,8 +197,8 @@ pub fn level_transition_collision_reader(
                     let transition_info = LevelTransitionInfo { transition_to_index: transition_collider.exit_index, transition_to_position: None };
 
                     cweampuff_velocity.linvel = Vec2::new(0., 0.);
-                    transition_state.set(TransitionState::Started);
                     spawn_level(&mut commands, transition_collider.transition_to_level, cweampuff, transition_info);
+                    transition_state.set(TransitionState::Started);
 
                     return;
                 }
