@@ -59,6 +59,8 @@ pub fn cweampuff_camera_adjustment(
 ) {
     let (camera_transform, camera_movable) = &mut *camera;
 
+    let time_passed = time.delta_secs();
+
     if keyboard_input.just_released(KeyCode::ArrowUp) || keyboard_input.just_released(KeyCode::ArrowDown) {
         camera_movable.look_up_down_duration = 0.;
     }
@@ -67,7 +69,7 @@ pub fn cweampuff_camera_adjustment(
 
     if keyboard_input.pressed(KeyCode::ArrowUp) || keyboard_input.pressed(KeyCode::ArrowDown) {
         if camera_movable.look_up_down_duration < camera_movable.look_up_down_invoke_threshold {
-            camera_movable.look_up_down_duration += time.delta_secs();
+            camera_movable.look_up_down_duration += time_passed;
         }
 
         if keyboard_input.pressed(KeyCode::ArrowDown) {
@@ -81,11 +83,11 @@ pub fn cweampuff_camera_adjustment(
         offset.y = camera_movable.camera_offset * direction;
     }
 
-    let mut new_camera_position = get_adjusted_camera_position(&cweampuff, &level_layout_query, Some(&offset));
+    let new_camera_position = get_adjusted_camera_position(&cweampuff, &level_layout_query, Some(&offset));
 
-    camera_transform.translation.smooth_nudge(&new_camera_position, CAMERA_DECAY_RATE, time.delta_secs());
+    camera_transform.translation.smooth_nudge(&new_camera_position, CAMERA_DECAY_RATE, time_passed);
 
-    new_camera_position.z = -10.0;
+    //new_camera_position.z = -10.0;
     //background.translation.smooth_nudge(&new_camera_position, CAMERA_DECAY_RATE, time.delta_secs());
 }
 

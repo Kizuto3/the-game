@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{level_layout::{cweamcat_lair_layout::CweamcatLairInfo, hell_2_layout::Hell2Info}, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, MINAWAN, NPC}};
 
-use super::{DoorCollider, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{DoorCollider, EntityInfo, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct Hell1Info;
@@ -10,25 +10,25 @@ pub struct Hell1Info;
 impl LevelInfo for Hell1Info {
     fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Box<[FloorInfo]> {
         Box::from([
-            FloorInfo { position: Vec3::new(-300.0, 1600.0, 1.0), size: Vec2::new(600.0, 300.0) },
-            FloorInfo { position: Vec3::new(1600.0, 1600.0, 1.0), size: Vec2::new(2600.0, 300.0) },
-            FloorInfo { position: Vec3::new(3050.0, 700.0, 1.0), size: Vec2::new(300.0, 2100.0) },
-            FloorInfo { position: Vec3::new(-450.0, 700.0, 1.0), size: Vec2::new(300.0, 2100.0) },
-            FloorInfo { position: Vec3::new(1050.0, -200.0, 1.0), size: Vec2::new(2700.0, 300.0) },
-            FloorInfo { position: Vec3::new(2550.0, 350.0, 1.0), size: Vec2::new(300.0, 1500.0) },
-            FloorInfo { position: Vec3::new(1800.0, 200.0, 1.0), size: Vec2::new(150.0, 100.0) },
-            FloorInfo { position: Vec3::new(1400.0, 500.0, 1.0), size: Vec2::new(150.0, 100.0) },
-            FloorInfo { position: Vec3::new(1000.0, 400.0, 1.0), size: Vec2::new(150.0, 100.0) },
-            FloorInfo { position: Vec3::new(400.0, 650.0, 1.0), size: Vec2::new(150.0, 100.0) },
-            FloorInfo { position: Vec3::new(1200.0, 850.0, 1.0), size: Vec2::new(150.0, 100.0) },
-            FloorInfo { position: Vec3::new(2000.0, 1050.0, 1.0), size: Vec2::new(150.0, 100.0) },
+            FloorInfo { position: Vec3::new(-300.0, 1600.0, 1.0), size: Vec2::new(600.0, 300.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(1600.0, 1600.0, 1.0), size: Vec2::new(2600.0, 300.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(3050.0, 700.0, 1.0), size: Vec2::new(300.0, 2100.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(-450.0, 700.0, 1.0), size: Vec2::new(300.0, 2100.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(1050.0, -200.0, 1.0), size: Vec2::new(2700.0, 300.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(2550.0, 350.0, 1.0), size: Vec2::new(300.0, 1500.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(1800.0, 200.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(1400.0, 500.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(1000.0, 400.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(400.0, 650.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(1200.0, 850.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(2000.0, 1050.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None },
         ])
     }
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::Hell2(Hell2Info), floor_info: FloorInfo { position: Vec3::new(2800.0, -300.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
-            TransitionCollider { exit_index: 1, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: FloorInfo { position: Vec3::new(150.0, 1700.0, 2.0), size: Vec2::new(300.0, 200.0) }  }
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::Hell2(Hell2Info), floor_info: EntityInfo { position: Vec3::new(2800.0, -300.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
+            TransitionCollider { exit_index: 1, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: EntityInfo { position: Vec3::new(150.0, 1700.0, 2.0), size: Vec2::new(300.0, 200.0) }  }
         ]))
     }
 
@@ -40,8 +40,8 @@ impl LevelInfo for Hell1Info {
         if cweampuff.progression <= Progression::MetMilk {
             return Some(Box::from([
                 NPC {
-                    floor_info: FloorInfo { position: Vec3::new(2000.0, 0.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                    after_conversation_func: |cweampuff| { cweampuff.has_double_jump = true; },
+                    floor_info: EntityInfo { position: Vec3::new(2000.0, 0.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                    after_conversation_func: |cweampuff, _commands, _breakable_walls| { cweampuff.has_double_jump = true; },
                     conversation: &[
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Wan! Wan!", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wan wan?..", emotion: Emotion::Regular },

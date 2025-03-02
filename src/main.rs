@@ -26,6 +26,7 @@ const CWEAMPUFF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 150.0, 1.0);
 const CWEAMPUFF_JUMP_IMPULSE: f32 = 800.;
 const CWEAMPUFF_DASH_IMPULSE: f32 = 650.;
 pub const CWEAMPUFF_DIAMETER: f32 = 30.;
+pub const CWEAMPUFF_GRAVITY_SCALE: f32 = 1.5;
 
 fn main() {
     let mut app = App::new();
@@ -90,14 +91,14 @@ fn main() {
             cweampuff_dash,
             cweampuff_jump,
             cweampuff_move,
-            cweampuff_camera_adjustment
+            cweampuff_camera_adjustment,
+            level_transition_collision_reader
         ).chain().run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)).run_if(in_state(FadeState::None)))
         .add_systems(FixedUpdate, (
             dash_reset,
             jump_reset,
             velocity_limiter,
             stunlock_reset,
-            level_transition_collision_reader,
             npc_collision_reader,
             interactable_door_collision_reader,
             jump_pad_collision_reader
@@ -122,7 +123,7 @@ fn setup_cweampuff(
             linvel: Vec2::new(0.0, 0.0),
             angvel: 0.,
         },
-        GravityScale(1.5),
+        GravityScale(CWEAMPUFF_GRAVITY_SCALE),
         Friction::coefficient(0.7),
         Collider::ball(0.5),
         Jumper { jump_impulse: CWEAMPUFF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false },

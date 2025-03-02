@@ -5,6 +5,7 @@ pub mod hell_1_layout;
 pub mod hell_2_layout;
 pub mod hell_3_layout;
 pub mod hell_4_layout;
+pub mod cerber_lair_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
@@ -23,31 +24,43 @@ pub struct FloorCollider {
     pub currently_touching_side: Option<CollisionType>
 }
 
+#[derive(Component, Default, Clone, Copy)]
+pub struct BreakableWall {
+    pub index: u32
+}
+
 #[derive(Component, Clone, Copy)]
 pub struct TransitionCollider {
     pub exit_index: u32,
-    pub floor_info: FloorInfo,
+    pub floor_info: EntityInfo,
     pub safe_position: Vec3,
     pub transition_to_level: Level
 }
 
 #[derive(Component, Clone, Copy)]
 pub struct DoorCollider {
-    pub floor_info: FloorInfo,
+    pub floor_info: EntityInfo,
     pub transition_to_level: Level,
     pub safe_position: Vec3,
     pub is_active: bool
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Default)]
 pub struct FloorInfo {
+    pub position: Vec3,
+    pub size: Vec2,
+    pub breakable_wall: Option<BreakableWall>
+}
+
+#[derive(Clone, Copy, Default)]
+pub struct EntityInfo {
     pub position: Vec3,
     pub size: Vec2
 }
 
 #[derive(Component, Clone, Copy)]
 pub struct JumpPad {
-    pub floor_info: FloorInfo
+    pub floor_info: EntityInfo
 }
 
 pub enum FloorModification {

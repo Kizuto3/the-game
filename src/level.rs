@@ -1,14 +1,16 @@
 use bevy::{ecs::observer::TriggerTargets, prelude::*};
 use bevy_rapier2d::prelude::*;
+use level_layout::cerber_lair_layout::CerberLairInfo;
 use level_layout::cweamcat_house_layout::CweamcatHouseInfo;
 use level_layout::hell_1_layout::Hell1Info;
 use level_layout::hell_2_layout::Hell2Info;
 use level_layout::hell_3_layout::Hell3Info;
 use level_layout::hell_4_layout::Hell4Info;
-use level_layout::{DoorCollider, FloorModification};
-use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, FloorInfo, TransitionCollider};
+use level_layout::{DoorCollider, FloorInfo, FloorModification};
+use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, TransitionCollider};
 use transition_states::TransitionState;
 
+use crate::CWEAMPUFF_GRAVITY_SCALE;
 use crate::{camera::get_adjusted_camera_position, interactable::Interactable, npc::NPC, Cweampuff};
 use crate::level::level_layout::LevelInfo;
 
@@ -32,7 +34,8 @@ pub enum Level {
     Hell1(Hell1Info),
     Hell2(Hell2Info),
     Hell3(Hell3Info),
-    Hell4(Hell4Info)
+    Hell4(Hell4Info),
+    CerberLair(CerberLairInfo)
 }
 
 pub struct LevelTransitionInfo {
@@ -72,23 +75,28 @@ pub fn spawn_new_level(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut transition_state: ResMut<NextState<TransitionState>>,
-    mut cweampuff: Single<&mut Transform, (With<Cweampuff>, Without<Camera2d>)>,
+    mut cweampuff: Single<(&mut Transform, &mut GravityScale), (With<Cweampuff>, Without<Camera2d>)>,
     mut camera: Single<&mut Transform, With<Camera2d>>,
     level_layout_query: Query<&LevelLayout, With<LevelLayout>>
 ) {
     for level_layout in level_layout_query.iter() {
         for floor in &level_layout.floor_layout {
-            commands
-            .spawn(RigidBody::Fixed)
-            .insert((
-                Mesh2d(meshes.add(Rectangle::new(floor.size.x, floor.size.y))),
-                MeshMaterial2d(materials.add(FLOOR_COLOR)),
-                Transform::from_translation(floor.position)
-            ))
-            .insert(Collider::cuboid(floor.size.x / 2.0, floor.size.y / 2.0))
-            .insert(Friction::coefficient(0.7))
-            .insert(ActiveEvents::COLLISION_EVENTS)
-            .insert(FloorCollider::default());
+            let mut floor_command = commands.spawn(RigidBody::Fixed);
+
+            floor_command
+                .insert((
+                    Mesh2d(meshes.add(Rectangle::new(floor.size.x, floor.size.y))),
+                    MeshMaterial2d(materials.add(FLOOR_COLOR)),
+                    Transform::from_translation(floor.position)
+                ))
+                .insert(Collider::cuboid(floor.size.x / 2.0, floor.size.y / 2.0))
+                .insert(Friction::coefficient(0.7))
+                .insert(ActiveEvents::COLLISION_EVENTS)
+                .insert(FloorCollider::default());
+
+            if let Some(breakable_wall) = floor.breakable_wall {
+                floor_command.insert(breakable_wall);
+            }
         }
 
         if let Some(transitions) = &level_layout.transition_layout {
@@ -159,16 +167,20 @@ pub fn spawn_new_level(
             }
         }
 
-        if let Some(position) = level_layout.transition_info.transition_to_position {
-            cweampuff.translation = position;
+        let (cweampuff_transform, cweampuff_gravity) = &mut *cweampuff;
 
-            let new_camera_position = get_adjusted_camera_position(&cweampuff, &level_layout_query, None);
+        cweampuff_gravity.0 = CWEAMPUFF_GRAVITY_SCALE;
+
+        if let Some(position) = level_layout.transition_info.transition_to_position {
+            cweampuff_transform.translation = position;
+
+            let new_camera_position = get_adjusted_camera_position(&cweampuff_transform, &level_layout_query, None);
             camera.translation = new_camera_position;
         }
         else if let Some(transition_collider) = level_layout.transition_layout.as_deref().unwrap_or_default().iter().find(|f| f.exit_index == level_layout.transition_info.transition_to_index) {
-            cweampuff.translation = transition_collider.safe_position;
+            cweampuff_transform.translation = transition_collider.safe_position;
 
-            let new_camera_position = get_adjusted_camera_position(&cweampuff, &level_layout_query, None);
+            let new_camera_position = get_adjusted_camera_position(&cweampuff_transform, &level_layout_query, None);
             camera.translation = new_camera_position;
         }
     }
@@ -177,14 +189,14 @@ pub fn spawn_new_level(
 }
 
 pub fn level_transition_collision_reader(
-    mut cweampuff: Single<(Entity, &Cweampuff, &mut Velocity), With<Cweampuff>>,
+    mut cweampuff: Single<(Entity, &Cweampuff, &mut Velocity, &mut GravityScale), With<Cweampuff>>,
     current_level_layout: Query<Entity, With<LevelLayout>>,
     transition_colliders: Query<(Entity, &TransitionCollider), With<TransitionCollider>>,
     mut contact_events: EventReader<CollisionEvent>,
     mut transition_state: ResMut<NextState<TransitionState>>,
     mut commands: Commands,
 ) {
-    let (cweampuff_entity, cweampuff, cweampuff_velocity) = &mut *cweampuff;
+    let (cweampuff_entity, cweampuff, cweampuff_velocity, cweampuff_gravity) = &mut *cweampuff;
     for contact_event in contact_events.read() {
         if let CollisionEvent::Started(h1, h2, _flags) = contact_event {
             for (collider_entity, transition_collider) in transition_colliders.iter() {
@@ -197,6 +209,7 @@ pub fn level_transition_collision_reader(
                     let transition_info = LevelTransitionInfo { transition_to_index: transition_collider.exit_index, transition_to_position: None };
 
                     cweampuff_velocity.linvel = Vec2::new(0., 0.);
+                    cweampuff_gravity.0 = 0.;
                     spawn_level(&mut commands, transition_collider.transition_to_level, cweampuff, transition_info);
                     transition_state.set(TransitionState::Started);
 
@@ -246,7 +259,7 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
-        }
+        },
         Level::CweamcatHouse(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
@@ -256,7 +269,7 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
-        }
+        },
         Level::Hell1(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
@@ -266,7 +279,7 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
-        }
+        },
         Level::Hell2(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
@@ -276,7 +289,7 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
-        }
+        },
         Level::Hell3(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
@@ -286,7 +299,7 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
-        }
+        },
         Level::Hell4(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
@@ -296,6 +309,16 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
                 transition_info
             });
-        }
+        },
+        Level::CerberLair(layout_info) => {
+            commands.spawn(LevelLayout {
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
+                transition_info
+            });
+        },
     }
 }

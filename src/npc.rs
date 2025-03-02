@@ -8,12 +8,14 @@ use conversation_entry::{ConversationEntry, ConversationPosition};
 use conversation_state::ConversationState;
 use dialog_state::DialogState;
 
-use crate::{fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::FloorInfo, Cweampuff};
+use crate::{fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::{BreakableWall, EntityInfo}, Cweampuff};
 
 pub const CWEAMPUFF: &str = "cweampuff";
 pub const OG_CWEAMPUFF: &str = "og cweampuff";
 pub const MILK_ASLEEP: &str = "milk_asleep";
 pub const MINAWAN: &str = "minawan";
+pub const OG_MINAWAN: &str = "og minawan";
+pub const SCIENTIST_MINAWAN: &str = "scientist minawan";
 
 #[derive(Component)]
 pub struct DialogNode;
@@ -33,11 +35,11 @@ pub struct RightCharacterImageNode;
 
 #[derive(Component, Clone)]
 pub struct NPC {
-    pub floor_info: FloorInfo,
+    pub floor_info: EntityInfo,
     pub is_active: bool,
     pub conversation: &'static [ConversationEntry],
     pub current_conversation_index: usize,
-    pub after_conversation_func: fn(&mut Cweampuff)
+    pub after_conversation_func: fn(&mut Cweampuff, &mut Commands, &Query<(Entity, &BreakableWall), (With<BreakableWall>, Without<Camera2d>)>)
 }
 
 pub fn npc_collision_reader(
@@ -194,6 +196,8 @@ pub fn conversation_input_reader(
     mut right_npc_image: Single<&mut ImageNode, (With<RightCharacterImageNode>, Without<LeftCharacterImageNode>)>,
     mut npcs_query: Query<&mut NPC, With<NPC>>,
     mut next_dialog_state: ResMut<NextState<DialogState>>,
+    mut commands: Commands,
+    breakable_walls: Query<(Entity, &BreakableWall), (With<BreakableWall>, Without<Camera2d>)>,
     asset_server: Res<AssetServer>
 ) {
     if let Some(mut npc) = npcs_query.iter_mut().find(|f| f.is_active) {
@@ -214,7 +218,7 @@ pub fn conversation_input_reader(
                     conversation_state.set(ConversationState::Finished);
                     npc.current_conversation_index = 0;
                     next_dialog_state.set(DialogState::None);
-                    (npc.after_conversation_func)(&mut cweampuff);
+                    (npc.after_conversation_func)(&mut cweampuff, &mut commands, &breakable_walls);
 
                     return;
                 }
