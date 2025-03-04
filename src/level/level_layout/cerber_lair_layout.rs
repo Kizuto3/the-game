@@ -43,11 +43,11 @@ impl LevelInfo for CerberLairInfo {
 
     fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
         let mut og_minawan = NPC { floor_info: EntityInfo { position: Vec3::new(0.0, -650.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls| { }
+                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
         };
 
         if cweampuff.progression == Progression::MetMilk {
-            og_minawan.after_conversation_func = |cweampuff, commands, breakable_walls| { 
+            og_minawan.after_conversation_func = |cweampuff, commands, breakable_walls, _cutscene| { 
                 cweampuff.progression = Progression::HasCherish;
 
                 for (entity, wall) in breakable_walls.iter() {
@@ -102,7 +102,7 @@ impl LevelInfo for CerberLairInfo {
         
         let scientist_minawan = NPC { 
             floor_info: EntityInfo { position: Vec3::new(-1550.0, -650.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-            after_conversation_func: |_cweampuff, _commands, _breakable_walls| { },
+            after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
             conversation: &[
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wan! Wan!", emotion: Emotion::Happy },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "...", emotion: Emotion::Regular },

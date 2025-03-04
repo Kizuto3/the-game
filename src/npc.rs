@@ -8,7 +8,7 @@ use conversation_entry::{ConversationEntry, ConversationPosition};
 use conversation_state::ConversationState;
 use dialog_state::DialogState;
 
-use crate::{fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::{BreakableWall, EntityInfo}, Cweampuff};
+use crate::{cutscene::CutsceneEvent, fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::{BreakableWall, EntityInfo}, main_menu::DEFAULT_FONT, Cweampuff};
 
 pub const CWEAMPUFF: &str = "cweampuff";
 pub const COOL_CWEAMPUFF: &str = "cool cweampuff";
@@ -40,7 +40,7 @@ pub struct NPC {
     pub is_active: bool,
     pub conversation: &'static [ConversationEntry],
     pub current_conversation_index: usize,
-    pub after_conversation_func: fn(&mut Cweampuff, &mut Commands, &Query<(Entity, &BreakableWall), (With<BreakableWall>, Without<Camera2d>)>)
+    pub after_conversation_func: fn(&mut Cweampuff, &mut Commands, &Query<(Entity, &BreakableWall), (With<BreakableWall>, Without<Camera2d>)>, &mut EventWriter<CutsceneEvent>)
 }
 
 pub fn npc_collision_reader(
@@ -131,7 +131,7 @@ pub fn spawn_conversation_resources(
                     parent.spawn((
                         Text::new(""),
                         TextFont {
-                            font: asset_server.load("fonts/Shadows Into Light.ttf"),
+                            font: asset_server.load(DEFAULT_FONT),
                             font_size: 50.0,
                             ..default()
                         },
@@ -198,6 +198,7 @@ pub fn conversation_input_reader(
     mut npcs_query: Query<&mut NPC, With<NPC>>,
     mut next_dialog_state: ResMut<NextState<DialogState>>,
     mut commands: Commands,
+    mut cutscene_writer: EventWriter<CutsceneEvent>,
     breakable_walls: Query<(Entity, &BreakableWall), (With<BreakableWall>, Without<Camera2d>)>,
     asset_server: Res<AssetServer>
 ) {
@@ -219,7 +220,7 @@ pub fn conversation_input_reader(
                     conversation_state.set(ConversationState::Finished);
                     npc.current_conversation_index = 0;
                     next_dialog_state.set(DialogState::None);
-                    (npc.after_conversation_func)(&mut cweampuff, &mut commands, &breakable_walls);
+                    (npc.after_conversation_func)(&mut cweampuff, &mut commands, &breakable_walls, &mut cutscene_writer);
 
                     return;
                 }

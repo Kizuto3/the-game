@@ -41,7 +41,7 @@ impl LevelInfo for Hell1Info {
             return Some(Box::from([
                 NPC {
                     floor_info: EntityInfo { position: Vec3::new(2000.0, 0.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                    after_conversation_func: |cweampuff, _commands, _breakable_walls| { cweampuff.has_double_jump = true; },
+                    after_conversation_func: |cweampuff, _commands, _breakable_walls, _cutscene| { cweampuff.has_double_jump = true; },
                     conversation: &[
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Wan! Wan!", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wan wan?..", emotion: Emotion::Regular },

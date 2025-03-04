@@ -12,7 +12,7 @@ use app_states::AppState;
 use bevy::prelude::*;
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collider, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
 use camera::{cweampuff_camera_adjustment, spawn_camera};
-use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, spawn_cutscene_resources, CutsceneEvent};
+use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, despawn_cutscene_resources, spawn_cutscene_resources, CutsceneEvent};
 use fade_in_fade_out::{despawn_fade_in_fade_out_node, fade_in, fade_out, set_fade_in_state, set_fade_out_state, spawn_fade_in_fade_out_node, FadeInFadeOutNode, FadeState};
 use interactable::{despawn_interaction_prompt, interaction_state::InteractionState, spawn_interaction_prompt};
 use level::{despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, floor_modification::jump_pad_collision_reader, level_layout::FloorCollider, level_transition_collision_reader, progression::Progression, spawn_new_level, transition_states::TransitionState};
@@ -55,10 +55,10 @@ fn main() {
 
     // CUTSCENE SYSTEMS
         .add_systems(OnEnter(AppState::Cutscene), spawn_cutscene_resources)
-        .add_systems(FixedUpdate, cutscene_event_reader)
+        .add_systems(Update, cutscene_event_reader)
         .add_systems(Update, cutscene_input_reader.run_if(in_state(AppState::Cutscene)))
         .add_systems(OnEnter(FadeState::FadeInFinished), cutscene_player.run_if(in_state(AppState::Cutscene)))
-        .add_systems(OnExit(AppState::Cutscene), clean_nodes)
+        .add_systems(OnExit(AppState::Cutscene), despawn_cutscene_resources)
 
     // FADE IN FADE OUT SYSTEMS
         .add_systems(OnEnter(FadeState::None), despawn_fade_in_fade_out_node)
@@ -110,15 +110,20 @@ fn setup_cweampuff(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    cweampuff_query: Query<&Cweampuff, With<Cweampuff>>
     //asset_server: Res<AssetServer>,
 ) {
+    if !cweampuff_query.is_empty() {
+        return;
+    }
+
     // Cweampuff
     commands.spawn((
         RigidBody::Dynamic,
         Mesh2d(meshes.add(Circle::default())),
         MeshMaterial2d(materials.add(CWEAMPUFF_COLOR)),
         Transform::from_translation(CWEAMPUFF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUFF_DIAMETER).extend(1.)),
-        Cweampuff { progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false },
+        Cweampuff { progression: Progression::HasCherish, has_double_jump: false, has_wall_jump: false, has_dash: false },
         Velocity {
             linvel: Vec2::new(0.0, 0.0),
             angvel: 0.,
@@ -142,7 +147,7 @@ fn clean_nodes(
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Clone, Copy)]
 struct Cweampuff {
     progression: Progression,
     has_double_jump: bool,

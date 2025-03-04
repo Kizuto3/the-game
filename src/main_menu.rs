@@ -1,6 +1,8 @@
 use bevy::{color::{palettes::css::RED, Color}, prelude::*};
 
-use crate::cutscene::{CutsceneEvent, CutsceneInfo};
+use crate::{cutscene::{CutsceneEvent, CutsceneInfo}, level::{level_layout::starting_room_layout::StartingRoomInfo, Level}};
+
+pub const DEFAULT_FONT: &str = "fonts/Shadows Into Light.ttf";
 
 const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
@@ -50,11 +52,11 @@ pub fn button_interactions_handler(
         if let Interaction::Pressed = *interaction  {
             match action {
                 ButtonAction::StartGame => {
-                    cutscene.send(CutsceneEvent::Started(vec![
-                        CutsceneInfo { text: "This", background: "", bgm: "" },
-                        CutsceneInfo { text: "Is", background: "", bgm: "" },
-                        CutsceneInfo { text: "A cutscene", background: "", bgm: "" },
-                    ]));
+                    cutscene.send(CutsceneEvent::Started(&[
+                        CutsceneInfo { text: "This", background: "npcs/cool cweampuff/Regular.png" },
+                        CutsceneInfo { text: "Is", background: "npcs/cool cweampuff/Sad.png"  },
+                        CutsceneInfo { text: "A cutscene", background: "npcs/cool cweampuff/Regular.png" },
+                    ], Level::StartingRoom(StartingRoomInfo), "vine-boom.mp3"));
                 },
                 ButtonAction::Quit => {
                     exit.send(AppExit::Success);
@@ -99,7 +101,7 @@ pub fn spawn_main_menu_buttons(
                 .with_child((
                     Text::new("Start"),
                     TextFont {
-                        font: asset_server.load("fonts/Shadows Into Light.ttf"),
+                        font: asset_server.load(DEFAULT_FONT),
                         font_size: 33.0,
                         ..default()
                     },
@@ -138,7 +140,7 @@ pub fn spawn_main_menu_buttons(
                 .with_child((
                     Text::new("Quit"),
                     TextFont {
-                        font: asset_server.load("fonts/Shadows Into Light.ttf"),
+                        font: asset_server.load(DEFAULT_FONT),
                         font_size: 33.0,
                         ..default()
                     },

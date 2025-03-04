@@ -68,15 +68,15 @@ impl LevelInfo for CweamcatLairInfo {
         let mut npcs = vec![];
         
         let mut og_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(750.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls| { }
+                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
         };
 
         let mut minawan = NPC { floor_info: EntityInfo { position: Vec3::new(1750.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                        conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls| { }
+                                        conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
         };
 
         let mut cool_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(2050.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls| { }
+                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
         };
 
         match cweampuff.progression {

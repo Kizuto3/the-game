@@ -2,6 +2,8 @@ pub mod interaction_state;
 
 use bevy::prelude::*;
 
+use crate::main_menu::DEFAULT_FONT;
+
 #[derive(Component)]
 pub struct Interactable;
 
@@ -24,7 +26,7 @@ pub fn spawn_interaction_prompt(
                 .spawn((
                     Text::new("[E]: Interact"),
                     TextFont {
-                        font: asset_server.load("fonts/Shadows Into Light.ttf"),
+                        font: asset_server.load(DEFAULT_FONT),
                         font_size: 50.0,
                         ..default()
                     },
