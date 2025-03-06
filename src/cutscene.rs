@@ -1,3 +1,4 @@
+use bevy::asset::{LoadState, UntypedAssetId};
 use bevy::audio::{PlaybackMode, Volume};
 use bevy::ecs::event::{Event, EventReader};
 use bevy::prelude::*;
@@ -12,6 +13,11 @@ use crate::level::{manually_transition_to_level, Level, LevelLayout};
 use crate::main_menu::DEFAULT_FONT;
 use crate::npc::{LeftCharacterImageNode, RightCharacterImageNode};
 use crate::{Cweampuff, CWEAMPUFF_STARTING_POSITION};
+
+#[derive(Component)]
+pub struct LoadingAssets{
+    assets: Vec<UntypedAssetId>
+}
 
 #[derive(Event)]
 pub enum CutsceneEvent {
@@ -38,6 +44,9 @@ pub struct CutsceneText;
 
 #[derive(Component)]
 pub struct CutsceneAudio;
+
+#[derive(Component)]
+pub struct CutsceneBackground;
 
 pub fn cutscene_event_reader(
     mut cutscene_events: EventReader<CutsceneEvent>,
@@ -81,11 +90,11 @@ pub fn cutscene_input_reader(
 pub fn cutscene_player(
     mut cutscene_events: EventWriter<CutsceneEvent>, 
     mut text_query: Query<&mut Text, With<CutsceneText>>,
-    mut background_image: Single<&mut ImageNode, (With<Node>, Without<RightCharacterImageNode>, Without<LeftCharacterImageNode>)>,
+    mut background_image: Single<&mut ImageNode, (With<Node>, With<CutsceneBackground>, Without<RightCharacterImageNode>, Without<LeftCharacterImageNode>)>,
     mut current_cutscene: Single<&mut Cutscene, With<Cutscene>>,
-    mut next_fade_state: ResMut<NextState<FadeState>>,
     cweampuff_query: Query<(&Cweampuff, &Transform), With<Cweampuff>>,
-    asset_server: Res<AssetServer>
+    asset_server: Res<AssetServer>,
+    mut loading_assets: Single<&mut LoadingAssets, With<LoadingAssets>>,
 ) {    
     {
         let current_cutscene_info = match current_cutscene.infos.get(current_cutscene.current_index) {
@@ -109,6 +118,7 @@ pub fn cutscene_player(
         };
 
         background_image.image = asset_server.load(current_cutscene_info.background);
+        loading_assets.assets.push(background_image.image.id().untyped());
 
         for mut text in text_query.iter_mut() {
             **text = current_cutscene_info.text.to_string();
@@ -116,8 +126,27 @@ pub fn cutscene_player(
     }
     
     current_cutscene.current_index += 1;
+}
 
-    next_fade_state.set(FadeState::FadeOut);
+pub fn wait_for_resources_to_load(
+    server: Res<AssetServer>,
+    mut loading_assets: Single<&mut LoadingAssets, With<LoadingAssets>>,
+    mut next_fade_state: ResMut<NextState<FadeState>>,
+) {
+    if loading_assets.assets.iter().all(|res| 
+        if let Some(state) = server.get_load_state(*res) {
+            match state {
+                LoadState::Loaded | LoadState::Failed(_) => return true,
+                _ => return false
+            }
+        }
+        else {
+            return true;
+        }
+    ) {
+        loading_assets.assets.clear();
+        next_fade_state.set(FadeState::FadeOut);
+    }
 }
 
 pub fn spawn_cutscene_resources(
@@ -129,27 +158,43 @@ pub fn spawn_cutscene_resources(
         .spawn((
             ImageNode::default()
             .with_mode(NodeImageMode::Stretch),
+            CutsceneBackground,
             Node {
                 width: Val::Percent(100.0),
                 height: Val::Percent(100.0),
                 align_items: AlignItems::Default,
+                position_type: PositionType::Absolute,
                 justify_content: JustifyContent::Center,
                 ..default()
             }
         ))
         .with_children(|parent| {
             parent
-                .spawn((
-                    Text::new(""),
-                    CutsceneText,
-                    TextFont {
-                        font: asset_server.load(DEFAULT_FONT),
-                        font_size: 33.0,
+                .spawn(
+                    Node {
+                        width: Val::Percent(100.0),
+                        height: Val::Percent(15.0),
+                        top: Val::Percent(85.0),
+                        left: Val::Percent(0.),
+                        position_type: PositionType::Absolute,
+                        align_items: AlignItems::Default,
+                        justify_content: JustifyContent::Center,
                         ..default()
-                    },
-                    TextColor(Color::srgb(0.9, 0.9, 0.9)),
-                ));
-        });
+                })
+                .with_children(|parent| {
+                    parent
+                        .spawn((
+                            Text::new(""),
+                            CutsceneText,
+                            TextFont {
+                                font: asset_server.load(DEFAULT_FONT),
+                                font_size: 33.0,
+                                ..default()
+                            },
+                            TextColor(Color::srgb(0.9, 0.9, 0.9))
+                        ));
+                });
+    });
 
     let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.2));
     playback_settings.mode = PlaybackMode::Once;
@@ -159,12 +204,15 @@ pub fn spawn_cutscene_resources(
         CutsceneAudio,
         playback_settings
     ));
+
+    commands.spawn(LoadingAssets { assets: vec![] });
 }
 
 pub fn despawn_cutscene_resources(
     mut commands: Commands,
     nodes: Query<Entity, (With<Node>, Without<Camera2d>, Without<FadeInFadeOutNode>)>,
     cutsnenes: Query<Entity, (With<Cutscene>, Without<Node>)>,
+    loading_assets: Query<Entity, (With<LoadingAssets>, Without<Node>)>,
     audio_players: Query<Entity, (With<AudioPlayer>, With<CutsceneAudio>)>
 ) {
     for entity in nodes.iter() {
@@ -176,6 +224,10 @@ pub fn despawn_cutscene_resources(
     }
 
     for entity in audio_players.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+
+    for entity in loading_assets.iter() {
         commands.entity(entity).despawn_recursive();
     }
 }

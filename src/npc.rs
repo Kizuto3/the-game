@@ -14,6 +14,7 @@ pub const CWEAMPUFF: &str = "cweampuff";
 pub const COOL_CWEAMPUFF: &str = "cool cweampuff";
 pub const OG_CWEAMPUFF: &str = "og cweampuff";
 pub const MILK_ASLEEP: &str = "milk_asleep";
+pub const MILK: &str = "milk";
 pub const MINAWAN: &str = "minawan";
 pub const OG_MINAWAN: &str = "og minawan";
 pub const SCIENTIST_MINAWAN: &str = "scientist minawan";
