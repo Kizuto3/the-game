@@ -18,6 +18,7 @@ pub const MILK: &str = "milk";
 pub const MINAWAN: &str = "minawan";
 pub const OG_MINAWAN: &str = "og minawan";
 pub const SCIENTIST_MINAWAN: &str = "scientist minawan";
+pub const CREW_MEMBER_1: &str = "crew member 1";
 
 #[derive(Component)]
 pub struct DialogNode;

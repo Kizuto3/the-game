@@ -6,6 +6,7 @@ use level_layout::hell_1_layout::Hell1Info;
 use level_layout::hell_2_layout::Hell2Info;
 use level_layout::hell_3_layout::Hell3Info;
 use level_layout::hell_4_layout::Hell4Info;
+use level_layout::spaceship_1_layout::Spaceship1Info;
 use level_layout::{DoorCollider, FloorInfo, FloorModification};
 use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, TransitionCollider};
 use transition_states::TransitionState;
@@ -35,7 +36,8 @@ pub enum Level {
     Hell2(Hell2Info),
     Hell3(Hell3Info),
     Hell4(Hell4Info),
-    CerberLair(CerberLairInfo)
+    CerberLair(CerberLairInfo),
+    Spaceship1(Spaceship1Info)
 }
 
 pub struct LevelTransitionInfo {
@@ -315,6 +317,16 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
             });
         },
         Level::CerberLair(layout_info) => {
+            commands.spawn(LevelLayout {
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
+                transition_info
+            });
+        },
+        Level::Spaceship1(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),

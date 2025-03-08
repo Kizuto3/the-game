@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{level_layout::{cweamcat_house_layout::CweamcatHouseInfo, hell_1_layout::Hell1Info, starting_room_layout::StartingRoomInfo}, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, MINAWAN, NPC, OG_CWEAMPUFF}};
 
-use super::{cerber_lair_layout::CerberLairInfo, DoorCollider, EntityInfo, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{cerber_lair_layout::CerberLairInfo, spaceship_1_layout::Spaceship1Info, DoorCollider, EntityInfo, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct CweamcatLairInfo;
@@ -34,6 +34,10 @@ impl LevelInfo for CweamcatLairInfo {
             floors.push(FloorInfo { position: Vec3::new(150.0, -350.0, 2.0), size: Vec2::new(300.0, 300.0), breakable_wall: None });
         }
 
+        if cweampuff.progression < Progression::MilkWokeUp {
+            floors.push(FloorInfo { position: Vec3::new(2450.0, 1600.0, 2.0), size: Vec2::new(300.0, 300.0), breakable_wall: None });
+        }
+
         floors.into_boxed_slice()
     }
 
@@ -51,6 +55,12 @@ impl LevelInfo for CweamcatLairInfo {
         if cweampuff.progression >= Progression::HasCherish {
             transitions.push(
                 TransitionCollider { exit_index: 2, safe_position: Vec3::new(350.0, -50.0, 1.0), transition_to_level: Level::CerberLair(CerberLairInfo), floor_info: EntityInfo { position: Vec3::new(150.0, -350.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
+            );
+        }
+
+        if cweampuff.progression >= Progression::MilkWokeUp {
+            transitions.push(
+                TransitionCollider { exit_index: 3, safe_position: Vec3::new(2450.0, 1550.0, 1.0), transition_to_level: Level::Spaceship1(Spaceship1Info), floor_info: EntityInfo { position: Vec3::new(2450.0, 1700.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
             );
         }
 
@@ -164,7 +174,7 @@ impl LevelInfo for CweamcatLairInfo {
                     ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "I thought our family would grow bigger.", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "But for each new cweampuff, old one would leave.", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "It hurt to see, and in my own sadness I would forget to talk to her.", emotion: Emotion::Sad },
-                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "I didn't even realise that it hurt her even more.", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "I didn't even realize that it hurt her even more.", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Did she...", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Did she think we didn't need her anymore?", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "No! Old Cweampuff! That can't be!", emotion: Emotion::Sad },
