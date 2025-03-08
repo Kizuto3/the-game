@@ -70,7 +70,7 @@ impl LevelInfo for Hell1Info {
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "I'm sure other minawan can help you with your hidden gem!", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Thank you! I will! Wan wan!", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "WAN! WAN!", emotion: Emotion::Happy },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "*** Seing how Minawan adores his rising star fills you with excitment! You want jump even when you are in the air ***", emotion: Emotion::Happy },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "*** Seeing how Minawan adores his rising star fills you with excitement! You want jump even when you are in the air ***", emotion: Emotion::Happy },
                     ]
                 }
             ]))

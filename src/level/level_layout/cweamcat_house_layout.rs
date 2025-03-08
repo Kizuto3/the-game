@@ -86,7 +86,7 @@ impl LevelInfo for CweamcatHouseInfo {
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "Miruku...", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK_ASLEEP, text: "...", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "You know, I've come to these lands looking for something...", emotion: Emotion::Regular },
-                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Something to give me joy... Something to give me hapiness...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Something to give me joy... Something to give me happiness...", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "At my 'home' I didn't feel quite right.", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "A lot things didn't go my way.", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "That's when I've heard of the legend of a hidden gem.", emotion: Emotion::Regular },
@@ -94,7 +94,7 @@ impl LevelInfo for CweamcatHouseInfo {
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Now I know, I was looking for you!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK_ASLEEP, text: "...", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "Miruku... I'm sorry.", emotion: Emotion::Sad },
-                    ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "For some reason, I just assumed you will always be with us.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "For some reason, I just assumed you would always be with us.", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "I forgot to show you what you mean to us... What you mean to me...", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "I'm sorry...", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK_ASLEEP, text: "...", emotion: Emotion::Regular },
@@ -115,7 +115,7 @@ impl LevelInfo for CweamcatHouseInfo {
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Please... Wake up...", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK_ASLEEP, text: "...", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "Miruku...", emotion: Emotion::Sad },
-                    ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "There is no one, not a single soul that can replace you.", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "There is no one, not a single soul, that can replace you.", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "I promise, I will always be there for you no matter what.", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "We will make you happy!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "We will never leave you!", emotion: Emotion::Happy },
@@ -135,7 +135,7 @@ impl LevelInfo for CweamcatHouseInfo {
                     }
 
                     cutscene.send(CutsceneEvent::Started(&[
-                        CutsceneInfo { text: "Milk is still sleaping", background: "cutscenes/milk wakes up/1.png" },
+                        CutsceneInfo { text: "Milk is still sleeping", background: "cutscenes/milk wakes up/1.png" },
                         CutsceneInfo { text: "Milk slightly opens her eye", background: "cutscenes/milk wakes up/2.png" },
                         CutsceneInfo { text: "Milk wakes up", background: "cutscenes/milk wakes up/3.png" },
                     ], Level::CweamcatHouse(CweamcatHouseInfo), "vine-boom.mp3"));
@@ -165,7 +165,7 @@ impl LevelInfo for CweamcatHouseInfo {
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "You were asleep for so long!", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I made you worried, didn't I?", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I'm sorry, Old Cweampuff.", emotion: Emotion::Sad },
-                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I've your voices while I was dreaming.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I heard your voices while I was dreaming.", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Thank you! Both of you!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "I'm the one who should apologize...", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "You have nothing to apologize for, Old Cweampuff.", emotion: Emotion::Regular },
@@ -178,7 +178,7 @@ impl LevelInfo for CweamcatHouseInfo {
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "Oh, Miruku!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "...", emotion: Emotion::Surprised },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Thank you too, Cweampuff.", emotion: Emotion::Happy },
-                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "You've gone on quite a jorney to wake me up.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "You've gone on quite a journey to wake me up.", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "And I would do it again!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I'm so happy!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "You guys are so cute!.", emotion: Emotion::Happy },
