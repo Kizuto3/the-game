@@ -20,7 +20,6 @@ use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_
 use movement::*;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
 
-const CWEAMPUFF_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
 // We set the z-value of the ball to 1 so it renders on top in the case of overlapping sprites.
 const CWEAMPUFF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 150.0, 1.0);
 const CWEAMPUFF_JUMP_IMPULSE: f32 = 800.;
@@ -109,22 +108,27 @@ fn main() {
 
 fn setup_cweampuff(
     mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-    cweampuff_query: Query<&Cweampuff, With<Cweampuff>>
-    //asset_server: Res<AssetServer>,
+    cweampuff_query: Query<&Cweampuff, With<Cweampuff>>,
+    asset_server: Res<AssetServer>,
 ) {
     if !cweampuff_query.is_empty() {
         return;
     }
 
+    let tile_handle = asset_server.load("npcs/cweampuff/Model.png");
+
     // Cweampuff
     commands.spawn((
         RigidBody::Dynamic,
-        Mesh2d(meshes.add(Circle::default())),
-        MeshMaterial2d(materials.add(CWEAMPUFF_COLOR)),
         Transform::from_translation(CWEAMPUFF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUFF_DIAMETER).extend(1.)),
-        Cweampuff { progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false },
+        Cweampuff { progression: Progression::None, has_double_jump: true, has_wall_jump: true, has_dash: true },
+        Sprite {
+            image: tile_handle,
+            anchor: bevy::sprite::Anchor::Center,
+            custom_size: Some(Vec2::new(1.42, 1.)),
+            image_mode: SpriteImageMode::Auto,
+            ..default()
+        },
         Velocity {
             linvel: Vec2::new(0.0, 0.0),
             angvel: 0.,

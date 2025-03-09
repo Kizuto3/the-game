@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{cutscene::{CutsceneEvent, CutsceneInfo}, level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, MILK, MILK_ASLEEP, NPC, OG_CWEAMPUFF}};
 
-use super::{DoorCollider, EntityInfo, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct CweamcatHouseInfo;
@@ -10,10 +10,10 @@ pub struct CweamcatHouseInfo;
 impl LevelInfo for CweamcatHouseInfo {
     fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Box<[FloorInfo]> {
         Box::from([
-            FloorInfo { position: Vec3::new(-1200.0, 0.0, 1.0), size: Vec2::new(400.0, 1500.0), breakable_wall: None },
-            FloorInfo { position: Vec3::new(0.0, 600.0, 1.0), size: Vec2::new(2000.0, 400.0), breakable_wall: None},
-            FloorInfo { position: Vec3::new(1200.0, 0.0, 1.0), size: Vec2::new(400.0, 1500.0), breakable_wall: None },
-            FloorInfo { position: Vec3::new(0.0, -600.0, 1.0), size: Vec2::new(2000.0, 400.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(-1200.0, 0.0, 1.0), size: Vec2::new(400.0, 1500.0), breakable_wall: None, floor_asset: FloorAssetType::CweamcatHouse },
+            FloorInfo { position: Vec3::new(0.0, 600.0, 1.0), size: Vec2::new(2000.0, 400.0), breakable_wall: None, floor_asset: FloorAssetType::CweamcatHouse },
+            FloorInfo { position: Vec3::new(1200.0, 0.0, 1.0), size: Vec2::new(400.0, 1500.0), breakable_wall: None, floor_asset: FloorAssetType::CweamcatHouse },
+            FloorInfo { position: Vec3::new(0.0, -600.0, 1.0), size: Vec2::new(2000.0, 400.0), breakable_wall: None, floor_asset: FloorAssetType::CweamcatHouse },
         ])
     }
 

@@ -7,7 +7,7 @@ use level_layout::hell_2_layout::Hell2Info;
 use level_layout::hell_3_layout::Hell3Info;
 use level_layout::hell_4_layout::Hell4Info;
 use level_layout::spaceship_1_layout::Spaceship1Info;
-use level_layout::{DoorCollider, FloorInfo, FloorModification};
+use level_layout::{DoorCollider, FloorAssetType, FloorInfo, FloorModification};
 use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, TransitionCollider};
 use transition_states::TransitionState;
 
@@ -24,7 +24,6 @@ pub mod floor_modification;
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
 const NPC_COLOR: Color = Color::srgb(0.5, 0.5, 1.0);
 const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);
-const FLOOR_COLOR: Color = Color::srgb(1.0, 0.5, 0.5);
 const JUMP_PAD_COLOR: Color = Color::srgb(0.2, 0.9, 0.9);
 
 #[derive(Clone, Copy)]
@@ -83,22 +82,40 @@ pub fn spawn_new_level(
     mut transition_state: ResMut<NextState<TransitionState>>,
     mut cweampuff: Single<(&mut Transform, &mut GravityScale), (With<Cweampuff>, Without<Camera2d>)>,
     mut camera: Single<&mut Transform, With<Camera2d>>,
-    level_layout_query: Query<&LevelLayout, With<LevelLayout>>
+    level_layout_query: Query<&LevelLayout, With<LevelLayout>>,
+    asset_server: Res<AssetServer>,
 ) {
     for level_layout in level_layout_query.iter() {
         for floor in &level_layout.floor_layout {
-            let mut floor_command = commands.spawn(RigidBody::Fixed);
 
-            floor_command
-                .insert((
-                    Mesh2d(meshes.add(Rectangle::new(floor.size.x, floor.size.y))),
-                    MeshMaterial2d(materials.add(FLOOR_COLOR)),
-                    Transform::from_translation(floor.position)
-                ))
-                .insert(Collider::cuboid(floor.size.x / 2.0, floor.size.y / 2.0))
-                .insert(Friction::coefficient(0.7))
-                .insert(ActiveEvents::COLLISION_EVENTS)
-                .insert(FloorCollider::default());
+            let tile_handle = match floor.floor_asset {
+                FloorAssetType::Forest => asset_server.load("tiles/Forest.png"),
+                FloorAssetType::CweamcatHouse => asset_server.load("tiles/CweamcatHouse.png"),
+                FloorAssetType::Hell => asset_server.load("tiles/Hell.png"),
+                FloorAssetType::Spaceship => asset_server.load("tiles/Spaceship.png"),
+            };
+
+            let mut floor_command = commands.spawn((
+                RigidBody::Fixed,
+                Transform::from_translation(floor.position),
+                Sprite {
+                    image: tile_handle,
+                    anchor: bevy::sprite::Anchor::Center,
+                    custom_size: Some(Vec2::new(floor.size.x, floor.size.y)),
+                    image_mode: SpriteImageMode::Sliced(TextureSlicer {
+                        border: BorderRect { left: 18., right: 15., top: 38., bottom: 11. },
+                        center_scale_mode: SliceScaleMode::Tile { stretch_value: 1. },
+                        sides_scale_mode: SliceScaleMode::Tile { stretch_value: 1. },
+                        max_corner_scale: 1.0,
+                        ..default()
+                    }),
+                    ..default()
+                },
+                Collider::cuboid(floor.size.x / 2.0, floor.size.y / 2.0),
+                Friction::coefficient(0.7),
+                ActiveEvents::COLLISION_EVENTS,
+                FloorCollider::default()
+            ));
 
             if let Some(breakable_wall) = floor.breakable_wall {
                 floor_command.insert(breakable_wall);

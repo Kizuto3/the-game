@@ -34,9 +34,9 @@ pub struct Movable {
 
 pub fn cweampuff_move(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut cweampuff_transform_velocity: Single<(&mut Velocity, &mut Movable), With<Cweampuff>>
+    mut cweampuff_transform_velocity: Single<(&mut Velocity, &mut Movable, &mut Sprite), With<Cweampuff>>
 ) {
-    let (cweampuff_velocity, cweampuff_movable) = &mut *cweampuff_transform_velocity;
+    let (cweampuff_velocity, cweampuff_movable, sprite) = &mut *cweampuff_transform_velocity;
 
     if cweampuff_movable.is_stunlocked {
         return;
@@ -53,6 +53,7 @@ pub fn cweampuff_move(
         }
 
         cweampuff_movable.facing_right = false;
+        sprite.flip_x = true;
 
         let new_velocity = -CWEAMPUFF_SPEED;
 
@@ -68,6 +69,7 @@ pub fn cweampuff_move(
         }
 
         cweampuff_movable.facing_right = true;
+        sprite.flip_x = false;
 
         let new_velocity = CWEAMPUFF_SPEED;
 

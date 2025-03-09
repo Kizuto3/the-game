@@ -20,6 +20,15 @@ pub enum CollisionType {
     Ceiling
 }
 
+#[derive(Clone, Copy, Default)]
+pub enum FloorAssetType {
+    #[default]
+    Forest,
+    CweamcatHouse,
+    Hell,
+    Spaceship,
+}
+
 #[derive(Component, Default)]
 pub struct FloorCollider {
     pub currently_touching_side: Option<CollisionType>
@@ -50,7 +59,8 @@ pub struct DoorCollider {
 pub struct FloorInfo {
     pub position: Vec3,
     pub size: Vec2,
-    pub breakable_wall: Option<BreakableWall>
+    pub breakable_wall: Option<BreakableWall>,
+    pub floor_asset: FloorAssetType
 }
 
 #[derive(Clone, Copy, Default)]

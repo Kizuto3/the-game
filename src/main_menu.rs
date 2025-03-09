@@ -53,9 +53,12 @@ pub fn button_interactions_handler(
             match action {
                 ButtonAction::StartGame => {
                     cutscene.send(CutsceneEvent::Started(&[
-                        CutsceneInfo { text: "This", background: "npcs/cool cweampuff/Regular.png" },
-                        CutsceneInfo { text: "Is", background: "npcs/cool cweampuff/Sad.png"  },
-                        CutsceneInfo { text: "A cutscene", background: "npcs/cool cweampuff/Regular.png" },
+                        CutsceneInfo { text: "The legend has it...", background: "npcs/cool cweampuff/Regular.png" },
+                        CutsceneInfo { text: "Somewhere in these lands, there is a hidden gem.", background: "npcs/cool cweampuff/Sad.png"  },
+                        CutsceneInfo { text: "Capable of giving eternal happiness to those who find it.", background: "npcs/cool cweampuff/Regular.png" },
+                        CutsceneInfo { text: "A brave cweampuff decided to look for her...", background: "npcs/cool cweampuff/Regular.png" },
+                        CutsceneInfo { text: "*** Cweampuff walking on a bridge ****", background: "npcs/cool cweampuff/Regular.png" },
+                        CutsceneInfo { text: "*** The bridge collapses and they fall ****", background: "npcs/cool cweampuff/Regular.png" },
                     ], Level::StartingRoom(StartingRoomInfo), "vine-boom.mp3"));
                 },
                 ButtonAction::Quit => {

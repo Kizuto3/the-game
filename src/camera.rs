@@ -11,7 +11,7 @@ const CAMERA_DECAY_RATE: f32 = 10.;
 //pub struct BackgroundComponent;
 
 #[derive(Component)]
-pub struct CameraUpDownMovalbe {
+pub struct CameraUpDownMovable {
     look_up_down_invoke_threshold: f32,
     look_up_down_duration: f32,
     camera_offset: f32,
@@ -30,8 +30,7 @@ pub fn spawn_camera (
         Camera{
             ..default()
         },
-        Transform::from_translation(CAMERA_TRANSFORM),
-        CameraUpDownMovalbe { look_up_down_duration: 0., look_up_down_invoke_threshold: 0.3, camera_offset: 360. },
+        CameraUpDownMovable { look_up_down_duration: 0., look_up_down_invoke_threshold: 0.3, camera_offset: 360. },
         projection
     ));
 
@@ -52,7 +51,7 @@ pub fn spawn_camera (
 pub fn cweampuff_camera_adjustment(
     keyboard_input: Res<ButtonInput<KeyCode>>, 
     cweampuff: Single<&Transform, (With<Cweampuff>, Without<Camera2d>)>,
-    mut camera: Single<(&mut Transform, &mut CameraUpDownMovalbe), With<Camera2d>>,
+    mut camera: Single<(&mut Transform, &mut CameraUpDownMovable), With<Camera2d>>,
     //mut background: Single<&mut Transform, (With<BackgroundComponent>, Without<Camera2d>, Without<Cweampuff>)>,
     level_layout_query: Query<&LevelLayout, With<LevelLayout>>,
     time: Res<Time>,

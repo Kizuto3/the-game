@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, NPC, OG_MINAWAN, SCIENTIST_MINAWAN}};
 
-use super::{hell_4_layout::Hell4Info, BreakableWall, DoorCollider, EntityInfo, FloorInfo, FloorModification, JumpPad, LevelInfo, TransitionCollider};
+use super::{hell_4_layout::Hell4Info, BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, JumpPad, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct CerberLairInfo;
@@ -10,20 +10,20 @@ pub struct CerberLairInfo;
 impl LevelInfo for CerberLairInfo {
     fn get_floor_info(&self, cweampuff: &crate::Cweampuff) -> Box<[FloorInfo]> {
         let mut floors = vec![
-            FloorInfo { position: Vec3::new(-2000.0, 0.0, 1.0), size: Vec2::new(300.0, 2000.0), breakable_wall: None },
-            FloorInfo { position: Vec3::new(2000.0, 500.0, 1.0), size: Vec2::new(300.0, 2000.0), breakable_wall: None },
-            FloorInfo { position: Vec3::new(0.0, -850.0, 1.0), size: Vec2::new(4300.0, 300.0), breakable_wall: None },
-            FloorInfo { position: Vec3::new(-100.0, 850.0, 1.0), size: Vec2::new(3500.0, 300.0), breakable_wall: None },
-            FloorInfo { position: Vec3::new(1450.0, -450.0, 1.0), size: Vec2::new(200.0, 100.0), breakable_wall: None },
-            FloorInfo { position: Vec3::new(950.0, -150.0, 1.0), size: Vec2::new(200.0, 100.0), breakable_wall: None },
-            FloorInfo { position: Vec3::new(1750.0, -50.0, 1.0), size: Vec2::new(200.0, 100.0), breakable_wall: None },
-            FloorInfo { position: Vec3::new(-1550.0, 0.0, 1.0), size: Vec2::new(1000.0, 100.0), breakable_wall: None },
-            FloorInfo { position: Vec3::new(-1000.0, -250.0, 1.0), size: Vec2::new(100.0, 600.0), breakable_wall: None },
+            FloorInfo { position: Vec3::new(-2000.0, 0.0, 1.0), size: Vec2::new(300.0, 2000.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(2000.0, 500.0, 1.0), size: Vec2::new(300.0, 2000.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(0.0, -850.0, 1.0), size: Vec2::new(4300.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(-100.0, 850.0, 1.0), size: Vec2::new(3500.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(1450.0, -450.0, 1.0), size: Vec2::new(200.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(950.0, -150.0, 1.0), size: Vec2::new(200.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(1750.0, -50.0, 1.0), size: Vec2::new(200.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(-1550.0, 0.0, 1.0), size: Vec2::new(1000.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(-1000.0, -250.0, 1.0), size: Vec2::new(100.0, 600.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
         ];
 
         if cweampuff.progression < Progression::HasCherish {
             floors.push(
-                FloorInfo { position: Vec3::new(1750.0, 800.0, 2.0), size: Vec2::new(300.0, 200.0), breakable_wall: Some(BreakableWall { index: 0 }) }
+                FloorInfo { position: Vec3::new(1750.0, 800.0, 2.0), size: Vec2::new(300.0, 200.0), breakable_wall: Some(BreakableWall { index: 0 }), floor_asset: FloorAssetType::Hell }
             );
         }
 
