@@ -121,7 +121,7 @@ fn setup_cweampuff(
     commands.spawn((
         RigidBody::Dynamic,
         Transform::from_translation(CWEAMPUFF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUFF_DIAMETER).extend(1.)),
-        Cweampuff { progression: Progression::None, has_double_jump: true, has_wall_jump: true, has_dash: true },
+        Cweampuff { progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false },
         Sprite {
             image: tile_handle,
             anchor: bevy::sprite::Anchor::Center,
