@@ -7,6 +7,7 @@ pub mod hell_3_layout;
 pub mod hell_4_layout;
 pub mod cerber_lair_layout;
 pub mod spaceship_1_layout;
+pub mod spaceship_2_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
