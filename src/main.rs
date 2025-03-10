@@ -20,8 +20,10 @@ use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_
 use movement::*;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
 
-// We set the z-value of the ball to 1 so it renders on top in the case of overlapping sprites.
-const CWEAMPUFF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 150.0, 1.0);
+// We set the z-value of Cweampuff to 2 so it renders on top in the case of overlapping sprites.
+
+pub const CWEAMPUFF_Z_INDEX: f32 = 2.0;
+const CWEAMPUFF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 150.0, CWEAMPUFF_Z_INDEX);
 const CWEAMPUFF_JUMP_IMPULSE: f32 = 800.;
 const CWEAMPUFF_DASH_IMPULSE: f32 = 650.;
 pub const CWEAMPUFF_DIAMETER: f32 = 30.;
@@ -99,6 +101,7 @@ fn main() {
             jump_reset,
             velocity_limiter,
             stunlock_reset,
+            cweampuff_asset_direction_monitor,
             npc_collision_reader,
             interactable_door_collision_reader,
             jump_pad_collision_reader
@@ -115,15 +118,15 @@ fn setup_cweampuff(
         return;
     }
 
-    let tile_handle = asset_server.load("npcs/cweampuff/Model.png");
+    let cweampuff_model_handle = asset_server.load("npcs/cweampuff/Model.png");
 
     // Cweampuff
     commands.spawn((
         RigidBody::Dynamic,
-        Transform::from_translation(CWEAMPUFF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUFF_DIAMETER).extend(1.)),
-        Cweampuff { progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false },
+        Transform::from_translation(CWEAMPUFF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUFF_DIAMETER).extend(CWEAMPUFF_Z_INDEX)),
+        Cweampuff { progression: Progression::None, has_double_jump: true, has_wall_jump: true, has_dash: true },
         Sprite {
-            image: tile_handle,
+            image: cweampuff_model_handle,
             anchor: bevy::sprite::Anchor::Center,
             custom_size: Some(Vec2::new(1.42, 1.)),
             image_mode: SpriteImageMode::Auto,
@@ -137,9 +140,9 @@ fn setup_cweampuff(
         Friction::coefficient(0.7),
         Collider::ball(0.5),
         Jumper { jump_impulse: CWEAMPUFF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false },
-        Dasher { dash_impulse: CWEAMPUFF_DASH_IMPULSE, dash_cooldown: 1., time_passed_since_dash: 0. },
+        Dasher { is_dash_available: false, dash_impulse: CWEAMPUFF_DASH_IMPULSE, dash_cooldown: 0.5, time_passed_since_dash: 0. },
         LockedAxes::ROTATION_LOCKED,
-        Movable { facing_right: true, hugging_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },
+        Movable { touching_ground: false, facing_right: true, hugging_left_wall: false, hugging_right_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },
     ));
 }
 

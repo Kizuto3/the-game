@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::{level_layout::{cweamcat_house_layout::CweamcatHouseInfo, hell_1_layout::Hell1Info, starting_room_layout::StartingRoomInfo}, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, MINAWAN, NPC, OG_CWEAMPUFF}};
+use crate::{level::{level_layout::{cweamcat_house_layout::CweamcatHouseInfo, hell_1_layout::Hell1Info, starting_room_layout::StartingRoomInfo}, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, MINAWAN, NPC, OG_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
 
 use super::{cerber_lair_layout::CerberLairInfo, spaceship_1_layout::Spaceship1Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
@@ -43,24 +43,24 @@ impl LevelInfo for CweamcatLairInfo {
 
     fn get_transitions_info(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         let mut transitions = vec![
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(-350.0, 870.0, 1.0), transition_to_level: Level::StartingRoom(StartingRoomInfo), floor_info: EntityInfo { position: Vec3::new(-500.0, 950.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(-350.0, 870.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::StartingRoom(StartingRoomInfo), floor_info: EntityInfo { position: Vec3::new(-500.0, 950.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
         ];
 
         if cweampuff.progression >= Progression::MetMilk {
             transitions.push(
-                TransitionCollider { exit_index: 1, safe_position: Vec3::new(2200.0, -50.0, 1.0), transition_to_level: Level::Hell1(Hell1Info), floor_info: EntityInfo { position: Vec3::new(2450.0, -350.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
+                TransitionCollider { exit_index: 1, safe_position: Vec3::new(2200.0, -50.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Hell1(Hell1Info), floor_info: EntityInfo { position: Vec3::new(2450.0, -350.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
             );
         }
 
         if cweampuff.progression >= Progression::HasCherish {
             transitions.push(
-                TransitionCollider { exit_index: 2, safe_position: Vec3::new(350.0, -50.0, 1.0), transition_to_level: Level::CerberLair(CerberLairInfo), floor_info: EntityInfo { position: Vec3::new(150.0, -350.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
+                TransitionCollider { exit_index: 2, safe_position: Vec3::new(350.0, -50.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::CerberLair(CerberLairInfo), floor_info: EntityInfo { position: Vec3::new(150.0, -350.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
             );
         }
 
         if cweampuff.progression >= Progression::MilkWokeUp {
             transitions.push(
-                TransitionCollider { exit_index: 3, safe_position: Vec3::new(2450.0, 1550.0, 1.0), transition_to_level: Level::Spaceship1(Spaceship1Info), floor_info: EntityInfo { position: Vec3::new(2450.0, 1700.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
+                TransitionCollider { exit_index: 3, safe_position: Vec3::new(2450.0, 1550.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship1(Spaceship1Info), floor_info: EntityInfo { position: Vec3::new(2450.0, 1700.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
             );
         }
 
@@ -70,7 +70,7 @@ impl LevelInfo for CweamcatLairInfo {
     fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
         Some(Box::from([
             DoorCollider { floor_info: EntityInfo { position: Vec3 { x: 1350., y: -50., z: 0.0 }, size: Vec2 { x: 100., y: 200. } },
-                transition_to_level: Level::CweamcatHouse(CweamcatHouseInfo), safe_position: Vec3 { x: -750.0, y: -375.0, z: 1.0 }, is_active: false }
+                transition_to_level: Level::CweamcatHouse(CweamcatHouseInfo), safe_position: Vec3 { x: -750.0, y: -375.0, z: CWEAMPUFF_Z_INDEX }, is_active: false }
         ]))
     }
     

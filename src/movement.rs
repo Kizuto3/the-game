@@ -18,6 +18,7 @@ pub struct Jumper {
 
 #[derive(Component)]
 pub struct Dasher {
+    pub is_dash_available: bool,
     pub dash_impulse: f32,
     pub dash_cooldown: f32,
     pub time_passed_since_dash: f32
@@ -26,7 +27,9 @@ pub struct Dasher {
 #[derive(Component)]
 pub struct Movable {
     pub facing_right: bool,
-    pub hugging_wall: bool,
+    pub hugging_left_wall: bool,
+    pub hugging_right_wall: bool,
+    pub touching_ground: bool,
     pub is_stunlocked: bool,
     pub stun_duration: f32,
     pub time_passed_since_stun: f32
@@ -34,9 +37,9 @@ pub struct Movable {
 
 pub fn cweampuff_move(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut cweampuff_transform_velocity: Single<(&mut Velocity, &mut Movable, &mut Sprite), With<Cweampuff>>
+    mut cweampuff_transform_velocity: Single<(&mut Velocity, &mut Movable), With<Cweampuff>>
 ) {
-    let (cweampuff_velocity, cweampuff_movable, sprite) = &mut *cweampuff_transform_velocity;
+    let (cweampuff_velocity, cweampuff_movable) = &mut *cweampuff_transform_velocity;
 
     if cweampuff_movable.is_stunlocked {
         return;
@@ -47,13 +50,12 @@ pub fn cweampuff_move(
     } 
 
     if keyboard_input.pressed(KeyCode::ArrowLeft) {
-        if cweampuff_movable.hugging_wall && !cweampuff_movable.facing_right {
+        if cweampuff_movable.hugging_right_wall && !cweampuff_movable.facing_right {
             cweampuff_velocity.linvel.x = 0.;
             return;
         }
 
         cweampuff_movable.facing_right = false;
-        sprite.flip_x = true;
 
         let new_velocity = -CWEAMPUFF_SPEED;
 
@@ -63,13 +65,12 @@ pub fn cweampuff_move(
     }
 
     if keyboard_input.pressed(KeyCode::ArrowRight) {
-        if cweampuff_movable.hugging_wall && cweampuff_movable.facing_right {
+        if cweampuff_movable.hugging_left_wall && cweampuff_movable.facing_right {
             cweampuff_velocity.linvel.x = 0.;
             return;
         }
 
         cweampuff_movable.facing_right = true;
-        sprite.flip_x = false;
 
         let new_velocity = CWEAMPUFF_SPEED;
 
@@ -107,10 +108,10 @@ pub fn cweampuff_jump(
         jumper.is_jumping = true;
         jumper.is_jump_available = false;
     
-        if movable.hugging_wall && cweampuff.has_wall_jump {
+        if (movable.hugging_left_wall || movable.hugging_right_wall) && cweampuff.has_wall_jump {
             let wall_jump_hor_velocity;
     
-            if movable.facing_right {
+            if movable.hugging_left_wall {
                 wall_jump_hor_velocity = -CWEAMPUFF_SPEED;
                 movable.facing_right = false;
             }
@@ -139,7 +140,8 @@ pub fn cweampuff_dash(
         return;
     }
 
-    if !keyboard_input.just_pressed(KeyCode::KeyX) || dasher.dash_cooldown - dasher.time_passed_since_dash > 0.01  {
+    if !keyboard_input.just_pressed(KeyCode::KeyX) || dasher.dash_cooldown - dasher.time_passed_since_dash > 0.01 ||
+        (!movable.touching_ground && !dasher.is_dash_available)  {
         return;
     }
 
@@ -158,6 +160,10 @@ pub fn cweampuff_dash(
     velocity.linvel = Vec2::new((dash_impulse + velocity.linvel.x).clamp(-MAX_DASH_IMPULSE, MAX_DASH_IMPULSE), vertical_velocity);
 
     dasher.time_passed_since_dash = 0.;
+
+    if !movable.touching_ground {
+        dasher.is_dash_available = false;
+    }
 }
 
 pub fn reset_abilities(mut cweampuff: Query<(&mut Jumper, &mut Movable, &mut Dasher), With<Cweampuff>>) {
@@ -166,18 +172,20 @@ pub fn reset_abilities(mut cweampuff: Query<(&mut Jumper, &mut Movable, &mut Das
         jumper.is_next_jump_doublejump = false;
         jumper.is_jump_available = true;
     
-        movable.hugging_wall = false;
+        movable.hugging_left_wall = false;
+        movable.hugging_right_wall = false;
         movable.is_stunlocked = false;
         movable.time_passed_since_stun = 0.;
     
         dasher.time_passed_since_dash = dasher.dash_cooldown + 0.1;
+        dasher.is_dash_available = true;
     }
 }
 
 pub fn velocity_limiter(mut cweampuff: Single<(&mut Velocity, &Cweampuff, &Movable), With<Cweampuff>>) {
     let (cweampuff_velocity, cweampuff, cweampuff_movable) = &mut *cweampuff;
 
-    if cweampuff_movable.hugging_wall && cweampuff.has_wall_jump && cweampuff_velocity.linvel.y < 0. {
+    if (cweampuff_movable.hugging_left_wall || cweampuff_movable.hugging_right_wall) && cweampuff.has_wall_jump && cweampuff_velocity.linvel.y < 0. {
         cweampuff_velocity.linvel.y = -MAX_WALL_DESCEND_VELOCITY;
     }
 
@@ -190,6 +198,12 @@ pub fn dash_reset(mut cweampuff: Single<(&mut Dasher, &Cweampuff), With<Cweampuf
     if cweampuff.has_dash && cweampuff_dasher.time_passed_since_dash <= cweampuff_dasher.dash_cooldown {
         cweampuff_dasher.time_passed_since_dash += time.delta_secs();
     } 
+}
+
+pub fn cweampuff_asset_direction_monitor(mut cweampuff: Single<(&mut Movable, &mut Sprite), With<Cweampuff>>) {
+    let (movable, sprite) = &mut *cweampuff;
+
+    sprite.flip_x = !movable.facing_right;
 }
 
 pub fn stunlock_reset(mut cweampuff_movable: Single<&mut Movable, With<Cweampuff>>, time: Res<Time>) {
@@ -207,13 +221,13 @@ pub fn stunlock_reset(mut cweampuff_movable: Single<&mut Movable, With<Cweampuff
 }
 
 pub fn jump_reset(
-    mut cweampuff: Single<(Entity, &Cweampuff, &mut Jumper, &mut Movable, &Transform, &mut Velocity), With<Cweampuff>>,
+    mut cweampuff: Single<(Entity, &Cweampuff, &mut Jumper, &mut Movable, &mut Dasher, &Transform, &mut Velocity), With<Cweampuff>>,
     mut colliders: Query<(Entity, &Transform, &Collider, &mut FloorCollider), With<FloorCollider>>,
     mut contact_events: EventReader<CollisionEvent>) {
-    let (cweampuff_entity, cweampuff, cweampuff_jumper, cweampuff_movable, cweampuff_transform, cweampuff_velocity) = &mut *cweampuff;
+    let (cweampuff_entity, cweampuff, cweampuff_jumper, cweampuff_movable, cweampuff_dasher, cweampuff_transform, cweampuff_velocity) = &mut *cweampuff;
 
     for contact_event in contact_events.read() {
-        detect_floor_and_wall_collision(*cweampuff_entity, cweampuff, cweampuff_jumper, cweampuff_transform, cweampuff_movable, cweampuff_velocity, contact_event, &mut colliders);
+        detect_floor_and_wall_collision(*cweampuff_entity, cweampuff, cweampuff_jumper, cweampuff_transform, cweampuff_movable, cweampuff_dasher, cweampuff_velocity, contact_event, &mut colliders);
     }
 }
 
@@ -223,6 +237,7 @@ fn detect_floor_and_wall_collision(
     jumper: &mut Jumper, 
     cweampuff_transform: &Transform,
     cweampuff_movable: &mut Movable,
+    cweampuff_dasher: &mut Dasher,
     cweampuff_velocity: &mut Velocity,
     event: &CollisionEvent, 
     colliders: &mut Query<(Entity, &Transform, &Collider, &mut FloorCollider), With<FloorCollider>>
@@ -237,10 +252,20 @@ fn detect_floor_and_wall_collision(
                         CollisionType::Floor => {
                             jumper.is_jumping = true;
                             jumper.is_next_jump_doublejump = true;
+                            cweampuff_movable.touching_ground = false;
                         },
-                        CollisionType::Wall => {
-                            if cweampuff_movable.hugging_wall {
-                                cweampuff_movable.hugging_wall = false;
+                        CollisionType::LeftWall => {
+                            if cweampuff_movable.hugging_left_wall {
+                                cweampuff_movable.hugging_left_wall = false;
+
+                                if cweampuff.has_wall_jump {
+                                    jumper.is_next_jump_doublejump = true;
+                                }
+                            }
+                        }, 
+                        CollisionType::RightWall => {
+                            if cweampuff_movable.hugging_right_wall {
+                                cweampuff_movable.hugging_right_wall = false;
 
                                 if cweampuff.has_wall_jump {
                                     jumper.is_next_jump_doublejump = true;
@@ -265,13 +290,24 @@ fn detect_floor_and_wall_collision(
                                                               cuboid.half_extents());
 
                     match check_collision(cweampuff_bounds, collider_bounds) {
-                        CollisionType::Wall => {
-                            cweampuff_movable.hugging_wall = true;
-                            floor_collider.currently_touching_side = Some(CollisionType::Wall);
+                        CollisionType::LeftWall => {
+                            cweampuff_movable.hugging_left_wall = true;
+                            floor_collider.currently_touching_side = Some(CollisionType::LeftWall);
                             
                             if cweampuff.has_wall_jump {
                                 jumper.is_jumping = false;
                                 jumper.is_next_jump_doublejump = false;
+                                cweampuff_dasher.is_dash_available = true;
+                            }
+                        },
+                        CollisionType::RightWall => {
+                            cweampuff_movable.hugging_right_wall = true;
+                            floor_collider.currently_touching_side = Some(CollisionType::RightWall);
+                            
+                            if cweampuff.has_wall_jump {
+                                jumper.is_jumping = false;
+                                jumper.is_next_jump_doublejump = false;
+                                cweampuff_dasher.is_dash_available = true;
                             }
                         },
                         CollisionType::Floor => {
@@ -279,6 +315,8 @@ fn detect_floor_and_wall_collision(
                             cweampuff_velocity.linvel.y = 0.;
                             jumper.is_jumping = false;
                             jumper.is_next_jump_doublejump = false;
+                            cweampuff_movable.touching_ground = true;
+                            cweampuff_dasher.is_dash_available = true;
                         },
                         CollisionType::Ceiling => {
                             floor_collider.currently_touching_side = Some(CollisionType::Ceiling);
@@ -296,7 +334,11 @@ fn check_collision(cweampuff_bounds: BoundingCircle, wall_bounds: Aabb2d) -> Col
     let offset = cweampuff_bounds.center() - closest;
 
     if offset.x.abs() >= offset.y.abs() {
-        return CollisionType::Wall;
+        if offset.x < 0. {
+            return CollisionType::LeftWall;
+        }
+
+        return CollisionType::RightWall;
     }
 
     if offset.y > 0. {

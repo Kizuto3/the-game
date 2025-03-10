@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, NPC, OG_MINAWAN, SCIENTIST_MINAWAN}};
+use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, NPC, OG_MINAWAN, SCIENTIST_MINAWAN}, CWEAMPUFF_Z_INDEX};
 
 use super::{hell_4_layout::Hell4Info, BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, JumpPad, LevelInfo, TransitionCollider};
 
@@ -32,8 +32,8 @@ impl LevelInfo for CerberLairInfo {
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
-            TransitionCollider { exit_index: 1, safe_position: Vec3::new(2050.0, -700.0, 1.0), transition_to_level: Level::Hell4(Hell4Info), floor_info: EntityInfo { position: Vec3::new(2200.0, -700.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
-            TransitionCollider { exit_index: 2, safe_position: Vec3::new(1750.0, 800.0, 1.0), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: EntityInfo { position: Vec3::new(1750.0, 950.0, 2.0), size: Vec2::new(200.0, 200.0) }  }
+            TransitionCollider { exit_index: 1, safe_position: Vec3::new(2050.0, -700.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Hell4(Hell4Info), floor_info: EntityInfo { position: Vec3::new(2200.0, -700.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
+            TransitionCollider { exit_index: 2, safe_position: Vec3::new(1750.0, 800.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: EntityInfo { position: Vec3::new(1750.0, 950.0, 2.0), size: Vec2::new(200.0, 200.0) }  }
         ]))
     }
 

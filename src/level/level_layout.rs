@@ -16,7 +16,8 @@ use super::Level;
 
 pub enum CollisionType {
     Floor,
-    Wall,
+    LeftWall,
+    RightWall,
     Ceiling
 }
 

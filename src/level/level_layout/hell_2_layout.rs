@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::{level_layout::{hell_1_layout::Hell1Info, hell_3_layout::Hell3Info}, Level}, npc::NPC};
+use crate::{level::{level_layout::{hell_1_layout::Hell1Info, hell_3_layout::Hell3Info}, Level}, npc::NPC, CWEAMPUFF_Z_INDEX};
 
 use super::{DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
@@ -34,8 +34,8 @@ impl LevelInfo for Hell2Info {
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::Hell1(Hell1Info), floor_info: EntityInfo { position: Vec3::new(150.0, 1700.0, 2.0), size: Vec2::new(300.0, 200.0) }  },
-            TransitionCollider { exit_index: 1, safe_position: Vec3::new(150.0, 1500.0, 1.0), transition_to_level: Level::Hell3(Hell3Info), floor_info: EntityInfo { position: Vec3::new(3650.0, -350.0, 2.0), size: Vec2::new(500.0, 200.0) }  }
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(150.0, 1500.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Hell1(Hell1Info), floor_info: EntityInfo { position: Vec3::new(150.0, 1700.0, 2.0), size: Vec2::new(300.0, 200.0) }  },
+            TransitionCollider { exit_index: 1, safe_position: Vec3::new(150.0, 1500.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Hell3(Hell3Info), floor_info: EntityInfo { position: Vec3::new(3650.0, -350.0, 2.0), size: Vec2::new(500.0, 200.0) }  }
         ]))
     }
 

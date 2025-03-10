@@ -22,7 +22,7 @@ pub fn spawn_camera (
     //asset_server: Res<AssetServer>,
 ) {
     let mut projection = OrthographicProjection::default_2d();
-    projection.scaling_mode = ScalingMode::AutoMin { min_width: 1920., min_height: 1080. };
+    projection.scaling_mode = ScalingMode::Fixed { width: 1920., height: 1080. };
 
     // Camera
     commands.spawn((

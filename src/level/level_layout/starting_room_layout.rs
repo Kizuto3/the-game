@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, Level}, npc::NPC};
+use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, Level}, npc::NPC, CWEAMPUFF_Z_INDEX};
 
 use super::{DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
@@ -26,7 +26,7 @@ impl LevelInfo for StartingRoomInfo {
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(2600.0, 820.0, 1.0), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: EntityInfo { position: Vec3::new(2700.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }  }
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(2600.0, 820.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: EntityInfo { position: Vec3::new(2700.0, 925.0, 2.0), size: Vec2::new(100.0, 250.0) }  }
         ]))
     }
 
