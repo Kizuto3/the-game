@@ -15,7 +15,7 @@ use camera::{cweampuff_camera_adjustment, spawn_camera};
 use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, despawn_cutscene_resources, spawn_cutscene_resources, wait_for_resources_to_load, CutsceneEvent};
 use fade_in_fade_out::{despawn_fade_in_fade_out_node, fade_in, fade_out, set_fade_in_state, set_fade_out_state, spawn_fade_in_fade_out_node, FadeInFadeOutNode, FadeState};
 use interactable::{despawn_interaction_prompt, interaction_state::InteractionState, spawn_interaction_prompt};
-use level::{despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, floor_modification::jump_pad_collision_reader, level_layout::FloorCollider, level_transition_collision_reader, progression::Progression, spawn_new_level, transition_states::TransitionState};
+use level::{despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, floor_modification::{gravity_inverter_collision_reader, jump_pad_collision_reader}, level_layout::FloorCollider, level_transition_collision_reader, progression::Progression, spawn_new_level, transition_states::TransitionState};
 use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_menu_buttons};
 use movement::*;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
@@ -104,7 +104,8 @@ fn main() {
             cweampuff_asset_direction_monitor,
             npc_collision_reader,
             interactable_door_collision_reader,
-            jump_pad_collision_reader
+            jump_pad_collision_reader,
+            gravity_inverter_collision_reader
         ).run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)).run_if(in_state(FadeState::None)))
         .run();
 }
@@ -142,7 +143,7 @@ fn setup_cweampuff(
         Jumper { jump_impulse: CWEAMPUFF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false },
         Dasher { is_dash_available: false, dash_impulse: CWEAMPUFF_DASH_IMPULSE, dash_cooldown: 0.5, time_passed_since_dash: 0. },
         LockedAxes::ROTATION_LOCKED,
-        Movable { touching_ground: false, facing_right: true, hugging_left_wall: false, hugging_right_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },
+        Movable { is_upside_down: false, touching_ground: false, facing_right: true, hugging_left_wall: false, hugging_right_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },
     ));
 }
 

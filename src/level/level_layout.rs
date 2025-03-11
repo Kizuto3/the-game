@@ -8,6 +8,7 @@ pub mod hell_4_layout;
 pub mod cerber_lair_layout;
 pub mod spaceship_1_layout;
 pub mod spaceship_2_layout;
+pub mod spaceship_3_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
@@ -76,8 +77,14 @@ pub struct JumpPad {
     pub floor_info: EntityInfo
 }
 
+#[derive(Component, Clone, Copy)]
+pub struct GravityInverter {
+    pub floor_info: EntityInfo
+}
+
 pub enum FloorModification {
-    JumpPad(JumpPad)
+    JumpPad(JumpPad),
+    GravityInverter(GravityInverter)
 }
 
 pub trait LevelInfo {

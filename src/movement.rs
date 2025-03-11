@@ -30,6 +30,7 @@ pub struct Movable {
     pub hugging_left_wall: bool,
     pub hugging_right_wall: bool,
     pub touching_ground: bool,
+    pub is_upside_down: bool,
     pub is_stunlocked: bool,
     pub stun_duration: f32,
     pub time_passed_since_stun: f32
@@ -50,7 +51,7 @@ pub fn cweampuff_move(
     } 
 
     if keyboard_input.pressed(KeyCode::ArrowLeft) {
-        if cweampuff_movable.hugging_right_wall && !cweampuff_movable.facing_right {
+        if cweampuff_movable.hugging_right_wall {
             cweampuff_velocity.linvel.x = 0.;
             return;
         }
@@ -65,7 +66,7 @@ pub fn cweampuff_move(
     }
 
     if keyboard_input.pressed(KeyCode::ArrowRight) {
-        if cweampuff_movable.hugging_left_wall && cweampuff_movable.facing_right {
+        if cweampuff_movable.hugging_left_wall {
             cweampuff_velocity.linvel.x = 0.;
             return;
         }
@@ -98,7 +99,10 @@ pub fn cweampuff_jump(
 
     if jump_released {
         // Kill current vertical velocity 
-        if velocity.linvel.y > 0.0 && velocity.linvel.y < jumper.jump_impulse {
+        if jumper.jump_impulse > 0. && velocity.linvel.y > 0.0 && velocity.linvel.y < jumper.jump_impulse {
+            velocity.linvel.y = 0.;
+        }
+        else if jumper.jump_impulse < 0. && velocity.linvel.y < 0.0 {
             velocity.linvel.y = 0.;
         }
     }
@@ -185,8 +189,19 @@ pub fn reset_abilities(mut cweampuff: Query<(&mut Jumper, &mut Movable, &mut Das
 pub fn velocity_limiter(mut cweampuff: Single<(&mut Velocity, &Cweampuff, &Movable), With<Cweampuff>>) {
     let (cweampuff_velocity, cweampuff, cweampuff_movable) = &mut *cweampuff;
 
-    if (cweampuff_movable.hugging_left_wall || cweampuff_movable.hugging_right_wall) && cweampuff.has_wall_jump && cweampuff_velocity.linvel.y < 0. {
-        cweampuff_velocity.linvel.y = -MAX_WALL_DESCEND_VELOCITY;
+    if (cweampuff_movable.hugging_left_wall || cweampuff_movable.hugging_right_wall) && cweampuff.has_wall_jump  {
+        if cweampuff_movable.is_upside_down && cweampuff_velocity.linvel.y > 0. {
+            cweampuff_velocity.linvel.y = MAX_WALL_DESCEND_VELOCITY;
+        }
+        else if cweampuff_velocity.linvel.y < 0. {
+            cweampuff_velocity.linvel.y = -MAX_WALL_DESCEND_VELOCITY;
+        }
+    }
+
+    if cweampuff_movable.is_upside_down {
+        cweampuff_velocity.linvel.y = cweampuff_velocity.linvel.y.min(MAX_CWEAMPUFF_VERTICAL_VELOCITY);
+
+        return;
     }
 
     cweampuff_velocity.linvel.y = cweampuff_velocity.linvel.y.max(-MAX_CWEAMPUFF_VERTICAL_VELOCITY);
@@ -204,6 +219,7 @@ pub fn cweampuff_asset_direction_monitor(mut cweampuff: Single<(&mut Movable, &m
     let (movable, sprite) = &mut *cweampuff;
 
     sprite.flip_x = !movable.facing_right;
+    sprite.flip_y = movable.is_upside_down;
 }
 
 pub fn stunlock_reset(mut cweampuff_movable: Single<&mut Movable, With<Cweampuff>>, time: Res<Time>) {
@@ -311,16 +327,33 @@ fn detect_floor_and_wall_collision(
                             }
                         },
                         CollisionType::Floor => {
-                            floor_collider.currently_touching_side = Some(CollisionType::Floor);
-                            cweampuff_velocity.linvel.y = 0.;
-                            jumper.is_jumping = false;
-                            jumper.is_next_jump_doublejump = false;
-                            cweampuff_movable.touching_ground = true;
-                            cweampuff_dasher.is_dash_available = true;
+                            if !cweampuff_movable.is_upside_down {
+                                floor_collider.currently_touching_side = Some(CollisionType::Floor);
+                                cweampuff_velocity.linvel.y = 0.;
+                                jumper.is_jumping = false;
+                                jumper.is_next_jump_doublejump = false;
+                                cweampuff_movable.touching_ground = true;
+                                cweampuff_dasher.is_dash_available = true;
+                            }
+                            else {
+                                floor_collider.currently_touching_side = Some(CollisionType::Ceiling);
+                                cweampuff_velocity.linvel.y = 0.;
+                            }
+                            
                         },
                         CollisionType::Ceiling => {
-                            floor_collider.currently_touching_side = Some(CollisionType::Ceiling);
-                            cweampuff_velocity.linvel.y = 0.;
+                            if !cweampuff_movable.is_upside_down {
+                                floor_collider.currently_touching_side = Some(CollisionType::Ceiling);
+                                cweampuff_velocity.linvel.y = 0.;
+                            }
+                            else {
+                                floor_collider.currently_touching_side = Some(CollisionType::Floor);
+                                cweampuff_velocity.linvel.y = 0.;
+                                jumper.is_jumping = false;
+                                jumper.is_next_jump_doublejump = false;
+                                cweampuff_movable.touching_ground = true;
+                                cweampuff_dasher.is_dash_available = true;
+                            }
                         }               
                     };
                 }
@@ -334,7 +367,9 @@ fn check_collision(cweampuff_bounds: BoundingCircle, wall_bounds: Aabb2d) -> Col
     let offset = cweampuff_bounds.center() - closest;
 
     if offset.x.abs() >= offset.y.abs() {
-        if offset.x < 0. {
+        let center_offset = cweampuff_bounds.center() - wall_bounds.center();
+
+        if offset.x < 0. || center_offset.x < 0. {
             return CollisionType::LeftWall;
         }
 
