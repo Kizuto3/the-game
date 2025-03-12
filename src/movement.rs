@@ -151,7 +151,12 @@ pub fn cweampuff_dash(
 
     let mut vertical_velocity = velocity.linvel.y;
 
-    if vertical_velocity < 0.0 {
+    if movable.is_upside_down {
+        if vertical_velocity > 0.0 {
+            vertical_velocity = 0.0;
+        }
+    }
+    else if vertical_velocity < 0.0 {
         vertical_velocity = 0.0;
     }
  
