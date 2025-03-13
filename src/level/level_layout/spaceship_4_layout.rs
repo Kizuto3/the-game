@@ -1,8 +1,8 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::Level, npc::NPC, CWEAMPUFF_Z_INDEX};
+use crate::{level::{progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, GLORP, NPC}, CWEAMPUFF_Z_INDEX};
 
-use super::{spaceship_3_layout::Spaceship3Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, GravityInverter, LevelInfo, TransitionCollider};
+use super::{aquwa_lair_layout::AquwaLairInfo, spaceship_3_layout::Spaceship3Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, GravityInverter, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct Spaceship4Info;
@@ -36,7 +36,8 @@ impl LevelInfo for Spaceship4Info {
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(1100.0, -2600.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship3(Spaceship3Info), floor_info: EntityInfo { position: Vec3::new(1250.0, -2950.0, 2.0), size: Vec2::new(200.0, 100.0) }  }
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(1100.0, -2600.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship3(Spaceship3Info), floor_info: EntityInfo { position: Vec3::new(1250.0, -2950.0, 2.0), size: Vec2::new(200.0, 100.0) }  },
+            TransitionCollider { exit_index: 1, safe_position: Vec3::new(-1550.0, 3050.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::AquwaLair(AquwaLairInfo), floor_info: EntityInfo { position: Vec3::new(-1725.0, 3100.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
         ]))
     }
 
@@ -44,7 +45,22 @@ impl LevelInfo for Spaceship4Info {
         None
     }
 
-    fn get_npcs(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {                
+    fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {                
+        if cweampuff.progression <= Progression::MilkWokeUp {
+            return Some(Box::from([
+                NPC {
+                    floor_info: EntityInfo { position: Vec3::new(-700.0, 950.0, 1.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                    after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
+                    conversation: &[
+                        ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Hello? Are you the intruder?", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: GLORP, text: "Agent GL-0-RP to agent CL-0-RP, I have been spotted, over!", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: GLORP, text: "Requesting permission to cancel the operation, over and out!", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Go away and don't come back!", emotion: Emotion::Regular },
+                    ]
+                }
+            ]))
+        }
+
         None
     }
 

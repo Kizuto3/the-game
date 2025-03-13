@@ -10,6 +10,7 @@ pub mod spaceship_1_layout;
 pub mod spaceship_2_layout;
 pub mod spaceship_3_layout;
 pub mod spaceship_4_layout;
+pub mod aquwa_lair_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 

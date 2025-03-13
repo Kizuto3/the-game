@@ -275,6 +275,9 @@ impl LevelInfo for CweamcatLairInfo {
                     ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "For now, I think I'll just go read the records a few more times.", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Okay! See you!", emotion: Emotion::Happy },
                 ];
+            },
+            Progression::HasLetter => {
+                // TODO
             }
         };
 

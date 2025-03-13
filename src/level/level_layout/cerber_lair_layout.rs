@@ -12,12 +12,12 @@ impl LevelInfo for CerberLairInfo {
         let mut floors = vec![
             FloorInfo { position: Vec3::new(-2000.0, 0.0, 1.0), size: Vec2::new(300.0, 2000.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(2000.0, 500.0, 1.0), size: Vec2::new(300.0, 2000.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
-            FloorInfo { position: Vec3::new(0.0, -850.0, 1.0), size: Vec2::new(4300.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(125.0, -850.0, 1.0), size: Vec2::new(3950.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(-100.0, 850.0, 1.0), size: Vec2::new(3500.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(1450.0, -450.0, 1.0), size: Vec2::new(200.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(950.0, -150.0, 1.0), size: Vec2::new(200.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(1750.0, -50.0, 1.0), size: Vec2::new(200.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
-            FloorInfo { position: Vec3::new(-1550.0, 0.0, 1.0), size: Vec2::new(1000.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(-1450.0, 0.0, 1.0), size: Vec2::new(800.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(-1000.0, -250.0, 1.0), size: Vec2::new(100.0, 600.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
         ];
 

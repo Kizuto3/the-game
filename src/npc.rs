@@ -18,7 +18,10 @@ pub const MILK: &str = "milk";
 pub const MINAWAN: &str = "minawan";
 pub const OG_MINAWAN: &str = "og minawan";
 pub const SCIENTIST_MINAWAN: &str = "scientist minawan";
-pub const CREW_MEMBER_1: &str = "crew member 1";
+pub const CREW_MEMBER: &str = "crew member";
+pub const OG_CREW_MEMBER: &str = "og crew member";
+pub const OBSERVER_CREW_MEMBER: &str = "observer crew member";
+pub const GLORP: &str = "glorp";
 
 #[derive(Component)]
 pub struct DialogNode;

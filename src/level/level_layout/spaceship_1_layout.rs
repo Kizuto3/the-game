@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CREW_MEMBER_1, CWEAMPUFF, NPC}, CWEAMPUFF_Z_INDEX};
+use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CREW_MEMBER, CWEAMPUFF, NPC}, CWEAMPUFF_Z_INDEX};
 
 use super::{spaceship_2_layout::Spaceship2Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
@@ -73,30 +73,30 @@ impl LevelInfo for Spaceship1Info {
                     floor_info: EntityInfo { position: Vec3::new(-5000.0, -2000.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                     after_conversation_func: |cweampuff, _commands, _breakable_walls, _cutscene| { cweampuff.has_dash = true; },
                     conversation: &[
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "Pumpkin to Otter, Pumpkin to Otter, do you copy, over?", emotion: Emotion::Regular },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "The last entrance has been shut, we are ready to dispatch a search, over.", emotion: Emotion::Regular },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "...", emotion: Emotion::Regular },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "Roger! Protect the captain at all cost, over and out!", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Pumpkin to Otter, Pumpkin to Otter, do you copy, over?", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "The last entrance has been shut, we are ready to dispatch a search, over.", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "...", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Roger! Protect the captain at all cost, over and out!", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "H-hello? What's going on?", emotion: Emotion::Sad },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "Oh, greetings.", emotion: Emotion::Regular },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "Sorry, we can't exactly welcome you properly right now.", emotion: Emotion::Sad },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "There is an intruder on our ship. Anyway, what brought you here?", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Oh, greetings.", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Sorry, we can't exactly welcome you properly right now.", emotion: Emotion::Sad },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "There is an intruder on our ship. Anyway, what brought you here?", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I-it's my hidden gem. She's just woken up from her sleep.", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I think it's some sort of a curse...", emotion: Emotion::Sad },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "Ah, the curse of a hidden gem.", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Ah, the curse of a hidden gem.", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "You know about it?", emotion: Emotion::Regular },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "I do. Our rising star has been afflicted once.", emotion: Emotion::Regular },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "Thankfully, there was enough of us, and we cured our captain!", emotion: Emotion::Happy },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "I do. Our rising star has been afflicted once.", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Thankfully, there was enough of us, and we cured our captain!", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "So the number does matter...", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I'm looking for an idea of how to get more cweampuffs to notice our hidden gem.", emotion: Emotion::Regular },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "I'm sure we can help you!", emotion: Emotion::Happy },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "However, we have to deal with the intruder first.", emotion: Emotion::Regular },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "I won't allow anything bad happening to our captain!", emotion: Emotion::Regular },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "I'll protect her smile!", emotion: Emotion::Happy },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "I'm sure we can help you!", emotion: Emotion::Happy },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "However, we have to deal with the intruder first.", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "I won't allow anything bad happening to our captain!", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "I'll protect her smile!", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I can help you look for the intruder!", emotion: Emotion::Happy },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "Then let's rush to her help immediately!", emotion: Emotion::Happy },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "*** Seeing how the crew doesn't waste a second to help their captain makes you want to dash with them. ***", emotion: Emotion::Happy },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER_1, text: "*** X - dash ***", emotion: Emotion::Happy },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Then let's rush to her help immediately!", emotion: Emotion::Happy },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "*** Seeing how the crew doesn't waste a second to help their captain makes you want to dash with them. ***", emotion: Emotion::Happy },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "*** X - dash ***", emotion: Emotion::Happy },
                     ]
                 }
             ]))
