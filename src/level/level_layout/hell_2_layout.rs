@@ -18,7 +18,7 @@ impl LevelInfo for Hell2Info {
             FloorInfo { position: Vec3::new(3250.0, 350.0, 1.0), size: Vec2::new(300.0, 1500.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(900.0, 275.0, 1.0), size: Vec2::new(500.0, 650.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(200.0, 200.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
-            FloorInfo { position: Vec3::new(-250.0, 500.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(-225.0, 500.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(300.0, 850.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(1500.0, 400.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(1800.0, 100.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },

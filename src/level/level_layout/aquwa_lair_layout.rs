@@ -101,6 +101,7 @@ impl LevelInfo for AquwaLairInfo {
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "What? Is that some sort of a metaphor?", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: OBSERVER_CREW_MEMBER, text: "I wish it was, but I mean it quite literally.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: OBSERVER_CREW_MEMBER, text: "She just keeps bringing it up.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OBSERVER_CREW_MEMBER, text: "Have you seen that big telescope? She's been constantly looking through it to get a glimpse of his back.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: OBSERVER_CREW_MEMBER, text: "We even came to this planet in search of that green guy.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: OBSERVER_CREW_MEMBER, text: "I'm still having fun though, so no reason to complain.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Well, I hope she finds him!", emotion: Emotion::Happy },

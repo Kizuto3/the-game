@@ -13,6 +13,7 @@ use crate::{cutscene::CutsceneEvent, fade_in_fade_out::FADE_DELTA, interactable:
 pub const CWEAMPUFF: &str = "cweampuff";
 pub const COOL_CWEAMPUFF: &str = "cool cweampuff";
 pub const OG_CWEAMPUFF: &str = "og cweampuff";
+pub const MASKED_CWEAMPUFF: &str = "masked cweampuff";
 pub const MILK_ASLEEP: &str = "milk_asleep";
 pub const MILK: &str = "milk";
 pub const MINAWAN: &str = "minawan";

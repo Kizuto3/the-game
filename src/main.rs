@@ -23,7 +23,7 @@ use npc::{conversation_input_reader, conversation_state::ConversationState, desp
 // We set the z-value of Cweampuff to 2 so it renders on top in the case of overlapping sprites.
 
 pub const CWEAMPUFF_Z_INDEX: f32 = 2.0;
-const CWEAMPUFF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 150.0, CWEAMPUFF_Z_INDEX);
+const CWEAMPUFF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 550.0, CWEAMPUFF_Z_INDEX);
 const CWEAMPUFF_JUMP_IMPULSE: f32 = 800.;
 const CWEAMPUFF_DASH_IMPULSE: f32 = 650.;
 pub const CWEAMPUFF_DIAMETER: f32 = 30.;
@@ -99,6 +99,7 @@ fn main() {
         .add_systems(FixedUpdate, (
             dash_reset,
             jump_reset,
+            jump_buffer_monitor,
             velocity_limiter,
             stunlock_reset,
             cweampuff_asset_direction_monitor,
@@ -120,7 +121,7 @@ fn setup_cweampuff(
     }
 
     let cweampuff_model_handle = asset_server.load("npcs/cweampuff/Model.png");
-
+    
     // Cweampuff
     commands.spawn((
         RigidBody::Dynamic,
@@ -140,7 +141,7 @@ fn setup_cweampuff(
         GravityScale(CWEAMPUFF_GRAVITY_SCALE),
         Friction::coefficient(0.7),
         Collider::ball(0.5),
-        Jumper { jump_impulse: CWEAMPUFF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false },
+        Jumper { jump_impulse: CWEAMPUFF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false, jump_buffer_duration: 0.075, time_passed_since_stopped_touching_ground: None },
         Dasher { is_dash_available: false, dash_impulse: CWEAMPUFF_DASH_IMPULSE, dash_cooldown: 0.5, time_passed_since_dash: 0. },
         LockedAxes::ROTATION_LOCKED,
         Movable { is_upside_down: false, touching_ground: false, facing_right: true, hugging_left_wall: false, hugging_right_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },

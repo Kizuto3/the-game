@@ -13,7 +13,9 @@ pub struct Jumper {
     pub jump_impulse: f32,
     pub is_jumping: bool,
     pub is_jump_available: bool,
-    pub is_next_jump_doublejump: bool
+    pub is_next_jump_doublejump: bool,
+    pub jump_buffer_duration: f32,
+    pub time_passed_since_stopped_touching_ground: Option<f32>
 }
 
 #[derive(Component)]
@@ -111,7 +113,17 @@ pub fn cweampuff_jump(
         velocity.linvel.y = jumper.jump_impulse;
         jumper.is_jumping = true;
         jumper.is_jump_available = false;
-    
+
+        if jumper.is_next_jump_doublejump {
+            jumper.is_next_jump_doublejump = false;
+        }
+
+        if let Some(_) = jumper.time_passed_since_stopped_touching_ground {
+            jumper.is_next_jump_doublejump = true;
+            movable.touching_ground = false;
+            jumper.time_passed_since_stopped_touching_ground = None;
+        }
+
         if (movable.hugging_left_wall || movable.hugging_right_wall) && cweampuff.has_wall_jump {
             let wall_jump_hor_velocity;
     
@@ -127,11 +139,26 @@ pub fn cweampuff_jump(
             movable.is_stunlocked = true;
             velocity.linvel.x = wall_jump_hor_velocity;
         }
-    
-        if jumper.is_next_jump_doublejump {
-            jumper.is_next_jump_doublejump = false;
-        }
     }
+}
+
+pub fn jump_buffer_monitor(
+    mut cweampuff: Single<(&mut Jumper, &mut Movable), With<Cweampuff>>,
+    time: Res<Time>
+) {
+    let (jumper, movable) = &mut *cweampuff;
+
+    if let Some(time_passed_since_stopped_touching_ground) = jumper.time_passed_since_stopped_touching_ground {
+        if time_passed_since_stopped_touching_ground <= jumper.jump_buffer_duration {
+            jumper.time_passed_since_stopped_touching_ground = Some(time.delta_secs() + time_passed_since_stopped_touching_ground);
+            return;
+        } 
+
+        jumper.is_jumping = true;
+        jumper.is_next_jump_doublejump = true;
+        movable.touching_ground = false;
+        jumper.time_passed_since_stopped_touching_ground = None;
+    }    
 }
 
 pub fn cweampuff_dash(
@@ -271,9 +298,15 @@ fn detect_floor_and_wall_collision(
                     match touching_side {
                         CollisionType::Ceiling => { },
                         CollisionType::Floor => {
-                            jumper.is_jumping = true;
-                            jumper.is_next_jump_doublejump = true;
-                            cweampuff_movable.touching_ground = false;
+                            if !jumper.is_jumping {
+                                jumper.time_passed_since_stopped_touching_ground = Some(0.);
+                            }
+                            else {
+                                jumper.is_jumping = true;
+                                jumper.is_next_jump_doublejump = true;
+                                cweampuff_movable.touching_ground = false;
+                                jumper.time_passed_since_stopped_touching_ground = None;
+                            }
                         },
                         CollisionType::LeftWall => {
                             if cweampuff_movable.hugging_left_wall {
