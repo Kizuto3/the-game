@@ -93,9 +93,9 @@ fn main() {
             cweampuff_dash,
             cweampuff_jump,
             cweampuff_move,
-            cweampuff_camera_adjustment,
-            level_transition_collision_reader
-        ).chain().run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)).run_if(in_state(FadeState::None)))
+            (cweampuff_camera_adjustment,
+            level_transition_collision_reader).chain()
+        ).run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)).run_if(in_state(FadeState::None)))
         .add_systems(FixedUpdate, (
             dash_reset,
             jump_reset,

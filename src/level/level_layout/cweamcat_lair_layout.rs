@@ -338,6 +338,9 @@ impl LevelInfo for CweamcatLairInfo {
                 ];
 
                 npcs.push(masked_cweampuff);
+            },
+            Progression::GivenLetter => {
+                
             }
         };
 

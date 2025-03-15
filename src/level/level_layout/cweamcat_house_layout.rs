@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{cutscene::{CutsceneEvent, CutsceneInfo}, level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, MILK, MILK_ASLEEP, NPC, OG_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
+use crate::{cutscene::{CutsceneEvent, CutsceneInfo}, level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, MILK, MILK_ASLEEP, NPC, OG_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
 
 use super::{DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
@@ -36,6 +36,10 @@ impl LevelInfo for CweamcatHouseInfo {
         };
 
         let mut og_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(350.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                                          conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+        };
+
+        let mut cool_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(0.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                           conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
         };
 
@@ -191,6 +195,83 @@ impl LevelInfo for CweamcatHouseInfo {
                 ];
             },
             Progression::HasLetter => {
+                og_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "I wonder what's in that bottle...", emotion: Emotion::Regular },
+                ];
+
+                npcs.push(og_cweampuff);
+
+                cool_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Yo, sup, Cweampuff.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Hello, Cool Cweampuff!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Have you been hanging out with out hidden gem?", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Oh- um- y-yeah, you could say so.", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "*cough cough* I mean, I've just been looking out for her.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Lurking around, just to make sure she's OK.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wow, you're so cool.", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I bet you had a lot to talk about!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Yeah, she even said 'Hi' to me!", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "But I was too scare-", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "*cough* *cough* I mean, I was too stunned by her beauty to say anything back.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I totally know what you mean.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Still, with you around our hidden gem has nothing to worry about.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I'm happy you are here.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "You think so?", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "I've been a little under the weather lately...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "What? Why?", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Don't worry about it.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "I don't really want to talk about it in front of our hidden gem.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "We're here to make her happy, aren't we?", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Well, you can always talk to me if you need to.", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Thanks, Cweampuff. You've become a bit cooler since last we met.", emotion: Emotion::Regular },
+                ];
+
+                npcs.push(cool_cweampuff);
+
+                milk.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Cweampuff! Hi! I missed you!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "...", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I missed you too!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Are you feeling better now?", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I am, thank you!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "*Yawn* Although, I'm still a bit sleepy.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "What've you been up to, my precious little Cweampuff?", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "...", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I've looking for a way to bring more cweampuffs here!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "So our family can grow bigger!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Oh, Cweampuff... You didn't have to.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "You don't have to do anything at all.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Just being here with me is enough.", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "But I want to!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "The spaceship's captain asked me to deliver you this letter in a bottle.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Captain?", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "SHE wanted ME to have it?", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "You know her?", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Well, I've always admired her. I didn't think she'd known me!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I'm so excited to read this letter!", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "'Dear Miruku...'", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "...", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "'I hope this helps you...'", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "'Do you...'", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "'... think we can be friends?'", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Huh? There is a picture here as well...", emotion: Emotion::Regular },
+                ];
+
+                milk.after_conversation_func = |cweampuff, _commands, _breakable_walls, cutscene| { 
+                    if cweampuff.progression < Progression::GivenLetter { 
+                        cweampuff.progression = Progression::GivenLetter;
+                    }
+
+                    cutscene.send(CutsceneEvent::Started(&[
+                        CutsceneInfo { text: "*** Milk reads letter ***", background: "cutscenes/letter/1.png" },
+                        CutsceneInfo { text: "*** Looks at the picture ***", background: "cutscenes/letter/2.png" },
+                        CutsceneInfo { text: "*** Ghost appears ***", background: "cutscenes/letter/3.png" },
+                    ], Level::CweamcatHouse(CweamcatHouseInfo), "vine-boom.mp3"));
+                };
+            },
+            Progression::GivenLetter => {
 
             }
         }
