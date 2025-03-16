@@ -272,7 +272,40 @@ impl LevelInfo for CweamcatHouseInfo {
                 };
             },
             Progression::GivenLetter => {
+                og_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Did my eyes deceive me?", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "You saw that too, didn't you?", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I did!", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Let's meet outside. We need to discuss what've just seen.", emotion: Emotion::Surprised },
+                ];
 
+                npcs.push(og_cweampuff);
+
+                cool_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "I've never seen such perfection before...", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Exactly! It's like I've just opened my eyes for the first time.", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "I have to go now. I need to draw this event in full details.", emotion: Emotion::Surprised },
+                ];
+
+                npcs.push(cool_cweampuff);
+
+                milk.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Wow!", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "...", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Just now I've felt so warm...", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "A robot girl, huh...", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Cweampuff... Thank you so much!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "This letter means so much to me!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I never could've imagined she wanted to be friends with me...", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I love that lady so much!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Y-you're welcome...", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Grrrr, cweampuffs are so nice to me!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "But please don't feel like you have to do something for me.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "...", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Cweampuff?..", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I can't even describe to you what you just made me feel...", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I need to step outside and take a breather...", emotion: Emotion::Surprised },
+                ];
             }
         }
 
