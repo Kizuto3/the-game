@@ -14,7 +14,7 @@ pub struct Jumper {
     pub is_jumping: bool,
     pub is_jump_available: bool,
     pub is_next_jump_doublejump: bool,
-    pub jump_buffer_duration: f32,
+    pub coyote_jump_buffer_duration: f32,
     pub time_passed_since_stopped_touching_ground: Option<f32>
 }
 
@@ -142,14 +142,14 @@ pub fn cweampuff_jump(
     }
 }
 
-pub fn jump_buffer_monitor(
+pub fn coyote_jump_buffer_monitor(
     mut cweampuff: Single<(&mut Jumper, &mut Movable), With<Cweampuff>>,
     time: Res<Time>
 ) {
     let (jumper, movable) = &mut *cweampuff;
 
     if let Some(time_passed_since_stopped_touching_ground) = jumper.time_passed_since_stopped_touching_ground {
-        if time_passed_since_stopped_touching_ground <= jumper.jump_buffer_duration {
+        if time_passed_since_stopped_touching_ground <= jumper.coyote_jump_buffer_duration {
             jumper.time_passed_since_stopped_touching_ground = Some(time.delta_secs() + time_passed_since_stopped_touching_ground);
             return;
         } 
