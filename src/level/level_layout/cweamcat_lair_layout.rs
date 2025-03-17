@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{level_layout::{cweamcat_house_layout::CweamcatHouseInfo, hell_1_layout::Hell1Info, starting_room_layout::StartingRoomInfo}, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CREW_MEMBER, CWEAMPUFF, MASKED_CWEAMPUFF, MINAWAN, NPC, OG_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
 
-use super::{cerber_lair_layout::CerberLairInfo, spaceship_1_layout::Spaceship1Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{cerber_lair_layout::CerberLairInfo, factory_transition_layout::FactoryTransitionInfo, spaceship_1_layout::Spaceship1Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct CweamcatLairInfo;
@@ -20,7 +20,7 @@ impl LevelInfo for CweamcatLairInfo {
             FloorInfo { position: Vec3::new(2900.0, 1600.0, 1.0), size: Vec2::new(600.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
             FloorInfo { position: Vec3::new(3350.0, -150.0, 1.0), size: Vec2::new(300.0, 500.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
             FloorInfo { position: Vec3::new(3350.0, 1200.0, 1.0), size: Vec2::new(300.0, 1500.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
-            FloorInfo { position: Vec3::new(3500.0, 275.0, 1.0), size: Vec2::new(300.0, 350.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
+            //FloorInfo { position: Vec3::new(3500.0, 275.0, 1.0), size: Vec2::new(300.0, 350.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
             FloorInfo { position: Vec3::new(2800.0, 350.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
             FloorInfo { position: Vec3::new(2500.0, 650.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
             FloorInfo { position: Vec3::new(2800.0, 950.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
@@ -45,6 +45,7 @@ impl LevelInfo for CweamcatLairInfo {
     fn get_transitions_info(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         let mut transitions = vec![
             TransitionCollider { exit_index: 0, safe_position: Vec3::new(-350.0, 870.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::StartingRoom(StartingRoomInfo), floor_info: EntityInfo { position: Vec3::new(-500.0, 950.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
+            TransitionCollider { exit_index: 4, safe_position: Vec3::new(3250.0, 150.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::FactoryTransition(FactoryTransitionInfo), floor_info: EntityInfo { position: Vec3::new(3450.0, 275.0, 1.0), size: Vec2::new(100.0, 350.0) }  },
         ];
 
         if cweampuff.progression >= Progression::MetMilk {

@@ -11,6 +11,7 @@ pub mod spaceship_2_layout;
 pub mod spaceship_3_layout;
 pub mod spaceship_4_layout;
 pub mod aquwa_lair_layout;
+pub mod factory_transition_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
@@ -32,6 +33,7 @@ pub enum FloorAssetType {
     CweamcatHouse,
     Hell,
     Spaceship,
+    Factory
 }
 
 #[derive(Component, Default)]

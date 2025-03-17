@@ -3,6 +3,7 @@ use bevy_rapier2d::prelude::*;
 use level_layout::aquwa_lair_layout::AquwaLairInfo;
 use level_layout::cerber_lair_layout::CerberLairInfo;
 use level_layout::cweamcat_house_layout::CweamcatHouseInfo;
+use level_layout::factory_transition_layout::FactoryTransitionInfo;
 use level_layout::hell_1_layout::Hell1Info;
 use level_layout::hell_2_layout::Hell2Info;
 use level_layout::hell_3_layout::Hell3Info;
@@ -45,7 +46,8 @@ pub enum Level {
     Spaceship2(Spaceship2Info),
     Spaceship3(Spaceship3Info),
     Spaceship4(Spaceship4Info),
-    AquwaLair(AquwaLairInfo)
+    AquwaLair(AquwaLairInfo),
+    FactoryTransition(FactoryTransitionInfo)
 }
 
 pub struct LevelTransitionInfo {
@@ -102,6 +104,7 @@ pub fn spawn_new_level(
                 FloorAssetType::CweamcatHouse => asset_server.load("tiles/CweamcatHouse.png"),
                 FloorAssetType::Hell => asset_server.load("tiles/Hell.png"),
                 FloorAssetType::Spaceship => asset_server.load("tiles/Spaceship.png"),
+                FloorAssetType::Factory => asset_server.load("tiles/Factory.png")
             };
 
             let mut floor_command = commands.spawn((
@@ -405,6 +408,16 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
             });
         },
         Level::AquwaLair(layout_info) => {
+            commands.spawn(LevelLayout {
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
+                transition_info
+            });
+        },
+        Level::FactoryTransition(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),

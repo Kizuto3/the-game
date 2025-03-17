@@ -21,7 +21,6 @@ use movement::*;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
 
 // We set the z-value of Cweampuff to 2 so it renders on top in the case of overlapping sprites.
-
 pub const CWEAMPUFF_Z_INDEX: f32 = 2.0;
 const CWEAMPUFF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 550.0, CWEAMPUFF_Z_INDEX);
 const CWEAMPUFF_JUMP_IMPULSE: f32 = 800.;
