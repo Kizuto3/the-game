@@ -313,7 +313,12 @@ fn detect_floor_and_wall_collision(
                                 cweampuff_movable.hugging_left_wall = false;
 
                                 if cweampuff.has_wall_jump {
-                                    jumper.is_next_jump_doublejump = true;
+                                    if !jumper.is_jumping {
+                                        jumper.time_passed_since_stopped_touching_ground = Some(0.);
+                                    }
+                                    else {
+                                        jumper.is_next_jump_doublejump = true;
+                                    }
                                 }
                             }
                         }, 
@@ -322,7 +327,12 @@ fn detect_floor_and_wall_collision(
                                 cweampuff_movable.hugging_right_wall = false;
 
                                 if cweampuff.has_wall_jump {
-                                    jumper.is_next_jump_doublejump = true;
+                                    if !jumper.is_jumping {
+                                        jumper.time_passed_since_stopped_touching_ground = Some(0.);
+                                    }
+                                    else {
+                                        jumper.is_next_jump_doublejump = true;
+                                    }
                                 }
                             }
                         }

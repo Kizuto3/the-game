@@ -23,6 +23,7 @@ pub const CREW_MEMBER: &str = "crew member";
 pub const OG_CREW_MEMBER: &str = "og crew member";
 pub const OBSERVER_CREW_MEMBER: &str = "observer crew member";
 pub const GLORP: &str = "glorp";
+pub const DRONE: &str = "drone";
 
 #[derive(Component)]
 pub struct DialogNode;
