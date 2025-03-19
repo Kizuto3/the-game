@@ -4,6 +4,7 @@ use level_layout::aquwa_lair_layout::AquwaLairInfo;
 use level_layout::cerber_lair_layout::CerberLairInfo;
 use level_layout::cweamcat_house_layout::CweamcatHouseInfo;
 use level_layout::factory_1_layout::Factory1Info;
+use level_layout::factory_2_layout::Factory2Info;
 use level_layout::factory_transition_layout::FactoryTransitionInfo;
 use level_layout::hell_1_layout::Hell1Info;
 use level_layout::hell_2_layout::Hell2Info;
@@ -33,6 +34,9 @@ const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);
 const JUMP_PAD_COLOR: Color = Color::srgb(0.2, 0.9, 0.9);
 const GRAVITY_INVERTER_COLOR: Color = Color::srgb(0.1, 0.2, 0.2);
 
+#[derive(Component)]
+pub struct BackgroundComponent;
+
 #[derive(Clone, Copy)]
 pub enum Level {
     StartingRoom(StartingRoomInfo),
@@ -49,7 +53,8 @@ pub enum Level {
     Spaceship4(Spaceship4Info),
     AquwaLair(AquwaLairInfo),
     FactoryTransition(FactoryTransitionInfo),
-    Factory1(Factory1Info)
+    Factory1(Factory1Info),
+    Factory2(Factory2Info),
 }
 
 pub struct LevelTransitionInfo {
@@ -72,7 +77,8 @@ pub fn despawn_current_level(
     mut cweampuff: Query<&mut GravityScale, (With<Cweampuff>, Without<Camera2d>, Without<FloorCollider>)>,
     floor_query: Query<Entity, (With<FloorCollider>, Without<Camera2d>)>,
     transitions_query: Query<Entity, (With<Sensor>, Without<Camera2d>)>,
-    interactable_query: Query<Entity, (With<Interactable>, Without<Camera2d>)>
+    interactable_query: Query<Entity, (With<Interactable>, Without<Camera2d>)>,
+    background_query: Query<Entity, (With<BackgroundComponent>, Without<Camera2d>)>,
 ) {
     for mut gravity in cweampuff.iter_mut() {
         gravity.0 = 0.;
@@ -84,6 +90,9 @@ pub fn despawn_current_level(
         commands.entity(entity).despawn_recursive();
     }
     for entity in interactable_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+    for entity in background_query.iter() {
         commands.entity(entity).despawn_recursive();
     }
 }
@@ -99,7 +108,24 @@ pub fn spawn_new_level(
     asset_server: Res<AssetServer>,
 ) {
     for level_layout in level_layout_query.iter() {
+        let mut min_x = f32::MAX;
+        let mut min_y = f32::MAX;
+        let mut max_x = f32::MIN;
+        let mut max_y = f32::MIN;
+
         for floor in &level_layout.floor_layout {
+            if floor.position.x > max_x {
+                max_x = floor.position.x;
+            }
+            if floor.position.y > max_y {
+                max_y = floor.position.y;
+            }
+            if floor.position.x < min_x {
+                min_x = floor.position.x;
+            }
+            if floor.position.y < min_y {
+                min_y = floor.position.y;
+            }
 
             let tile_handle = match floor.floor_asset {
                 FloorAssetType::Forest => asset_server.load("tiles/Forest.png"),
@@ -135,6 +161,24 @@ pub fn spawn_new_level(
                 floor_command.insert(breakable_wall);
             }
         }
+
+        let background_image_handle = asset_server.load("forest.png");
+
+        let width = (max_x - min_x).abs();
+        let height = (max_y - min_y).abs();
+        let x = (max_x + min_x) / 2.;
+        let y = (max_y + min_y) / 2.;
+        // TODO: Use TextureSlicer when background images are ready
+        commands.spawn((
+            Sprite {
+                image: background_image_handle,
+                anchor: bevy::sprite::Anchor::Center,
+                custom_size: Some(Vec2::new(width.abs(), height.abs())),
+                ..default()
+            },
+            BackgroundComponent,
+            Transform::from_translation(Vec3::new(x, y, -10.0))
+        ));
 
         if let Some(transitions) = &level_layout.transition_layout {
             for transition in transitions {
@@ -430,6 +474,16 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
             });
         },
         Level::Factory1(layout_info) => {
+            commands.spawn(LevelLayout {
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
+                transition_info
+            });
+        },
+        Level::Factory2(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),

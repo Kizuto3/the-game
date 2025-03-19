@@ -7,9 +7,6 @@ use crate::{level::LevelLayout, Cweampuff};
 const CAMERA_TRANSFORM: Vec3 = Vec3::new(0.0, 3.0, 0.0);
 const CAMERA_DECAY_RATE: f32 = 10.;
 
-//#[derive(Component)]
-//pub struct BackgroundComponent;
-
 #[derive(Component)]
 pub struct CameraUpDownMovable {
     look_up_down_invoke_threshold: f32,
@@ -19,7 +16,6 @@ pub struct CameraUpDownMovable {
 
 pub fn spawn_camera (
     mut commands: Commands,
-    //asset_server: Res<AssetServer>,
 ) {
     let mut projection = OrthographicProjection::default_2d();
     projection.scaling_mode = ScalingMode::Fixed { width: 1920., height: 1080. };
@@ -33,26 +29,12 @@ pub fn spawn_camera (
         CameraUpDownMovable { look_up_down_duration: 0., look_up_down_invoke_threshold: 0.3, camera_offset: 360. },
         projection
     ));
-
-    // let background_image_handle = asset_server.load("background.png");
-
-    // commands.spawn((
-    //     Sprite {
-    //         image: background_image_handle,
-    //         anchor: bevy::sprite::Anchor::Center,
-    //         custom_size: Some(Vec2::new(1920., 1080.)),
-    //         ..default()
-    //     },
-    //     BackgroundComponent,
-    //     Transform::from_translation(Vec3::new(0., 1080., -10.0))
-    // ));
 }
 
 pub fn cweampuff_camera_adjustment(
     keyboard_input: Res<ButtonInput<KeyCode>>, 
     cweampuff: Single<&Transform, (With<Cweampuff>, Without<Camera2d>)>,
     mut camera: Single<(&mut Transform, &mut CameraUpDownMovable), With<Camera2d>>,
-    //mut background: Single<&mut Transform, (With<BackgroundComponent>, Without<Camera2d>, Without<Cweampuff>)>,
     level_layout_query: Query<&LevelLayout, With<LevelLayout>>,
     time: Res<Time>,
 ) {
@@ -85,9 +67,6 @@ pub fn cweampuff_camera_adjustment(
     let new_camera_position = get_adjusted_camera_position(&cweampuff, &level_layout_query, Some(&offset));
 
     camera_transform.translation.smooth_nudge(&new_camera_position, CAMERA_DECAY_RATE, time_passed);
-
-    //new_camera_position.z = -10.0;
-    //background.translation.smooth_nudge(&new_camera_position, CAMERA_DECAY_RATE, time.delta_secs());
 }
 
 pub fn get_adjusted_camera_position(
