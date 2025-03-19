@@ -14,6 +14,7 @@ pub mod aquwa_lair_layout;
 pub mod factory_transition_layout;
 pub mod factory_1_layout;
 pub mod factory_2_layout;
+pub mod factory_3_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
@@ -88,9 +89,19 @@ pub struct GravityInverter {
     pub floor_info: EntityInfo
 }
 
+#[derive(Component, Clone, Copy)]
+pub struct TimeTrial {
+    pub lever_info: EntityInfo,
+    pub floor_infos: &'static [FloorInfo],
+    pub seconds_to_complete: u64,
+    pub id: u32,
+    pub is_active: bool
+}
+
 pub enum FloorModification {
     JumpPad(JumpPad),
-    GravityInverter(GravityInverter)
+    GravityInverter(GravityInverter),
+    TimeTrial(TimeTrial)
 }
 
 pub trait LevelInfo {

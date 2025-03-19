@@ -5,6 +5,7 @@ use level_layout::cerber_lair_layout::CerberLairInfo;
 use level_layout::cweamcat_house_layout::CweamcatHouseInfo;
 use level_layout::factory_1_layout::Factory1Info;
 use level_layout::factory_2_layout::Factory2Info;
+use level_layout::factory_3_layout::Factory3Info;
 use level_layout::factory_transition_layout::FactoryTransitionInfo;
 use level_layout::hell_1_layout::Hell1Info;
 use level_layout::hell_2_layout::Hell2Info;
@@ -33,6 +34,7 @@ const NPC_COLOR: Color = Color::srgb(0.5, 0.5, 1.0);
 const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);
 const JUMP_PAD_COLOR: Color = Color::srgb(0.2, 0.9, 0.9);
 const GRAVITY_INVERTER_COLOR: Color = Color::srgb(0.1, 0.2, 0.2);
+const TIME_TRIAL_COLOR: Color = Color::srgb(0.9, 0.2, 0.2);
 
 #[derive(Component)]
 pub struct BackgroundComponent;
@@ -55,6 +57,7 @@ pub enum Level {
     FactoryTransition(FactoryTransitionInfo),
     Factory1(Factory1Info),
     Factory2(Factory2Info),
+    Factory3(Factory3Info),
 }
 
 pub struct LevelTransitionInfo {
@@ -168,7 +171,7 @@ pub fn spawn_new_level(
         let height = (max_y - min_y).abs();
         let x = (max_x + min_x) / 2.;
         let y = (max_y + min_y) / 2.;
-        // TODO: Use TextureSlicer when background images are ready
+        //TODO: Use TextureSlicer when background images are ready
         commands.spawn((
             Sprite {
                 image: background_image_handle,
@@ -253,6 +256,19 @@ pub fn spawn_new_level(
                                 Transform::from_translation(gravity_inverter.floor_info.position)
                             ))
                             .insert(Collider::cuboid(gravity_inverter.floor_info.size.x / 2.0, gravity_inverter.floor_info.size.y / 2.0))
+                            .insert(Sensor)
+                            .insert(ActiveEvents::COLLISION_EVENTS);
+                    },
+                    FloorModification::TimeTrial(time_trial) => {
+                        commands
+                            .spawn(*time_trial)
+                            .insert((
+                                Mesh2d(meshes.add(Rectangle::new(time_trial.lever_info.size.x, time_trial.lever_info.size.y))),
+                                MeshMaterial2d(materials.add(TIME_TRIAL_COLOR)),
+                                Transform::from_translation(time_trial.lever_info.position),
+                                Interactable
+                            ))
+                            .insert(Collider::cuboid(time_trial.lever_info.size.x / 2.0, time_trial.lever_info.size.y / 2.0))
                             .insert(Sensor)
                             .insert(ActiveEvents::COLLISION_EVENTS);
                     }
@@ -484,6 +500,16 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
             });
         },
         Level::Factory2(layout_info) => {
+            commands.spawn(LevelLayout {
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
+                transition_info
+            });
+        },
+        Level::Factory3(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),

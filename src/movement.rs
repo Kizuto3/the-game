@@ -1,5 +1,5 @@
 use bevy::{ecs::observer::TriggerTargets, math::bounding::{Aabb2d, BoundingCircle, BoundingVolume}, prelude::*};
-use bevy_rapier2d::prelude::{Collider, CollisionEvent, Velocity};
+use bevy_rapier2d::{prelude::{Collider, CollisionEvent, Velocity}, rapier::prelude::CollisionEventFlags};
 
 use crate::{level::level_layout::CollisionType, Cweampuff, FloorCollider, CWEAMPUFF_DIAMETER};
 
@@ -290,7 +290,45 @@ fn detect_floor_and_wall_collision(
     event: &CollisionEvent, 
     colliders: &mut Query<(Entity, &Transform, &Collider, &mut FloorCollider), With<FloorCollider>>
 ) {
-    if let CollisionEvent::Stopped(h1, h2, _flags) = event {
+    if let CollisionEvent::Stopped(h1, h2, flags) = event {
+        if *flags == CollisionEventFlags::REMOVED {
+            if cweampuff_movable.hugging_left_wall {
+                cweampuff_movable.hugging_left_wall = false;
+
+                if cweampuff.has_wall_jump {
+                    if !jumper.is_jumping {
+                        jumper.time_passed_since_stopped_touching_ground = Some(0.);
+                    }
+                    else {
+                        jumper.is_next_jump_doublejump = true;
+                    }
+                }
+            }
+            if cweampuff_movable.hugging_right_wall {
+                cweampuff_movable.hugging_right_wall = false;
+
+                if cweampuff.has_wall_jump {
+                    if !jumper.is_jumping {
+                        jumper.time_passed_since_stopped_touching_ground = Some(0.);
+                    }
+                    else {
+                        jumper.is_next_jump_doublejump = true;
+                    }
+                }
+            }
+            if !jumper.is_jumping {
+                jumper.time_passed_since_stopped_touching_ground = Some(0.);
+            }
+            else {
+                jumper.is_jumping = true;
+                jumper.is_next_jump_doublejump = true;
+                cweampuff_movable.touching_ground = false;
+                jumper.time_passed_since_stopped_touching_ground = None;
+            }
+
+            return;
+        }
+
         for (collider_entity, _collider_transform, _collider, mut floor_collider) in colliders.iter_mut() {
             if h1.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) && 
                h2.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) {
