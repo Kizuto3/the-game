@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::Level, npc::NPC, CWEAMPUFF_Z_INDEX};
 
-use super::{factory_1_layout::Factory1Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{factory_1_layout::Factory1Info, factory_3_layout::Factory3Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct Factory2Info;
@@ -37,6 +37,7 @@ impl LevelInfo for Factory2Info {
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
             TransitionCollider { exit_index: 1, safe_position: Vec3::new(-3450.0, -1450.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory1(Factory1Info), floor_info: EntityInfo { position: Vec3::new(-3600.0, -1400.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(2650.0, 900.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory3(Factory3Info), floor_info: EntityInfo { position: Vec3::new(3075.0, -1750.0, 2.0), size: Vec2::new(550.0, 100.0) }  },
         ]))
     }
 

@@ -168,7 +168,7 @@ pub fn time_trial_start_interaction_input_reader(
 pub fn tick_timer_trial_timer(
     mut commands: Commands,
     mut timers: Query<(Entity, &mut TimeTrialTimer)>,
-    floors: Query<Entity, With<BreakableWall>>,
+    floors: Query<(Entity, &BreakableWall), With<BreakableWall>>,
     time: Res<Time>,
 ) {
     for (timer_entity, mut timer) in timers.iter_mut() {
@@ -177,7 +177,11 @@ pub fn tick_timer_trial_timer(
         if timer.timer.finished() {
             commands.entity(timer_entity).despawn_recursive();
 
-            for floor_entity in floors.iter() {
+            for (floor_entity, breakable_wall) in floors.iter() {
+                if breakable_wall.index != timer.entity_id {
+                    continue;
+                }
+                
                 commands.entity(floor_entity).despawn_recursive();
             }
         }
