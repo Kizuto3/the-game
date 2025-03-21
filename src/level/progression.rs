@@ -8,7 +8,8 @@ pub enum Progression {
     HasCherish,
     MilkWokeUp,
     HasLetter,
-    GivenLetter
+    GivenLetter,
+    RisingStar
 }
 
 impl Display for Progression {

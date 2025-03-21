@@ -12,6 +12,7 @@ use level_layout::hell_1_layout::Hell1Info;
 use level_layout::hell_2_layout::Hell2Info;
 use level_layout::hell_3_layout::Hell3Info;
 use level_layout::hell_4_layout::Hell4Info;
+use level_layout::neuro_lair_layout::NeuroLairInfo;
 use level_layout::spaceship_1_layout::Spaceship1Info;
 use level_layout::spaceship_2_layout::Spaceship2Info;
 use level_layout::spaceship_3_layout::Spaceship3Info;
@@ -59,7 +60,8 @@ pub enum Level {
     Factory1(Factory1Info),
     Factory2(Factory2Info),
     Factory3(Factory3Info),
-    Factory4(Factory4Info)
+    Factory4(Factory4Info),
+    NeuroLair(NeuroLairInfo)
 }
 
 pub struct LevelTransitionInfo {
@@ -522,6 +524,16 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
             });
         },
         Level::Factory4(layout_info) => {
+            commands.spawn(LevelLayout {
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
+                transition_info
+            });
+        },
+        Level::NeuroLair(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),

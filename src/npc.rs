@@ -14,6 +14,7 @@ pub const CWEAMPUFF: &str = "cweampuff";
 pub const COOL_CWEAMPUFF: &str = "cool cweampuff";
 pub const OG_CWEAMPUFF: &str = "og cweampuff";
 pub const MASKED_CWEAMPUFF: &str = "masked cweampuff";
+pub const RICH_CWEAMPUFF: &str = "rich cweampuff";
 pub const MILK_ASLEEP: &str = "milk_asleep";
 pub const MILK: &str = "milk";
 pub const MINAWAN: &str = "minawan";
@@ -24,6 +25,8 @@ pub const OG_CREW_MEMBER: &str = "og crew member";
 pub const OBSERVER_CREW_MEMBER: &str = "observer crew member";
 pub const GLORP: &str = "glorp";
 pub const DRONE: &str = "drone";
+pub const OG_DRONE: &str = "og drone";
+pub const CLIPPER_DRONE: &str = "clipper drone";
 
 #[derive(Component)]
 pub struct DialogNode;

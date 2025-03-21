@@ -401,6 +401,9 @@ impl LevelInfo for CweamcatLairInfo {
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MASKED_CWEAMPUFF, text: "But I've never seen anything like this before...", emotion: Emotion::Surprised },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MASKED_CWEAMPUFF, text: "I'll prepare a worthy present for our hidden gem!", emotion: Emotion::Happy },
                 ];
+            },
+            Progression::RisingStar => {
+                
             }
         };
 

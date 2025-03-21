@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::Level, npc::NPC, CWEAMPUFF_Z_INDEX};
 
-use super::{factory_3_layout::Factory3Info, BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TimeTrial, TransitionCollider};
+use super::{factory_3_layout::Factory3Info, neuro_lair_layout::NeuroLairInfo, BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TimeTrial, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct Factory4Info;
@@ -21,6 +21,7 @@ impl LevelInfo for Factory4Info {
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
             TransitionCollider { exit_index: 1, safe_position: Vec3::new(1100.0, -2650.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory3(Factory3Info), floor_info: EntityInfo { position: Vec3::new(1250.0, -2600.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(-1800.0, 3600.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::NeuroLair(NeuroLairInfo), floor_info: EntityInfo { position: Vec3::new(-1950.0, 3650.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
         ]))
     }
 

@@ -306,6 +306,9 @@ impl LevelInfo for CweamcatHouseInfo {
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I can't even describe to you what you just made me feel...", emotion: Emotion::Surprised },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I need to step outside and take a breather...", emotion: Emotion::Surprised },
                 ];
+            },
+            Progression::RisingStar => {
+                
             }
         }
 

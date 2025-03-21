@@ -16,6 +16,7 @@ pub mod factory_1_layout;
 pub mod factory_2_layout;
 pub mod factory_3_layout;
 pub mod factory_4_layout;
+pub mod neuro_lair_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
