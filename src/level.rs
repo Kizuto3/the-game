@@ -6,6 +6,7 @@ use level_layout::cweamcat_house_layout::CweamcatHouseInfo;
 use level_layout::factory_1_layout::Factory1Info;
 use level_layout::factory_2_layout::Factory2Info;
 use level_layout::factory_3_layout::Factory3Info;
+use level_layout::factory_4_layout::Factory4Info;
 use level_layout::factory_transition_layout::FactoryTransitionInfo;
 use level_layout::hell_1_layout::Hell1Info;
 use level_layout::hell_2_layout::Hell2Info;
@@ -58,6 +59,7 @@ pub enum Level {
     Factory1(Factory1Info),
     Factory2(Factory2Info),
     Factory3(Factory3Info),
+    Factory4(Factory4Info)
 }
 
 pub struct LevelTransitionInfo {
@@ -510,6 +512,16 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
             });
         },
         Level::Factory3(layout_info) => {
+            commands.spawn(LevelLayout {
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
+                transition_info
+            });
+        },
+        Level::Factory4(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),

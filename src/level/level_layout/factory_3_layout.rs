@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, MINAWAN, NPC}, CWEAMPUFF_Z_INDEX};
 
-use super::{factory_2_layout::Factory2Info, BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TimeTrial, TransitionCollider};
+use super::{factory_2_layout::Factory2Info, factory_4_layout::Factory4Info, BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TimeTrial, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct Factory3Info;
@@ -28,6 +28,7 @@ impl LevelInfo for Factory3Info {
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
             TransitionCollider { exit_index: 0, safe_position: Vec3::new(1725.0, 2950.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory2(Factory2Info), floor_info: EntityInfo { position: Vec3::new(1725.0, 3100.0, 2.0), size: Vec2::new(550.0, 100.0) }  },
+            TransitionCollider { exit_index: 1, safe_position: Vec3::new(-1800.0, -2950.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory4(Factory4Info), floor_info: EntityInfo { position: Vec3::new(-1950.0, -2900.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
         ]))
     }
 

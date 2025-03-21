@@ -15,6 +15,7 @@ pub mod factory_transition_layout;
 pub mod factory_1_layout;
 pub mod factory_2_layout;
 pub mod factory_3_layout;
+pub mod factory_4_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
