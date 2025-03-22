@@ -48,7 +48,7 @@ impl LevelInfo for Factory3Info {
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Did you come here to fulfill your mission?", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Not really, no. I'm just visiting Swarm.", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Minawan and Swarm are very good friends!", emotion: Emotion::Happy },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "They can seem intimidating at first, but they're all really nice!", emotion: Emotion::Happy },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "They can seem intimidating at first, but they're all really nice drones!", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "However, seems like this place changed a bit since I've been here last time.", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Swarm installed these things that make platforms appear.", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "But they disappear too fast!", emotion: Emotion::Sad },

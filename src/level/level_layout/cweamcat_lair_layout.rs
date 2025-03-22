@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::{level_layout::{cweamcat_house_layout::CweamcatHouseInfo, hell_1_layout::Hell1Info, starting_room_layout::StartingRoomInfo}, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CREW_MEMBER, CWEAMPUFF, MASKED_CWEAMPUFF, MINAWAN, NPC, OG_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
+use crate::{level::{level_layout::{cweamcat_house_layout::CweamcatHouseInfo, hell_1_layout::Hell1Info, starting_room_layout::StartingRoomInfo}, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CREW_MEMBER, CWEAMPUFF, DRONE, MASKED_CWEAMPUFF, MINAWAN, NPC, OG_CWEAMPUFF, RICH_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
 
 use super::{cerber_lair_layout::CerberLairInfo, factory_transition_layout::FactoryTransitionInfo, spaceship_1_layout::Spaceship1Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
@@ -50,13 +50,13 @@ impl LevelInfo for CweamcatLairInfo {
 
         if cweampuff.progression >= Progression::MetMilk {
             transitions.push(
-                TransitionCollider { exit_index: 1, safe_position: Vec3::new(2200.0, -50.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Hell1(Hell1Info), floor_info: EntityInfo { position: Vec3::new(2450.0, -350.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
+                TransitionCollider { exit_index: 1, safe_position: Vec3::new(2200.0, -50.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Hell1(Hell1Info), floor_info: EntityInfo { position: Vec3::new(2450.0, -400.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
             );
         }
 
         if cweampuff.progression >= Progression::HasCherish {
             transitions.push(
-                TransitionCollider { exit_index: 2, safe_position: Vec3::new(350.0, -50.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::CerberLair(CerberLairInfo), floor_info: EntityInfo { position: Vec3::new(150.0, -350.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
+                TransitionCollider { exit_index: 2, safe_position: Vec3::new(350.0, -50.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::CerberLair(CerberLairInfo), floor_info: EntityInfo { position: Vec3::new(150.0, -400.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
             );
         }
 
@@ -97,6 +97,14 @@ impl LevelInfo for CweamcatLairInfo {
 
         let mut masked_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(2050.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                       conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+        };
+
+        let mut drone = NPC { floor_info: EntityInfo { position: Vec3::new(2800.0, 450.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                                    conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+        };
+
+        let mut rich_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(1050.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                                            conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
         };
 
         match cweampuff.progression {
@@ -403,7 +411,119 @@ impl LevelInfo for CweamcatLairInfo {
                 ];
             },
             Progression::RisingStar => {
-                
+                og_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Old Cweampuff! Old Cweampuff!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "There you are Cweampuff!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Look how many of us are here today!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "They all came to see our hidden gem!", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "My old heart can't take this! I'm so happy!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Our family's grown so much!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I hope they all enjoy their stay here!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "We don't have to worry about the curse now too.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I know how to cure it!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "What?! How?", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "We need to make her a rising star!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Rising star?", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "But of course!", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Now that there's enough of us we can surely make it happen!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "I can't wait to see her shine!", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Let's go inside the house, Cweampuff. Our rising star is waiting for us.", emotion: Emotion::Regular },
+                ];
+
+                cool_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Yo, Cweampuff.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Hello!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "You were right about everything.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "What a fool I was for even thinking all of that.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "I had a great talk with our hidden gem.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "She let me know how much she appreciates me!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "I think I'll dedicate myself to drawing art of her while I'm lurking around.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Have to put my skills to a good use.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wow, you're are so cool!", emotion: Emotion::Surprised },
+                ];
+
+                cool_cweampuff.floor_info.position.x = 1750.;
+
+                masked_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Hello, Masked Cweampuff!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MASKED_CWEAMPUFF, text: "Hello, Cweampuff!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MASKED_CWEAMPUFF, text: "Do you remember how I wanted to prepare our hidden gem a present?", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MASKED_CWEAMPUFF, text: "After the crew had given her a walkie-talkie I heard her talk with their captain.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MASKED_CWEAMPUFF, text: "I'm pretty sure I've heard some train whistles.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MASKED_CWEAMPUFF, text: "So I thought she likes trains and left her a little plushy train!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "That's such a cute present!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I'm sure she loves it!", emotion: Emotion::Happy },
+                ];
+
+                crew_member.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Hello, Cweampuff!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Hello!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Our captain asked me to deliver a walkie-talkie to your hidden gem.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Now they can talk to each other whenever they want!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "That's great news!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I'm so happy they're friends now!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Same here!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "I can't wait to see them go on an adventure together!", emotion: Emotion::Happy },
+                ];
+
+                crew_member.floor_info.position.x = 2500.;
+                crew_member.floor_info.position.y = 750.;
+
+                npcs.push(crew_member);
+
+                minawan.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Wan! Wan!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Minawan! I'm so happy to see you here! Wan, wan!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "I've completed my mission, and really wanted to see your hidden gem once more.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Thanks to you, the word of her's been spreading quite fast around these lands.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "This place seems so lively now!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "It's just like with my rising star... Speaking of...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "I'd love to see your hidden gem and my rising star together someday!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "I think they could be very good friends!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I'd love that! Wan, wan!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Wan! Wan!", emotion: Emotion::Happy },
+                ];
+
+                minawan.floor_info.position.x = 2900.;
+
+                npcs.push(minawan);
+
+                drone.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "I LOVE OUR HIDDEN GEM!!!!", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "'Our'?..", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "YES!!! I AM NOW A CWEAMPUFF TOO!!!!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "SHE IS THE BEST THING IN THE WORLD!!!!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "SHE WILL BE ASSIMIL... Wait...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "Maybe it's not her who's being assimilated...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "Maybe it's ME who got assimilated...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Oh! We'll be happy to make you a part of our family!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "THANK YOU!!!!", emotion: Emotion::Happy },
+                ];
+
+                npcs.push(drone);
+
+                rich_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Yes, this'll be quite the investment", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Hello! What kind of investment are you talking about?", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Oh, hello Cweampuff!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Drone told me about your hidden gem, so I wanted to see her for myself.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Now that I'm here, I'm confident, she's worth the investment!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "She got so flustered after I'd bought her a yacht!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Maybe I should double my investment...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wow! That's so much money!", emotion: Emotion::Surprised },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "You're calling it 'investment', are you planning to get something in return?", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Well, naturally.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "In return, I want to see her happy!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "I'm confident, if I do it for her then nothing's a waste.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "If my money can make her just a bit happier, then that's more than enough for me!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "They say money can't buy happiness.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "But that's the case only if you spend them on yourself!", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "If you spend money to make someone else's life better...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Then you bet it's going to make you feel happy!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Yeah! Our hidden gem deserves our support!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Indeed!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "On the second thought, maybe I should triple my investment...", emotion: Emotion::Regular },
+                ];
             }
         };
 
@@ -415,6 +535,10 @@ impl LevelInfo for CweamcatLairInfo {
 
         if cweampuff.progression >= Progression::HasLetter {
             npcs.push(masked_cweampuff);
+        }
+
+        if cweampuff.progression >= Progression::RisingStar {
+            npcs.push(rich_cweampuff);
         }
 
         Some(npcs.into_boxed_slice())

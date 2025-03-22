@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{cutscene::{CutsceneEvent, CutsceneInfo}, level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, MILK, MILK_ASLEEP, NPC, OG_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
+use crate::{cutscene::{CutsceneEvent, CutsceneInfo}, level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, CWEAMPUFFS, MASKED_CWEAMPUFF, MILK, MILK_ASLEEP, NPC, OG_CWEAMPUFF, RICH_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
 
 use super::{DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
@@ -35,12 +35,20 @@ impl LevelInfo for CweamcatHouseInfo {
                                   conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| {}
         };
 
-        let mut og_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(350.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let mut og_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(450.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                           conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
         };
 
-        let mut cool_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(0.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let mut cool_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(-450.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                           conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+        };
+
+        let mut masked_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(150.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                                            conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+        };
+
+        let mut rich_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(-150.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                                            conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
         };
 
         match cweampuff.progression {
@@ -308,7 +316,78 @@ impl LevelInfo for CweamcatHouseInfo {
                 ];
             },
             Progression::RisingStar => {
-                
+                milk.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Cweampuffs! You're all here!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "The crew, minawan and even the Swarm are all here!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I can't believe I've made friends with the crew's captain and met all of you!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I'm so glad to see everyone noticing you!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Everyone is so nice to me!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "But I...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I don't know why you're doing this.", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Old Cweampuff, you've always stayed with me...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "...", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Cool Cweampuff, you're always there to listen to my silly stories...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: COOL_CWEAMPUFF, text: "...", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Masked Cweampuff, you always surprise me with your presents...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "But I can't even thank you properly!..", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: MASKED_CWEAMPUFF, text: "...", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Rich Cweampuff, you spend way too much money on me...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: RICH_CWEAMPUFF, text: "...", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Cweampuff, you've traveled all over these lands to help me...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "...", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I don't know what I did to deserve this...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "I don't even know how to thank you properly...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "'Thank you' isn't enough when it's up against this mountain of love...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: RICH_CWEAMPUFF, text: "Your happiness is our biggest reward!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: MASKED_CWEAMPUFF, text: "We all just want to see you smile!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: COOL_CWEAMPUFF, text: "You accept me for who I am! It's me who should be thanking you!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "I know more than anyone else just how much you deserve all of this!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "You built a house for us with your own hands!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "You always smile when we come visit you!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "You gave us home!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Stop...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "It's your hard work paying off!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "You being you is enough!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFFS, text: "WE LOVE YOU!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Cweampuffs...", emotion: Emotion::Sad },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "But this is just the beginning, isn't it?", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "You've been waiting for this for a long time now.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "It's time for you to shine.", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "...", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFFS, text: "Rise, our star!", emotion: Emotion::Happy },
+                ];
+
+                milk.after_conversation_func = |_cweampuff, _commands, _breakable_walls, cutscene| { 
+                    cutscene.send(CutsceneEvent::Started(&[
+                        CutsceneInfo { text: "", background: "cutscenes/rising star/1.png" },
+                        CutsceneInfo { text: "", background: "cutscenes/rising star/2.png" },
+                        CutsceneInfo { text: "", background: "cutscenes/rising star/3.png" },
+                    ], Level::CweamcatHouse(CweamcatHouseInfo), "vine-boom.mp3"));
+                };
+
+                masked_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MASKED_CWEAMPUFF, text: "Cute...", emotion: Emotion::Regular },
+                ];
+
+                npcs.push(masked_cweampuff);
+
+                og_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "Adorable...", emotion: Emotion::Regular },
+                ];
+
+                npcs.push(og_cweampuff);
+
+                cool_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Perfect...", emotion: Emotion::Regular },
+                ];
+
+                npcs.push(cool_cweampuff);
+
+                rich_cweampuff.conversation = &[
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Wonderful..", emotion: Emotion::Regular },
+                ];
+
+                npcs.push(rich_cweampuff);
             }
         }
 

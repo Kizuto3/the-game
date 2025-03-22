@@ -117,7 +117,10 @@ pub fn cutscene_player(
             }
         };
 
-        background_image.image = asset_server.load(current_cutscene_info.background);
+        if !current_cutscene_info.background.is_empty() {
+            background_image.image = asset_server.load(current_cutscene_info.background);
+        }
+        
         loading_assets.assets.push(background_image.image.id().untyped());
 
         for mut text in text_query.iter_mut() {
