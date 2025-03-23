@@ -56,4 +56,8 @@ impl LevelInfo for Hell3Info {
             FloorModification::JumpPad(JumpPad { floor_info: EntityInfo { position: Vec3::new(-1600.0, -800.0, 0.0), size: Vec2::new(200.0, 200.0) } }),
         ]))
     }
+
+    fn get_bgm(&self) -> Option<&'static str> {
+        Some("hell")
+    }
 }

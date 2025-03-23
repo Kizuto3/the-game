@@ -96,4 +96,8 @@ impl LevelInfo for Spaceship3Info {
             FloorModification::GravityInverter(GravityInverter { floor_info: EntityInfo { position: Vec3 { x: -1100., y: 1000., z: 0. }, size: Vec2 { x: 7500., y: 1700. } } })
         ]))
     }
+
+    fn get_bgm(&self) -> Option<&'static str> {
+        Some("spaceship")
+    }
 }

@@ -49,6 +49,10 @@ impl LevelInfo for Factory4Info {
             }),
         ]))
     }
+
+    fn get_bgm(&self) -> Option<&'static str> {
+        Some("factory")
+    }
 }
 
 static TIME_TRIAL_1: &[FloorInfo] = &[

@@ -130,4 +130,8 @@ impl LevelInfo for CerberLairInfo {
             FloorModification::JumpPad(JumpPad { floor_info: EntityInfo { position: Vec3::new(1750.0, 100.0, 0.0), size: Vec2::new(200.0, 200.0) } }),
         ]))
     }
+
+    fn get_bgm(&self) -> Option<&'static str> {
+        Some("hell")
+    }
 }

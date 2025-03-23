@@ -207,6 +207,7 @@ pub fn reset_abilities(mut cweampuff: Query<(&mut Jumper, &mut Movable, &mut Das
         jumper.is_jumping = false;
         jumper.is_next_jump_doublejump = false;
         jumper.is_jump_available = true;
+        jumper.time_passed_since_stopped_touching_ground = None;
     
         movable.hugging_left_wall = false;
         movable.hugging_right_wall = false;
@@ -397,6 +398,7 @@ fn detect_floor_and_wall_collision(
                             floor_collider.currently_touching_side = Some(CollisionType::LeftWall);
                             
                             if cweampuff.has_wall_jump {
+                                jumper.time_passed_since_stopped_touching_ground = None;
                                 jumper.is_jumping = false;
                                 jumper.is_next_jump_doublejump = false;
                                 cweampuff_dasher.is_dash_available = true;
@@ -405,8 +407,9 @@ fn detect_floor_and_wall_collision(
                         CollisionType::RightWall => {
                             cweampuff_movable.hugging_right_wall = true;
                             floor_collider.currently_touching_side = Some(CollisionType::RightWall);
-                            
+
                             if cweampuff.has_wall_jump {
+                                jumper.time_passed_since_stopped_touching_ground = None;
                                 jumper.is_jumping = false;
                                 jumper.is_next_jump_doublejump = false;
                                 cweampuff_dasher.is_dash_available = true;
@@ -420,6 +423,7 @@ fn detect_floor_and_wall_collision(
                                 jumper.is_next_jump_doublejump = false;
                                 cweampuff_movable.touching_ground = true;
                                 cweampuff_dasher.is_dash_available = true;
+                                jumper.time_passed_since_stopped_touching_ground = None;
                             }
                             else {
                                 floor_collider.currently_touching_side = Some(CollisionType::Ceiling);
@@ -439,6 +443,7 @@ fn detect_floor_and_wall_collision(
                                 jumper.is_next_jump_doublejump = false;
                                 cweampuff_movable.touching_ground = true;
                                 cweampuff_dasher.is_dash_available = true;
+                                jumper.time_passed_since_stopped_touching_ground = None;
                             }
                         }               
                     };

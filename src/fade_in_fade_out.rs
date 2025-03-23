@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-pub const FADE_DELTA: f32 = 4.0;
+pub const FADE_DELTA: f32 = 2.0;
 
 #[derive(States, Default, Debug, Clone, PartialEq, Eq, Hash)]
 pub enum FadeState {

@@ -41,4 +41,8 @@ impl LevelInfo for StartingRoomInfo {
     fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[FloorModification]>> {
         None
     }
+
+    fn get_bgm(&self) -> Option<&'static str> {
+        None
+    }
 }

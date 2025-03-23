@@ -1,5 +1,7 @@
+use bevy::audio::{PlaybackMode, Volume};
 use bevy::{ecs::observer::TriggerTargets, prelude::*};
 use bevy_rapier2d::prelude::*;
+use level_bgm::LevelBGM;
 use level_layout::aquwa_lair_layout::AquwaLairInfo;
 use level_layout::cerber_lair_layout::CerberLairInfo;
 use level_layout::cweamcat_house_layout::CweamcatHouseInfo;
@@ -30,6 +32,7 @@ pub mod level_layout;
 pub mod door;
 pub mod progression;
 pub mod floor_modification;
+pub mod level_bgm;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
 const NPC_COLOR: Color = Color::srgb(0.5, 0.5, 1.0);
@@ -77,6 +80,7 @@ pub struct LevelLayout {
     pub door_layout: Option<Box<[DoorCollider]>>,
     pub floor_modifications: Option<Box<[FloorModification]>>,
     pub transition_info: LevelTransitionInfo,
+    pub bgm: Option<&'static str>
 }
 
 pub fn despawn_current_level(
@@ -85,7 +89,7 @@ pub fn despawn_current_level(
     floor_query: Query<Entity, (With<FloorCollider>, Without<Camera2d>)>,
     transitions_query: Query<Entity, (With<Sensor>, Without<Camera2d>)>,
     interactable_query: Query<Entity, (With<Interactable>, Without<Camera2d>)>,
-    background_query: Query<Entity, (With<BackgroundComponent>, Without<Camera2d>)>,
+    background_query: Query<Entity, (With<BackgroundComponent>, Without<Camera2d>)>
 ) {
     for mut gravity in cweampuff.iter_mut() {
         gravity.0 = 0.;
@@ -112,9 +116,48 @@ pub fn spawn_new_level(
     mut cweampuff: Single<(&mut Transform, &mut GravityScale), (With<Cweampuff>, Without<Camera2d>)>,
     mut camera: Single<&mut Transform, With<Camera2d>>,
     level_layout_query: Query<&LevelLayout, With<LevelLayout>>,
+    bgm_query: Query<(Entity, &AudioPlayer), With<LevelBGM>>,
     asset_server: Res<AssetServer>,
 ) {
     for level_layout in level_layout_query.iter() {
+        match level_layout.bgm {
+            Some(bgm) => {
+                if bgm_query.is_empty() {
+                    let audio_handle = asset_server.load(format!("ost/{}.mp3", bgm));
+
+                    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.0));
+                    playback_settings.mode = PlaybackMode::Loop;
+                                        commands.spawn((
+                        AudioPlayer::new(audio_handle),
+                        LevelBGM,
+                        playback_settings
+                    ));
+                }
+
+                for (current_bgm_entity, current_bgm) in bgm_query.iter() {
+                    let audio_handle = asset_server.load(format!("ost/{}.mp3", bgm));
+                    
+                    if current_bgm.0 != audio_handle {
+                        commands.entity(current_bgm_entity).despawn_recursive();
+    
+                        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.0));
+                        playback_settings.mode = PlaybackMode::Loop;
+                    
+                        commands.spawn((
+                            AudioPlayer::new(audio_handle),
+                            LevelBGM,
+                            playback_settings
+                        ));
+                    }
+                }
+            }
+            None => {
+                for (current_bgm_entity, _) in bgm_query.iter() {
+                    commands.entity(current_bgm_entity).despawn_recursive();
+                }
+            }
+        }
+
         let mut min_x = f32::MAX;
         let mut min_y = f32::MAX;
         let mut max_x = f32::MIN;
@@ -360,7 +403,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::CweamcatLair(layout_info) => {
@@ -370,7 +414,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::CweamcatHouse(layout_info) => {
@@ -380,7 +425,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Hell1(layout_info) => {
@@ -390,7 +436,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Hell2(layout_info) => {
@@ -400,7 +447,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Hell3(layout_info) => {
@@ -410,7 +458,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Hell4(layout_info) => {
@@ -420,7 +469,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::CerberLair(layout_info) => {
@@ -430,7 +480,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Spaceship1(layout_info) => {
@@ -440,7 +491,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Spaceship2(layout_info) => {
@@ -450,7 +502,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Spaceship3(layout_info) => {
@@ -460,7 +513,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Spaceship4(layout_info) => {
@@ -470,7 +524,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::AquwaLair(layout_info) => {
@@ -480,7 +535,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::FactoryTransition(layout_info) => {
@@ -490,7 +546,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Factory1(layout_info) => {
@@ -500,7 +557,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Factory2(layout_info) => {
@@ -510,7 +568,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Factory3(layout_info) => {
@@ -520,7 +579,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::Factory4(layout_info) => {
@@ -530,7 +590,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
         Level::NeuroLair(layout_info) => {
@@ -540,7 +601,8 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
                 npc_layout: layout_info.get_npcs(cweampuff),
                 door_layout: layout_info.get_doors(cweampuff),
                 floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info
+                transition_info,
+                bgm: layout_info.get_bgm()
             });
         },
     }

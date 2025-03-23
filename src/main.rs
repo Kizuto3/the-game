@@ -7,15 +7,17 @@ mod camera;
 mod interactable;
 mod npc;
 mod fade_in_fade_out;
+mod audio_settings;
 
 use app_states::AppState;
+use audio_settings::AudioSettings;
 use bevy::prelude::*;
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collider, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
 use camera::{cweampuff_camera_adjustment, spawn_camera};
 use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, despawn_cutscene_resources, spawn_cutscene_resources, wait_for_resources_to_load, CutsceneEvent};
 use fade_in_fade_out::{despawn_fade_in_fade_out_node, fade_in, fade_out, set_fade_in_state, set_fade_out_state, spawn_fade_in_fade_out_node, FadeInFadeOutNode, FadeState};
 use interactable::{despawn_interaction_prompt, interaction_state::InteractionState, spawn_interaction_prompt};
-use level::{despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, floor_modification::{gravity_inverter_collision_reader, jump_pad_collision_reader, tick_timer_trial_timer, time_trial_collision_reader, time_trial_start_interaction_input_reader}, level_layout::FloorCollider, level_transition_collision_reader, progression::Progression, spawn_new_level, transition_states::TransitionState};
+use level::{despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, floor_modification::{gravity_inverter_collision_reader, jump_pad_collision_reader, tick_timer_trial_timer, time_trial_collision_reader, time_trial_start_interaction_input_reader}, level_bgm::{fade_in_bgm, fade_out_bgm, set_bgm_state, LevelBGMState}, level_layout::FloorCollider, level_transition_collision_reader, progression::Progression, spawn_new_level, transition_states::TransitionState};
 use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_menu_buttons};
 use movement::*;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
@@ -40,8 +42,11 @@ fn main() {
     app.init_state::<ConversationState>();
     app.init_state::<FadeState>();
     app.init_state::<DialogState>();
+    app.init_state::<LevelBGMState>();
 
     app.add_event::<CutsceneEvent>();
+
+    app.init_resource::<AudioSettings>();
 
     app.add_systems(Startup, spawn_camera)
 
@@ -68,7 +73,9 @@ fn main() {
         .add_systems(FixedUpdate, fade_out.run_if(in_state(FadeState::FadeOut)))
 
     // LEVEL TRANSITION SYSTEMS
-        .add_systems(OnEnter(TransitionState::Started), set_fade_in_state)
+        .add_systems(OnEnter(TransitionState::Started), (set_fade_in_state, set_bgm_state))
+        .add_systems(FixedUpdate, fade_in_bgm.run_if(in_state(LevelBGMState::Changing)).run_if(in_state(FadeState::FadeIn)))
+        .add_systems(FixedUpdate, fade_out_bgm.run_if(in_state(LevelBGMState::Changing)).run_if(in_state(TransitionState::Finished)))
         .add_systems(OnEnter(TransitionState::Finished), (set_fade_out_state, reset_abilities).chain())
         .add_systems(OnEnter(FadeState::FadeInFinished), (despawn_current_level, spawn_new_level).run_if(in_state(TransitionState::Started)).chain())
 

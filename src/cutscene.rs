@@ -199,7 +199,7 @@ pub fn spawn_cutscene_resources(
                 });
     });
 
-    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.2));
+    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.01));
     playback_settings.mode = PlaybackMode::Once;
 
     commands.spawn((
