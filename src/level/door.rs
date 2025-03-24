@@ -1,7 +1,7 @@
-use bevy::{ecs::observer::TriggerTargets, prelude::*};
+use bevy::{audio::{PlaybackMode, Volume}, ecs::observer::TriggerTargets, prelude::*};
 use bevy_rapier2d::prelude::CollisionEvent;
 
-use crate::{interactable::{interaction_state::InteractionState, Interactable}, npc::NPC, Cweampuff};
+use crate::{audio_settings::AudioSettings, interactable::{interaction_state::InteractionState, Interactable}, npc::NPC, Cweampuff};
 
 use super::{level_layout::DoorCollider, manually_transition_to_level, transition_states::TransitionState, LevelLayout};
 
@@ -45,12 +45,22 @@ pub fn door_start_interaction_input_reader(
     mut commands: Commands,
     current_level_layout: Query<Entity, With<LevelLayout>>,
     mut transition_state: ResMut<NextState<TransitionState>>,
+    asset_server: Res<AssetServer>,
+    audio_settings: Res<AudioSettings>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::KeyE) {
         return;
     }
 
     for door in doors.iter().find(|f| f.is_active).iter() {
+        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+        playback_settings.mode = PlaybackMode::Despawn;
+    
+        commands.spawn((
+            AudioPlayer::new(asset_server.load("sfx/door.wav")),
+            playback_settings
+        ));
+
         manually_transition_to_level(&current_level_layout, &mut transition_state, &cweampuff, &mut commands, door.transition_to_level, door.safe_position);
     }
 }

@@ -1,7 +1,7 @@
-use bevy::{ecs::observer::TriggerTargets, math::bounding::{Aabb2d, BoundingCircle, BoundingVolume}, prelude::*};
+use bevy::{audio::{PlaybackMode, Volume}, ecs::observer::TriggerTargets, math::bounding::{Aabb2d, BoundingCircle, BoundingVolume}, prelude::*};
 use bevy_rapier2d::{prelude::{Collider, CollisionEvent, Velocity}, rapier::prelude::CollisionEventFlags};
 
-use crate::{level::level_layout::CollisionType, Cweampuff, FloorCollider, CWEAMPUFF_DIAMETER};
+use crate::{audio_settings::AudioSettings, level::level_layout::CollisionType, Cweampuff, FloorCollider, CWEAMPUFF_DIAMETER};
 
 const CWEAMPUFF_SPEED: f32 = 500.0;
 const MAX_CWEAMPUFF_VERTICAL_VELOCITY: f32 = 800.0;
@@ -85,7 +85,10 @@ pub fn cweampuff_move(
 
 pub fn cweampuff_jump(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut cweampuff_jumper: Single<(&mut Jumper, &mut Velocity, &mut Movable, &Cweampuff), With<Cweampuff>>
+    mut cweampuff_jumper: Single<(&mut Jumper, &mut Velocity, &mut Movable, &Cweampuff), With<Cweampuff>>,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    audio_settings: Res<AudioSettings>,
 ) {
     let (jumper, velocity, movable, cweampuff) = &mut *cweampuff_jumper;
 
@@ -113,6 +116,14 @@ pub fn cweampuff_jump(
         velocity.linvel.y = jumper.jump_impulse;
         jumper.is_jumping = true;
         jumper.is_jump_available = false;
+
+        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+        playback_settings.mode = PlaybackMode::Despawn;
+    
+        commands.spawn((
+            AudioPlayer::new(asset_server.load("sfx/jump2.wav")),
+            playback_settings
+        ));
 
         if jumper.is_next_jump_doublejump {
             jumper.is_next_jump_doublejump = false;
@@ -163,7 +174,10 @@ pub fn coyote_jump_buffer_monitor(
 
 pub fn cweampuff_dash(
     keyboard_input: Res<ButtonInput<KeyCode>>, 
-    mut cweampuff_dasher: Single<(&mut Dasher, &mut Velocity, &mut Movable, &Cweampuff), With<Cweampuff>>
+    mut cweampuff_dasher: Single<(&mut Dasher, &mut Velocity, &mut Movable, &Cweampuff), With<Cweampuff>>,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    audio_settings: Res<AudioSettings>,
 ) {
     let (dasher, velocity, movable, cweampuff) = &mut *cweampuff_dasher;
 
@@ -175,6 +189,14 @@ pub fn cweampuff_dash(
         (!movable.touching_ground && !dasher.is_dash_available)  {
         return;
     }
+
+    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+    playback_settings.mode = PlaybackMode::Despawn;
+
+    commands.spawn((
+        AudioPlayer::new(asset_server.load("sfx/dash.wav")),
+        playback_settings
+    ));
 
     let mut vertical_velocity = velocity.linvel.y;
 

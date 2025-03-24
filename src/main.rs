@@ -83,7 +83,6 @@ fn main() {
         .add_systems(OnEnter(InteractionState::Ready), spawn_interaction_prompt)
         .add_systems(Update, (
             npc_start_interaction_input_reader, 
-            door_start_interaction_input_reader,
             time_trial_start_interaction_input_reader
         ).run_if(in_state(InteractionState::Ready)))
         .add_systems(OnExit(InteractionState::Ready), despawn_interaction_prompt)
@@ -101,6 +100,7 @@ fn main() {
             cweampuff_jump,
             cweampuff_move,
             cweampuff_camera_adjustment,
+            door_start_interaction_input_reader.run_if(in_state(InteractionState::Ready)),
             level_transition_collision_reader
         ).chain().run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)).run_if(in_state(FadeState::None)))
         .add_systems(FixedUpdate, (

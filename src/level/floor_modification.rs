@@ -1,9 +1,9 @@
 use std::time::Duration;
 
-use bevy::{ecs::observer::TriggerTargets, prelude::*};
+use bevy::{audio::{PlaybackMode, Volume}, ecs::observer::TriggerTargets, prelude::*};
 use bevy_rapier2d::prelude::*;
 
-use crate::{interactable::{interaction_state::InteractionState, Interactable}, movement::{Jumper, Movable}, npc::NPC, Cweampuff};
+use crate::{audio_settings::AudioSettings, interactable::{interaction_state::InteractionState, Interactable}, movement::{Jumper, Movable}, npc::NPC, Cweampuff};
 
 use super::level_layout::{BreakableWall, DoorCollider, FloorAssetType, FloorCollider, GravityInverter, JumpPad, TimeTrial};
 
@@ -19,6 +19,9 @@ pub fn jump_pad_collision_reader(
     jump_pads: Query<Entity, (With<Sensor>, With<JumpPad>, Without<NPC>, Without<DoorCollider>)>,
     mut cweampuff: Single<(Entity, &mut Velocity, &Jumper), With<Cweampuff>>,
     mut contact_events: EventReader<CollisionEvent>,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    audio_settings: Res<AudioSettings>,
 ) {
     let (cweampuff_entity, cweampuff_velocity, cweampuff_jumper) = &mut *cweampuff;
     for event in contact_events.read() {    
@@ -27,6 +30,14 @@ pub fn jump_pad_collision_reader(
                 if h1.entities().iter().any(|f| *f == jump_pad_entity || *f == *cweampuff_entity) && 
                    h2.entities().iter().any(|f| *f == jump_pad_entity || *f == *cweampuff_entity) {
                     cweampuff_velocity.linvel.y = cweampuff_jumper.jump_impulse * JUMP_PAD_VELOCITY_DELTA;
+
+                    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+                    playback_settings.mode = PlaybackMode::Despawn;
+                
+                    commands.spawn((
+                        AudioPlayer::new(asset_server.load("sfx/woosh.wav")),
+                        playback_settings
+                    ));
 
                     return;
                 }
@@ -39,6 +50,9 @@ pub fn gravity_inverter_collision_reader(
     jump_pads: Query<Entity, (With<Sensor>, With<GravityInverter>, Without<NPC>, Without<DoorCollider>)>,
     mut cweampuff: Single<(Entity, &mut Jumper, &mut GravityScale, &mut Movable), With<Cweampuff>>,
     mut contact_events: EventReader<CollisionEvent>,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    audio_settings: Res<AudioSettings>,
 ) {
     let (cweampuff_entity, cweampuff_jumper, cweampuff_gravity, cweampuff_movable) = &mut *cweampuff;
     for event in contact_events.read() {    
@@ -49,6 +63,14 @@ pub fn gravity_inverter_collision_reader(
                     cweampuff_gravity.0 = -cweampuff_gravity.0;
                     cweampuff_jumper.jump_impulse = -cweampuff_jumper.jump_impulse;
                     cweampuff_movable.is_upside_down = true;
+
+                    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+                    playback_settings.mode = PlaybackMode::Despawn;
+                
+                    commands.spawn((
+                        AudioPlayer::new(asset_server.load("sfx/gravity.wav")),
+                        playback_settings
+                    ));
 
                     return;
                 }
@@ -109,12 +131,21 @@ pub fn time_trial_start_interaction_input_reader(
     mut timers: Query<&mut TimeTrialTimer>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
+    audio_settings: Res<AudioSettings>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::KeyE) {
         return;
     }
 
     for time_trial in time_trials.iter().find(|f| f.is_active).iter() {
+        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+        playback_settings.mode = PlaybackMode::Despawn;
+    
+        commands.spawn((
+            AudioPlayer::new(asset_server.load("sfx/lever.wav")),
+            playback_settings
+        ));
+
         if !timers.is_empty() {
             for timer in timers.iter_mut().find(|x| x.entity_id == time_trial.id).iter_mut() {
                 timer.timer.reset();

@@ -57,8 +57,8 @@ pub fn button_interactions_handler(
                         CutsceneInfo { text: "Somewhere in these lands, there is a hidden gem.", background: ""  },
                         CutsceneInfo { text: "Capable of giving eternal happiness to those who find it.", background: "" },
                         CutsceneInfo { text: "A brave cweampuff decided to look for it...", background: "" },
-                        CutsceneInfo { text: "*** Cweampuff walking on a bridge ****", background: "cutscenes/opening/1.png" },
-                        CutsceneInfo { text: "*** The bridge collapses and they fall ****", background: "cutscenes/opening/2.png" },
+                        CutsceneInfo { text: "", background: "cutscenes/opening/1.png" },
+                        CutsceneInfo { text: "", background: "cutscenes/opening/2.png" },
                     ], Level::StartingRoom(StartingRoomInfo), "vine-boom.mp3"));
                 },
                 ButtonAction::Quit => {
