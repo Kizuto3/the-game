@@ -529,7 +529,7 @@ impl LevelInfo for CweamcatLairInfo {
 
         npcs.push(og_cweampuff);
 
-        if cweampuff.progression >= Progression::HasCherish {
+        if cweampuff.progression >= Progression::HasCherish && cweampuff.progression != Progression::HasLetter {
             npcs.push(cool_cweampuff);
         }
 

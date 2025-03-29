@@ -150,7 +150,7 @@ fn setup_cweampuff(
         GravityScale(CWEAMPUFF_GRAVITY_SCALE),
         Friction::coefficient(0.7),
         Collider::ball(0.5),
-        Jumper { jump_impulse: CWEAMPUFF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false, coyote_jump_buffer_duration: 0.075, time_passed_since_stopped_touching_ground: None },
+        Jumper { jump_impulse: CWEAMPUFF_JUMP_IMPULSE, is_jump_available: true, is_jumping: false, is_next_jump_doublejump: false, coyote_jump_buffer_duration: 0.085, time_passed_since_stopped_touching_ground: None },
         Dasher { is_dash_available: false, dash_impulse: CWEAMPUFF_DASH_IMPULSE, dash_cooldown: 0.5, time_passed_since_dash: 0. },
         LockedAxes::ROTATION_LOCKED,
         Movable { is_upside_down: false, touching_ground: false, facing_right: true, hugging_left_wall: false, hugging_right_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },

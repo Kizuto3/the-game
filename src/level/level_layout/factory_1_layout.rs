@@ -42,7 +42,7 @@ impl LevelInfo for Factory1Info {
     }
 
     fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {        
-        if cweampuff.progression <= Progression::MetMilk {
+        if cweampuff.progression == Progression::GivenLetter {
             return Some(Box::from([
                 NPC {
                     floor_info: EntityInfo { position: Vec3::new(-1900.0, -1450.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
