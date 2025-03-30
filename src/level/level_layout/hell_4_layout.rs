@@ -12,8 +12,8 @@ impl LevelInfo for Hell4Info {
         Box::from([
             FloorInfo { position: Vec3::new(-1500.0, -200.0, 1.0), size: Vec2::new(300.0, 5800.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(1500.0, 200.0, 1.0), size: Vec2::new(300.0, 5800.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
-            FloorInfo { position: Vec3::new(0.0, -3050.0, 1.0), size: Vec2::new(3300.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
-            FloorInfo { position: Vec3::new(0.0, 3050.0, 1.0), size: Vec2::new(3300.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(225.0, -3050.0, 1.0), size: Vec2::new(3150.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(-225.0, 3050.0, 1.0), size: Vec2::new(3150.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(0.0, -2650.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(400.0, -2350.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(400.0, -2050.0, 1.0), size: Vec2::new(600.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },

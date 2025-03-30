@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{cutscene::{CutsceneEvent, CutsceneInfo}, level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, CWEAMPUFFS, MASKED_CWEAMPUFF, MILK, MILK_ASLEEP, NPC, OG_CWEAMPUFF, RICH_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
 
-use super::{DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{DoorCollider, DoorType, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct CweamcatHouseInfo;
@@ -23,7 +23,7 @@ impl LevelInfo for CweamcatHouseInfo {
 
     fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
         Some(Box::from([
-            DoorCollider { floor_info: EntityInfo { position: Vec3 { x: -750., y: -300., z: 0.0 }, size: Vec2 { x: 100., y: 200. } },
+            DoorCollider { floor_info: EntityInfo { position: Vec3 { x: -750., y: -300., z: 0.0 }, size: Vec2 { x: 100., y: 200. } }, door_type: DoorType::Door,
                 transition_to_level: Level::CweamcatLair(CweamcatLairInfo), safe_position: Vec3 { x: 1350., y: -125., z: CWEAMPUFF_Z_INDEX }, is_active: false }
         ]))
     }

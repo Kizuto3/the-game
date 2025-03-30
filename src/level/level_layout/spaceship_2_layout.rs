@@ -13,7 +13,7 @@ impl LevelInfo for Spaceship2Info {
             FloorInfo { position: Vec3::new(-5000.0, 0.0, 1.0), size: Vec2::new(300.0, 2700.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
             FloorInfo { position: Vec3::new(-3300.0, 1500.0, 1.0), size: Vec2::new(3700.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
             FloorInfo { position: Vec3::new(625.0, 1500.0, 1.0), size: Vec2::new(3750.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
-            FloorInfo { position: Vec3::new(2500.0, 200.0, 1.0), size: Vec2::new(300.0, 2500.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
+            FloorInfo { position: Vec3::new(2500.0, 125.0, 1.0), size: Vec2::new(300.0, 2450.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
             FloorInfo { position: Vec3::new(-2500.0, -1500.0, 1.0), size: Vec2::new(10000.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
             FloorInfo { position: Vec3::new(800.0, -150.0, 1.0), size: Vec2::new(300.0, 2400.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
             FloorInfo { position: Vec3::new(1800.0, -1100.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },

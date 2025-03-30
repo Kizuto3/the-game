@@ -3,7 +3,7 @@ use bevy_rapier2d::prelude::CollisionEvent;
 
 use crate::{audio_settings::AudioSettings, interactable::{interaction_state::InteractionState, Interactable}, npc::NPC, Cweampuff};
 
-use super::{level_layout::DoorCollider, manually_transition_to_level, transition_states::TransitionState, LevelLayout};
+use super::{level_layout::{DoorCollider, DoorType}, manually_transition_to_level, transition_states::TransitionState, LevelLayout};
 
 pub fn interactable_door_collision_reader(
     mut doors: Query<(Entity, &mut DoorCollider), (With<Interactable>, Without<NPC>)>,
@@ -56,11 +56,21 @@ pub fn door_start_interaction_input_reader(
         let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
         playback_settings.mode = PlaybackMode::Despawn;
     
-        commands.spawn((
-            AudioPlayer::new(asset_server.load("sfx/door.wav")),
-            playback_settings
-        ));
-
+        match door.door_type {
+            DoorType::Door => {
+                commands.spawn((
+                    AudioPlayer::new(asset_server.load("sfx/door.wav")),
+                    playback_settings
+                ));
+            },
+            DoorType::Teleport => {
+                commands.spawn((
+                    AudioPlayer::new(asset_server.load("sfx/gravity.wav")),
+                    playback_settings
+                ));
+            }
+        }
+        
         manually_transition_to_level(&current_level_layout, &mut transition_state, &cweampuff, &mut commands, door.transition_to_level, door.safe_position);
     }
 }

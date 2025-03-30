@@ -10,7 +10,7 @@ pub struct Hell1Info;
 impl LevelInfo for Hell1Info {
     fn get_floor_info(&self, _cweampuff: &crate::Cweampuff) -> Box<[FloorInfo]> {
         Box::from([
-            FloorInfo { position: Vec3::new(-300.0, 1600.0, 1.0), size: Vec2::new(600.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(-150.0, 1600.0, 1.0), size: Vec2::new(300.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(1600.0, 1600.0, 1.0), size: Vec2::new(2600.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(3050.0, 700.0, 1.0), size: Vec2::new(300.0, 2100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(-450.0, 700.0, 1.0), size: Vec2::new(300.0, 2100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
@@ -22,6 +22,9 @@ impl LevelInfo for Hell1Info {
             FloorInfo { position: Vec3::new(400.0, 650.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
             FloorInfo { position: Vec3::new(1200.0, 850.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell},
             FloorInfo { position: Vec3::new(2000.0, 1050.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(-225.0, 850.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(-225.0, 1100.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
+            FloorInfo { position: Vec3::new(-100.0, 1300.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Hell },
         ])
     }
 

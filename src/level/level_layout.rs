@@ -59,12 +59,20 @@ pub struct TransitionCollider {
     pub transition_to_level: Level
 }
 
+#[derive(Clone, Copy, Default)]
+pub enum DoorType {
+    #[default]
+    Door,
+    Teleport
+}
+
 #[derive(Component, Clone, Copy)]
 pub struct DoorCollider {
     pub floor_info: EntityInfo,
     pub transition_to_level: Level,
     pub safe_position: Vec3,
-    pub is_active: bool
+    pub is_active: bool,
+    pub door_type: DoorType,
 }
 
 #[derive(Clone, Copy, Default)]

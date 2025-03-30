@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, NPC, OBSERVER_CREW_MEMBER, OG_CREW_MEMBER}, CWEAMPUFF_Z_INDEX};
 
-use super::{cweamcat_lair_layout::CweamcatLairInfo, spaceship_4_layout::Spaceship4Info, BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{cweamcat_lair_layout::CweamcatLairInfo, spaceship_4_layout::Spaceship4Info, BreakableWall, DoorCollider, DoorType, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct AquwaLairInfo;
@@ -13,7 +13,7 @@ impl LevelInfo for AquwaLairInfo {
             FloorInfo { position: Vec3::new(-2000.0, 0.0, 1.0), size: Vec2::new(300.0, 2000.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
             FloorInfo { position: Vec3::new(2000.0, 500.0, 1.0), size: Vec2::new(300.0, 2000.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
             FloorInfo { position: Vec3::new(125.0, -850.0, 1.0), size: Vec2::new(3950.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
-            FloorInfo { position: Vec3::new(-100.0, 850.0, 1.0), size: Vec2::new(3500.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
+            FloorInfo { position: Vec3::new(0.0, 850.0, 1.0), size: Vec2::new(3700.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
             FloorInfo { position: Vec3::new(-1450.0, 0.0, 1.0), size: Vec2::new(800.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
             FloorInfo { position: Vec3::new(-1000.0, -500.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
             FloorInfo { position: Vec3::new(-600.0, -200.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Spaceship },
@@ -36,7 +36,7 @@ impl LevelInfo for AquwaLairInfo {
 
     fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
         Some(Box::from([
-            DoorCollider { floor_info: EntityInfo { position: Vec3 { x: -1550.0, y: -600.0, z: 0.0 }, size: Vec2 { x: 100., y: 200. } },
+            DoorCollider { floor_info: EntityInfo { position: Vec3 { x: -1550.0, y: -600.0, z: 0.0 }, size: Vec2 { x: 100., y: 200. } }, door_type: DoorType::Teleport,
                 transition_to_level: Level::CweamcatLair(CweamcatLairInfo), safe_position: Vec3 { x: 2450., y: 1550., z: CWEAMPUFF_Z_INDEX }, is_active: false }
         ]))
     }
