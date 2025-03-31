@@ -1,6 +1,6 @@
 use bevy::{color::{palettes::css::RED, Color}, prelude::*};
 
-use crate::{cutscene::{CutsceneEvent, CutsceneInfo}, level::{level_layout::starting_room_layout::StartingRoomInfo, Level}};
+use crate::{cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, level::{level_layout::starting_room_layout::StartingRoomInfo, Level}};
 
 pub const DEFAULT_FONT: &str = "fonts/Shadows Into Light.ttf";
 
@@ -59,7 +59,7 @@ pub fn button_interactions_handler(
                         CutsceneInfo { text: "A brave cweampuff decided to look for it...", background: "" },
                         CutsceneInfo { text: "", background: "cutscenes/opening/1.png" },
                         CutsceneInfo { text: "", background: "cutscenes/opening/2.png" },
-                    ], Level::StartingRoom(StartingRoomInfo), "vine-boom.mp3"));
+                    ], "vine-boom.mp3", PostCutsceneAction::TransitionTo(Level::StartingRoom(StartingRoomInfo))));
                 },
                 ButtonAction::Quit => {
                     exit.send(AppExit::Success);

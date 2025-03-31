@@ -1,6 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{cutscene::{CutsceneEvent, CutsceneInfo}, level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, CWEAMPUFFS, MASKED_CWEAMPUFF, MILK, MILK_ASLEEP, NPC, OG_CWEAMPUFF, RICH_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
+use crate::{cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, CWEAMPUFFS, MASKED_CWEAMPUFF, MILK, MILK_ASLEEP, NPC, OG_CWEAMPUFF, RICH_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
 
 use super::{DoorCollider, DoorType, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
@@ -150,7 +150,7 @@ impl LevelInfo for CweamcatHouseInfo {
                         CutsceneInfo { text: "Milk is still sleeping", background: "cutscenes/milk wakes up/1.png" },
                         CutsceneInfo { text: "Milk slightly opens her eye", background: "cutscenes/milk wakes up/2.png" },
                         CutsceneInfo { text: "Milk wakes up", background: "cutscenes/milk wakes up/3.png" },
-                    ], Level::CweamcatHouse(CweamcatHouseInfo), "vine-boom.mp3"));
+                    ], "vine-boom.mp3", PostCutsceneAction::TransitionTo(Level::CweamcatHouse(CweamcatHouseInfo))));
                 };
             },
             Progression::MilkWokeUp => {
@@ -276,7 +276,7 @@ impl LevelInfo for CweamcatHouseInfo {
                         CutsceneInfo { text: "*** Milk reads letter ***", background: "cutscenes/letter/1.png" },
                         CutsceneInfo { text: "*** Looks at the picture ***", background: "cutscenes/letter/2.png" },
                         CutsceneInfo { text: "*** Ghost appears ***", background: "cutscenes/letter/3.png" },
-                    ], Level::CweamcatHouse(CweamcatHouseInfo), "vine-boom.mp3"));
+                    ], "vine-boom.mp3", PostCutsceneAction::TransitionTo(Level::CweamcatHouse(CweamcatHouseInfo))));
                 };
             },
             Progression::GivenLetter => {
@@ -362,7 +362,7 @@ impl LevelInfo for CweamcatHouseInfo {
                         CutsceneInfo { text: "", background: "cutscenes/rising star/1.png" },
                         CutsceneInfo { text: "", background: "cutscenes/rising star/2.png" },
                         CutsceneInfo { text: "", background: "cutscenes/rising star/3.png" },
-                    ], Level::CweamcatHouse(CweamcatHouseInfo), "vine-boom.mp3"));
+                    ], "vine-boom.mp3", PostCutsceneAction::EndGame));
                 };
 
                 masked_cweampuff.conversation = &[
@@ -384,7 +384,7 @@ impl LevelInfo for CweamcatHouseInfo {
                 npcs.push(cool_cweampuff);
 
                 rich_cweampuff.conversation = &[
-                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Wonderful..", emotion: Emotion::Regular },
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: RICH_CWEAMPUFF, text: "Angelic..", emotion: Emotion::Regular },
                 ];
 
                 npcs.push(rich_cweampuff);

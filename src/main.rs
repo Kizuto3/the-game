@@ -51,7 +51,7 @@ fn main() {
     app.add_systems(Startup, spawn_camera)
 
     // MAIN MENU SYSTEMS
-        .add_systems(OnEnter(AppState::MainMenu), spawn_main_menu_buttons)
+        .add_systems(OnEnter(AppState::MainMenu), (despawn_current_level, despawn_cweampuff, spawn_main_menu_buttons).chain())
         .add_systems(Update, (
             button_visuals_handler,
             button_interactions_handler
@@ -135,7 +135,7 @@ fn setup_cweampuff(
     commands.spawn((
         RigidBody::Dynamic,
         Transform::from_translation(CWEAMPUFF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUFF_DIAMETER).extend(CWEAMPUFF_Z_INDEX)),
-        Cweampuff { progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false },
+        Cweampuff { progression: Progression::RisingStar, has_double_jump: true, has_wall_jump: true, has_dash: true },
         Sprite {
             image: cweampuff_model_handle,
             anchor: bevy::sprite::Anchor::Center,
@@ -162,6 +162,15 @@ fn clean_nodes(
     query: Query<Entity, (With<Node>, Without<Camera2d>, Without<FadeInFadeOutNode>)>
 ) {
     for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+}
+
+fn despawn_cweampuff(
+    cweampuff_query: Query<Entity, (With<Cweampuff>, Without<Camera2d>)>,
+    mut commands: Commands
+) {
+    for entity in cweampuff_query.iter() {
         commands.entity(entity).despawn_recursive();
     }
 }

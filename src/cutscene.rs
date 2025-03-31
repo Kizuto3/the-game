@@ -19,10 +19,16 @@ pub struct LoadingAssets{
     assets: Vec<UntypedAssetId>
 }
 
+#[derive(Copy, Clone)]
+pub enum PostCutsceneAction {
+    TransitionTo(Level),
+    EndGame
+}
+
 #[derive(Event)]
 pub enum CutsceneEvent {
-    Started(&'static[CutsceneInfo], Level, &'static str),
-    Stopped(Cweampuff, Level, Vec3)
+    Started(&'static[CutsceneInfo], &'static str, PostCutsceneAction),
+    Stopped(Cweampuff, PostCutsceneAction, Vec3)
 }
 
 #[derive(Clone)]
@@ -36,7 +42,7 @@ pub struct Cutscene {
     infos: &'static[CutsceneInfo],
     bgm: &'static str,
     current_index: usize,
-    transition_to_level_after: Level
+    post_cutscene_action: PostCutsceneAction
 }
 
 #[derive(Component)]
@@ -56,15 +62,22 @@ pub fn cutscene_event_reader(
     mut transition_state: ResMut<NextState<TransitionState>>,
 ) {
     for cutscene in cutscene_events.read() {
-        if let CutsceneEvent::Started(infos, level, bgm) = cutscene {
-            commands.spawn(Cutscene { infos, bgm, current_index: 0, transition_to_level_after: *level});
+        if let CutsceneEvent::Started(infos, bgm, level) = cutscene {
+            commands.spawn(Cutscene { infos, bgm, current_index: 0, post_cutscene_action: *level});
 
             state.set(AppState::Cutscene);
         }
-        if let CutsceneEvent::Stopped(cweampuff, level, position) = cutscene {
-            state.set(AppState::InGame);
+        if let CutsceneEvent::Stopped(cweampuff, post_cutscene_action, position) = cutscene {
+            match post_cutscene_action {
+                PostCutsceneAction::TransitionTo(level) => {
+                    state.set(AppState::InGame);
 
-            manually_transition_to_level(&current_level_layout, &mut transition_state, cweampuff, &mut commands, *level, *position);
+                    manually_transition_to_level(&current_level_layout, &mut transition_state, cweampuff, &mut commands, *level, *position);
+                },
+                PostCutsceneAction::EndGame => {
+                    state.set(AppState::MainMenu);
+                }
+            };
         }
     }
 }
@@ -103,7 +116,7 @@ pub fn cutscene_player(
                 if cweampuff_query.is_empty() {
                     cutscene_events.send(CutsceneEvent::Stopped(
                         Cweampuff {progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false}, 
-                        Level::StartingRoom(StartingRoomInfo),
+                        PostCutsceneAction::TransitionTo(Level::StartingRoom(StartingRoomInfo)),
                         CWEAMPUFF_STARTING_POSITION
                     ));
                     return;
@@ -111,7 +124,7 @@ pub fn cutscene_player(
                 
                 let (cweampuff, transform) = cweampuff_query.single();
 
-                cutscene_events.send(CutsceneEvent::Stopped(*cweampuff, current_cutscene.transition_to_level_after, transform.translation));
+                cutscene_events.send(CutsceneEvent::Stopped(*cweampuff, current_cutscene.post_cutscene_action, transform.translation));
 
                 return;
             }
