@@ -8,17 +8,19 @@ mod interactable;
 mod npc;
 mod fade_in_fade_out;
 mod audio_settings;
+mod audio_settings_menu;
 
 use app_states::AppState;
 use audio_settings::AudioSettings;
+use audio_settings_menu::{audio_button_interactions_handler, despawn_audio_settings, settings_menu_input_reader, spawn_audio_menu};
 use bevy::prelude::*;
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collider, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
 use camera::{cweampuff_camera_adjustment, spawn_camera};
 use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, despawn_cutscene_resources, spawn_cutscene_resources, wait_for_resources_to_load, CutsceneEvent};
-use fade_in_fade_out::{despawn_fade_in_fade_out_node, fade_in, fade_out, set_fade_in_state, set_fade_out_state, spawn_fade_in_fade_out_node, FadeInFadeOutNode, FadeState};
+use fade_in_fade_out::{despawn_fade_in_fade_out_node, fade_in, fade_out, set_fade_in_state, set_fade_out_state, spawn_fade_in_fade_out_node, FadeState};
 use interactable::{despawn_interaction_prompt, interaction_state::InteractionState, spawn_interaction_prompt};
 use level::{despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, floor_modification::{gravity_inverter_collision_reader, jump_pad_collision_reader, tick_timer_trial_timer, time_trial_collision_reader, time_trial_start_interaction_input_reader}, level_bgm::{fade_in_bgm, fade_out_bgm, set_bgm_state, LevelBGMState}, level_layout::FloorCollider, level_transition_collision_reader, progression::Progression, spawn_new_level, transition_states::TransitionState};
-use main_menu::{button_interactions_handler, button_visuals_handler, spawn_main_menu_buttons};
+use main_menu::{button_visuals_handler, despawn_main_menu, main_menu_button_interactions_handler, spawn_main_menu};
 use movement::*;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
 
@@ -51,12 +53,21 @@ fn main() {
     app.add_systems(Startup, spawn_camera)
 
     // MAIN MENU SYSTEMS
-        .add_systems(OnEnter(AppState::MainMenu), (despawn_current_level, despawn_cweampuff, spawn_main_menu_buttons).chain())
+        .add_systems(OnEnter(AppState::MainMenu), (despawn_current_level, despawn_cweampuff, spawn_main_menu).chain())
         .add_systems(Update, (
             button_visuals_handler,
-            button_interactions_handler
+            main_menu_button_interactions_handler,
         ).run_if(in_state(AppState::MainMenu)))
-        .add_systems(OnExit(AppState::MainMenu), clean_nodes)
+        .add_systems(OnExit(AppState::MainMenu), despawn_main_menu)
+
+    // AUDIO MENU SYSTEMS
+        .add_systems(OnEnter(AppState::AudioMenu), spawn_audio_menu)
+        .add_systems(Update, (
+            button_visuals_handler,
+            audio_button_interactions_handler,
+            settings_menu_input_reader
+        ).run_if(in_state(AppState::AudioMenu)))
+        .add_systems(OnExit(AppState::AudioMenu), despawn_audio_settings)
 
     // CUTSCENE SYSTEMS
         .add_systems(OnEnter(AppState::Cutscene), spawn_cutscene_resources)
@@ -94,7 +105,7 @@ fn main() {
         .add_systems(OnExit(ConversationState::Started), despawn_conversation_resources)
 
     // GAMEPLAY SYSTEMS
-        .add_systems(OnEnter(AppState::InGame), setup_cweampuff)
+        .add_systems(OnEnter(AppState::InGame), spawn_cweampuff)
         .add_systems(Update, (
             cweampuff_dash,
             cweampuff_jump,
@@ -115,12 +126,13 @@ fn main() {
             jump_pad_collision_reader,
             gravity_inverter_collision_reader,
             time_trial_collision_reader,
-            tick_timer_trial_timer
+            tick_timer_trial_timer,
+            settings_menu_input_reader
         ).run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)).run_if(in_state(FadeState::None)))
         .run();
 }
 
-fn setup_cweampuff(
+fn spawn_cweampuff(
     mut commands: Commands,
     cweampuff_query: Query<&Cweampuff, With<Cweampuff>>,
     asset_server: Res<AssetServer>,
@@ -155,15 +167,6 @@ fn setup_cweampuff(
         LockedAxes::ROTATION_LOCKED,
         Movable { is_upside_down: false, touching_ground: false, facing_right: true, hugging_left_wall: false, hugging_right_wall: false, is_stunlocked: false, stun_duration: 0.2, time_passed_since_stun: 0. },
     ));
-}
-
-fn clean_nodes(
-    mut commands: Commands, 
-    query: Query<Entity, (With<Node>, Without<Camera2d>, Without<FadeInFadeOutNode>)>
-) {
-    for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
-    }
 }
 
 fn despawn_cweampuff(

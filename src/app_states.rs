@@ -4,6 +4,7 @@ use bevy::state::state::States;
 pub enum AppState {
     #[default]
     MainMenu,
+    AudioMenu,
     Cutscene,
     InGame
 }

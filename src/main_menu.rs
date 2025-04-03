@@ -1,16 +1,20 @@
 use bevy::{color::{palettes::css::RED, Color}, prelude::*};
 
-use crate::{cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, level::{level_layout::starting_room_layout::StartingRoomInfo, Level}};
+use crate::{app_states::AppState, cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, fade_in_fade_out::FadeInFadeOutNode, level::{level_layout::starting_room_layout::StartingRoomInfo, Level}};
 
 pub const DEFAULT_FONT: &str = "fonts/Shadows Into Light.ttf";
 
-const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
+pub const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.75, 0.35);
 
 #[derive(Component)]
+pub struct MainMenuComponent;
+
+#[derive(Component)]
 pub enum ButtonAction {
     StartGame,
+    Settings,
     Quit
 }
 
@@ -43,9 +47,10 @@ pub fn button_visuals_handler(
     }
 }
 
-pub fn button_interactions_handler(
+pub fn main_menu_button_interactions_handler(
     mut interaction_query: Query<(&Interaction, &ButtonAction), (Changed<Interaction>, With<Button>)>,
     mut exit: EventWriter<AppExit>,
+    mut app_state: ResMut<NextState<AppState>>,
     mut cutscene: EventWriter<CutsceneEvent>
 ) {
     for (interaction, action) in &mut interaction_query {
@@ -61,6 +66,9 @@ pub fn button_interactions_handler(
                         CutsceneInfo { text: "", background: "cutscenes/opening/2.png" },
                     ], "vine-boom.mp3", PostCutsceneAction::TransitionTo(Level::StartingRoom(StartingRoomInfo))));
                 },
+                ButtonAction::Settings => {
+                    app_state.set(AppState::AudioMenu);
+                }
                 ButtonAction::Quit => {
                     exit.send(AppExit::Success);
                 }
@@ -69,19 +77,19 @@ pub fn button_interactions_handler(
     }
 }
 
-pub fn spawn_main_menu_buttons(
+pub fn spawn_main_menu(
     mut commands: Commands,
     asset_server: Res<AssetServer>
 ) {    
     commands
-        .spawn(Node {
+        .spawn((Node {
             width: Val::Percent(10.0),
             height: Val::Percent(5.0),
             top: Val::Percent(70.),
             left: Val::Percent(45.),
             justify_content: JustifyContent::Center,
             ..default()
-        })
+        }, MainMenuComponent))
         .with_children(|parent| {
             parent
                 .spawn((
@@ -113,14 +121,53 @@ pub fn spawn_main_menu_buttons(
         });
 
     commands
-        .spawn(Node {
+        .spawn((Node {
             width: Val::Percent(10.0),
             height: Val::Percent(5.0),
-            top: Val::Percent(80.0),
+            top: Val::Percent(80.),
             left: Val::Percent(45.),
             justify_content: JustifyContent::Center,
             ..default()
-        })
+        }, MainMenuComponent))
+        .with_children(|parent| {
+            parent
+                .spawn((
+                    Button,
+                    ButtonAction::Settings,
+                    Node {
+                        width: Val::Percent(100.0),
+                        height: Val::Percent(100.0),
+                        border: UiRect::all(Val::Percent(2.0)),
+                        // horizontally center child text
+                        justify_content: JustifyContent::Center,
+                        // vertically center child text
+                        align_items: AlignItems::Center,
+                        ..default()
+                    },
+                    BorderColor(Color::BLACK),
+                    BorderRadius::MAX,
+                    BackgroundColor(NORMAL_BUTTON),
+                ))
+                .with_child((
+                    Text::new("Settings"),
+                    TextFont {
+                        font: asset_server.load(DEFAULT_FONT),
+                        font_size: 33.0,
+                        ..default()
+                    },
+                    TextColor(Color::srgb(0.9, 0.9, 0.9)),
+                ));
+        });
+
+    commands
+        .spawn((Node {
+            width: Val::Percent(10.0),
+            height: Val::Percent(5.0),
+            top: Val::Percent(90.0),
+            left: Val::Percent(45.),
+            justify_content: JustifyContent::Center,
+            ..default()
+        }, MainMenuComponent))
         .with_children(|parent| {
             parent
                 .spawn((
@@ -150,4 +197,13 @@ pub fn spawn_main_menu_buttons(
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
                 ));
         });
+}
+
+pub fn despawn_main_menu(
+    mut commands: Commands, 
+    query: Query<Entity, (With<Node>, With<MainMenuComponent>, Without<Camera2d>, Without<FadeInFadeOutNode>)>
+) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
 }
