@@ -43,7 +43,8 @@ impl LevelInfo for CerberLairInfo {
 
     fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
         let mut og_minawan = NPC { floor_info: EntityInfo { position: Vec3::new(0.0, -650.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
+                                      name: OG_MINAWAN
         };
 
         if cweampuff.progression == Progression::MetMilk {
@@ -116,7 +117,8 @@ impl LevelInfo for CerberLairInfo {
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "But some things are still missing.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Excuse me, I have to get back to work.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Good luck with your research!", emotion: Emotion::Happy },
-            ]
+            ],
+            name: SCIENTIST_MINAWAN
         };
 
         Some(Box::from([

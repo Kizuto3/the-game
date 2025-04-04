@@ -83,7 +83,8 @@ impl LevelInfo for Spaceship3Info {
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "I'm going to rest here for a bit. Be careful, Cweampuff!", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Okay! See you, Minawan! Wan, Wan!", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Wan! Wan!", emotion: Emotion::Happy },
-                    ]
+                    ],
+                    name: MINAWAN
                 }
             ]))
         }

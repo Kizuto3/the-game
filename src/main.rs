@@ -13,7 +13,7 @@ mod audio_settings_menu;
 use app_states::AppState;
 use audio_settings::AudioSettings;
 use audio_settings_menu::{audio_button_interactions_handler, despawn_audio_settings, settings_menu_input_reader, spawn_audio_menu};
-use bevy::prelude::*;
+use bevy::{prelude::*, window::{PrimaryWindow, WindowMode}, winit::WinitWindows};
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collider, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
 use camera::{cweampuff_camera_adjustment, spawn_camera};
 use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, despawn_cutscene_resources, spawn_cutscene_resources, wait_for_resources_to_load, CutsceneEvent};
@@ -23,6 +23,7 @@ use level::{despawn_current_level, door::{door_start_interaction_input_reader, i
 use main_menu::{button_visuals_handler, despawn_main_menu, main_menu_button_interactions_handler, spawn_main_menu};
 use movement::*;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
+use winit::window::Icon;
 
 // We set the z-value of Cweampuff to 2 so it renders on top in the case of overlapping sprites.
 pub const CWEAMPUFF_Z_INDEX: f32 = 2.0;
@@ -50,7 +51,7 @@ fn main() {
 
     app.init_resource::<AudioSettings>();
 
-    app.add_systems(Startup, spawn_camera)
+    app.add_systems(Startup, (set_window_icon, spawn_camera, setup_window))
 
     // MAIN MENU SYSTEMS
         .add_systems(OnEnter(AppState::MainMenu), (despawn_current_level, despawn_cweampuff, spawn_main_menu).chain())
@@ -132,6 +133,38 @@ fn main() {
         .run();
 }
 
+fn set_window_icon(
+    // we have to use `NonSend` here
+    windows: NonSend<WinitWindows>,
+) {
+    // here we use the `image` crate to load our icon data from a png file
+    // this is not a very bevy-native solution, but it will do
+    let (icon_rgba, icon_width, icon_height) = {
+        let image = image::open("assets/npcs/cweampuff/Model.png")
+            .expect("Failed to open icon path")
+            .into_rgba8();
+        let (width, height) = image.dimensions();
+        let rgba = image.into_raw();
+        (rgba, width, height)
+    };
+    let icon = Icon::from_rgba(icon_rgba, icon_width, icon_height).unwrap();
+
+    // do it for all windows
+    for window in windows.windows.values() {
+        window.set_window_icon(Some(icon.clone()));
+    }
+}
+
+fn setup_window(
+    mut window_query: Query<&mut Window, With<PrimaryWindow>>,
+) {
+    if let Ok(mut window) = window_query.get_single_mut() {
+        window.title = "Cweampuff's Adventure".to_string();
+        window.mode = WindowMode::BorderlessFullscreen(MonitorSelection::Current);
+        window.resizable = false;
+    } 
+}
+
 fn spawn_cweampuff(
     mut commands: Commands,
     cweampuff_query: Query<&Cweampuff, With<Cweampuff>>,
@@ -151,7 +184,7 @@ fn spawn_cweampuff(
         Sprite {
             image: cweampuff_model_handle,
             anchor: bevy::sprite::Anchor::Center,
-            custom_size: Some(Vec2::new(1.42, 1.)),
+            custom_size: Some(Vec2::new(1.25, 1.)),
             image_mode: SpriteImageMode::Auto,
             ..default()
         },

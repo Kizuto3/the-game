@@ -43,7 +43,8 @@ impl LevelInfo for AquwaLairInfo {
 
     fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
         let mut og_crew_member = NPC { floor_info: EntityInfo { position: Vec3::new(0.0, -650.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+                                            name: OG_CREW_MEMBER,
+                                            conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
         };
 
         if cweampuff.progression == Progression::MilkWokeUp {
@@ -91,6 +92,7 @@ impl LevelInfo for AquwaLairInfo {
         }
         
         let observer_crew_member = NPC { 
+            name: OBSERVER_CREW_MEMBER,
             floor_info: EntityInfo { position: Vec3::new(-1550.0, 100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
             after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
             conversation: &[

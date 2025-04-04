@@ -96,7 +96,8 @@ impl LevelInfo for Spaceship1Info {
                         ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Then let's rush to her help immediately!", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "*** Seeing how the crew doesn't waste a second to help their captain makes you want to dash with them. ***", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "*** X - dash ***", emotion: Emotion::Happy },
-                    ]
+                    ],
+                    name: CREW_MEMBER
                 }
             ]))
         }

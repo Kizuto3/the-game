@@ -35,7 +35,6 @@ pub mod floor_modification;
 pub mod level_bgm;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
-const NPC_COLOR: Color = Color::srgb(0.5, 0.5, 1.0);
 const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);
 const JUMP_PAD_COLOR: Color = Color::srgb(0.2, 0.9, 0.9);
 const GRAVITY_INVERTER_COLOR: Color = Color::srgb(0.1, 0.2, 0.2);
@@ -248,11 +247,17 @@ pub fn spawn_new_level(
 
         if let Some(npcs) = &level_layout.npc_layout {
             for npc in npcs {
+                let image_handle = asset_server.load(format!("npcs/{}/Model.png", npc.name));
+
                 commands
                     .spawn(npc.clone())
                     .insert((
-                        Mesh2d(meshes.add(Rectangle::new(npc.floor_info.size.x, npc.floor_info.size.y))),
-                        MeshMaterial2d(materials.add(NPC_COLOR)),
+                        Sprite {
+                            image: image_handle,
+                            anchor: bevy::sprite::Anchor::Custom(Vec2::new(0., 1.2)),
+                            custom_size: Some(Vec2::new(40., 30.)),
+                            ..default()
+                        },
                         Transform::from_translation(npc.floor_info.position)
                     ))
                     .insert(Collider::cuboid(npc.floor_info.size.x / 2.0, npc.floor_info.size.y / 2.0))

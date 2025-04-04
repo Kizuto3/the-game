@@ -47,6 +47,7 @@ pub struct RightCharacterImageNode;
 
 #[derive(Component, Clone)]
 pub struct NPC {
+    pub name: &'static str,
     pub floor_info: EntityInfo,
     pub is_active: bool,
     pub conversation: &'static [ConversationEntry],
@@ -155,6 +156,7 @@ pub fn spawn_conversation_resources(
             // LEFT CHARACTER IMAGE
             parent.spawn((
                     ImageNode::default()
+                        .with_flip_x()
                         .with_color(Color::Srgba(Srgba::new(1.0, 1.0, 1.0, 0.0)))
                         .with_mode(NodeImageMode::Auto),
                     Node {
@@ -172,7 +174,6 @@ pub fn spawn_conversation_resources(
             // RIGHT CHARACTER IMAGE
             parent.spawn((
                     ImageNode::default()
-                        .with_flip_x()
                         .with_color(Color::Srgba(Srgba::new(1.0, 1.0, 1.0, 0.0)))
                         .with_mode(NodeImageMode::Auto),
                     Node {

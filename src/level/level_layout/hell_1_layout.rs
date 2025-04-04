@@ -43,6 +43,7 @@ impl LevelInfo for Hell1Info {
         if cweampuff.progression <= Progression::MetMilk {
             return Some(Box::from([
                 NPC {
+                    name: MINAWAN,
                     floor_info: EntityInfo { position: Vec3::new(2000.0, 0.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                     after_conversation_func: |cweampuff, _commands, _breakable_walls, _cutscene| { cweampuff.has_double_jump = true; },
                     conversation: &[

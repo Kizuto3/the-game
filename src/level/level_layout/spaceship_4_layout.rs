@@ -56,7 +56,8 @@ impl LevelInfo for Spaceship4Info {
                         ConversationEntry { position: ConversationPosition::Right, npc_name: GLORP, text: "Agent GL-0-RP to agent CL-0-RP, I have been spotted, over!", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: GLORP, text: "Requesting permission to cancel the operation, over and out!", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Go away and don't come back!", emotion: Emotion::Regular },
-                    ]
+                    ],
+                    name: GLORP
                 }
             ]))
         }

@@ -40,6 +40,7 @@ impl LevelInfo for Factory3Info {
         if cweampuff.progression <= Progression::GivenLetter {
             return Some(Box::from([
                 NPC {
+                    name: MINAWAN,
                     floor_info: EntityInfo { position: Vec3::new(1600.0, 1200.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                     after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                     conversation: &[

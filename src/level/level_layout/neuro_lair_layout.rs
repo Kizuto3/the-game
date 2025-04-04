@@ -41,7 +41,8 @@ impl LevelInfo for NeuroLairInfo {
 
     fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
         let mut og_drone = NPC { floor_info: EntityInfo { position: Vec3::new(0.0, -650.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+                                      conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
+                                      name: OG_DRONE
         };
 
         if cweampuff.progression == Progression::GivenLetter {
@@ -115,7 +116,8 @@ impl LevelInfo for NeuroLairInfo {
                 ConversationEntry { position: ConversationPosition::Right, npc_name: CLIPPER_DRONE, text: "This way, everyone can find them easily.", emotion: Emotion::Happy },
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I would love for you to take pictures of my hidden gem!", emotion: Emotion::Happy },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: CLIPPER_DRONE, text: "I will!", emotion: Emotion::Happy },
-            ]
+            ],
+            name: CLIPPER_DRONE
         };
 
         Some(Box::from([

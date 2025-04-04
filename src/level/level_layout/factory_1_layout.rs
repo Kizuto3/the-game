@@ -45,6 +45,7 @@ impl LevelInfo for Factory1Info {
         if cweampuff.progression == Progression::GivenLetter {
             return Some(Box::from([
                 NPC {
+                    name: DRONE,
                     floor_info: EntityInfo { position: Vec3::new(-1900.0, -1450.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                     after_conversation_func: |cweampuff, _commands, _breakable_walls, _cutscene| { cweampuff.has_wall_jump = true; },
                     conversation: &[

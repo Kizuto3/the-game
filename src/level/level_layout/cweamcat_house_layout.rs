@@ -32,27 +32,33 @@ impl LevelInfo for CweamcatHouseInfo {
         let mut npcs = vec![];
 
         let mut milk = NPC { floor_info: EntityInfo { position: Vec3::new(750.0, -300.0, 0.0), size: Vec2::new(200.0, 200.0) }, is_active: false, current_conversation_index: 0,
-                                  conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| {}
+                                  conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| {},
+                                  name: MILK
         };
 
         let mut og_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(450.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                          conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+                                          conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
+                                          name: OG_CWEAMPUFF
         };
 
         let mut cool_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(-450.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                          conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+                                          conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
+                                          name: COOL_CWEAMPUFF
         };
 
         let mut masked_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(150.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                            conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+                                            conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
+                                            name: MASKED_CWEAMPUFF
         };
 
         let mut rich_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(-150.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
-                                            conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { }
+                                            conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
+                                            name: RICH_CWEAMPUFF
         };
 
         match cweampuff.progression {
             Progression::None => {
+                milk.name = MILK_ASLEEP;
                 milk.conversation = &[
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK_ASLEEP, text: "...", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wow...", emotion: Emotion::Surprised },
@@ -79,12 +85,16 @@ impl LevelInfo for CweamcatHouseInfo {
                 };
             },
             Progression::MetMilk => {
+                milk.name = MILK_ASLEEP;
+
                 milk.conversation = &[
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK_ASLEEP, text: "...", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "She is perfect...", emotion: Emotion::Surprised },
                 ];
             },
             Progression::HasCherish => {
+                milk.name = MILK_ASLEEP;
+
                 og_cweampuff.conversation = &[
                     ConversationEntry { position: ConversationPosition::Right, npc_name: OG_CWEAMPUFF, text: "It's time...", emotion: Emotion::Sad },
                 ];

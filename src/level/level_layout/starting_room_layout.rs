@@ -21,6 +21,7 @@ impl LevelInfo for StartingRoomInfo {
             FloorInfo { position: Vec3::new(2300.0, 365.0, 1.0), size: Vec2::new(150.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
             FloorInfo { position: Vec3::new(2300.0, 750.0, 1.0), size: Vec2::new(400.0, 100.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
             FloorInfo { position: Vec3::new(2450.0, 1300.0, 1.0), size: Vec2::new(700.0, 500.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
+            FloorInfo { position: Vec3::new(700.0, 1400.0, 1.0), size: Vec2::new(2850.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Forest },
         ])
     }
 
