@@ -137,6 +137,7 @@ pub fn spawn_conversation_resources(
                         ..default()
                     },
                     DialogTextNode,
+                    BorderRadius::all(Val::Px(20.)),
                     BorderColor(Color::Srgba(Srgba { red: 0.75, green: 0.75, blue: 0.75, alpha: 1.0 })),
                 ))
                 .with_children(|parent| {
