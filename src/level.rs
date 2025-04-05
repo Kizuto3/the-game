@@ -23,6 +23,7 @@ use level_layout::{DoorCollider, FloorAssetType, FloorInfo, FloorModification};
 use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, TransitionCollider};
 use transition_states::TransitionState;
 
+use crate::animations::AnimationConfig;
 use crate::CWEAMPUFF_GRAVITY_SCALE;
 use crate::{camera::get_adjusted_camera_position, interactable::Interactable, npc::NPC, Cweampuff};
 use crate::level::level_layout::LevelInfo;
@@ -36,7 +37,7 @@ pub mod level_bgm;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
 const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);
-const JUMP_PAD_COLOR: Color = Color::srgb(0.2, 0.9, 0.9);
+//const JUMP_PAD_COLOR: Color = Color::srgb(0.2, 0.9, 0.9);
 const GRAVITY_INVERTER_COLOR: Color = Color::srgb(0.1, 0.2, 0.2);
 const TIME_TRIAL_COLOR: Color = Color::srgb(0.9, 0.2, 0.2);
 
@@ -117,6 +118,7 @@ pub fn spawn_new_level(
     level_layout_query: Query<&LevelLayout, With<LevelLayout>>,
     bgm_query: Query<(Entity, &AudioPlayer), With<LevelBGM>>,
     asset_server: Res<AssetServer>,
+    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
 ) {
     for level_layout in level_layout_query.iter() {
         match level_layout.bgm {
@@ -288,12 +290,24 @@ pub fn spawn_new_level(
             for modification in modifications {
                 match modification {
                     FloorModification::JumpPad(jump_pad) => {
+                        let texture = asset_server.load("floor_modifications/Wind_animation.png");
+
+                        // the sprite sheet has 2 sprites arranged in a row, and they are all 200px x 200px
+                        let layout = TextureAtlasLayout::from_grid(UVec2::splat(200), 3, 1, None, None);
+                        let texture_atlas_layout = texture_atlas_layouts.add(layout);
+
+                        let animation_config = AnimationConfig::new(0, 2, 15);
+
                         commands
                             .spawn(*jump_pad)
                             .insert((
-                                Mesh2d(meshes.add(Rectangle::new(jump_pad.floor_info.size.x, jump_pad.floor_info.size.y))),
-                                MeshMaterial2d(materials.add(JUMP_PAD_COLOR)),
-                                Transform::from_translation(jump_pad.floor_info.position)
+                                Sprite {
+                                    image: texture,
+                                    texture_atlas: Some(TextureAtlas { layout: texture_atlas_layout, index: animation_config.first_sprite_index }),
+                                    ..default()
+                                },
+                                Transform::from_translation(jump_pad.floor_info.position),
+                                animation_config
                             ))
                             .insert(Collider::cuboid(jump_pad.floor_info.size.x / 2.0, jump_pad.floor_info.size.y / 2.0))
                             .insert(Sensor)

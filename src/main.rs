@@ -9,6 +9,7 @@ mod npc;
 mod fade_in_fade_out;
 mod audio_settings;
 mod audio_settings_menu;
+mod animations;
 
 use app_states::AppState;
 use audio_settings::AudioSettings;
@@ -22,6 +23,7 @@ use interactable::{despawn_interaction_prompt, interaction_state::InteractionSta
 use level::{despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, floor_modification::{gravity_inverter_collision_reader, jump_pad_collision_reader, tick_timer_trial_timer, time_trial_collision_reader, time_trial_start_interaction_input_reader}, level_bgm::{fade_in_bgm, fade_out_bgm, set_bgm_state, LevelBGMState}, level_layout::FloorCollider, level_transition_collision_reader, progression::Progression, spawn_new_level, transition_states::TransitionState};
 use main_menu::{button_visuals_handler, despawn_main_menu, main_menu_button_interactions_handler, spawn_main_menu};
 use movement::*;
+use animations::play_animations;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
 use winit::window::Icon;
 
@@ -128,7 +130,8 @@ fn main() {
             gravity_inverter_collision_reader,
             time_trial_collision_reader,
             tick_timer_trial_timer,
-            settings_menu_input_reader
+            settings_menu_input_reader,
+            play_animations
         ).run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)).run_if(in_state(FadeState::None)))
         .run();
 }
@@ -180,7 +183,7 @@ fn spawn_cweampuff(
     commands.spawn((
         RigidBody::Dynamic,
         Transform::from_translation(CWEAMPUFF_STARTING_POSITION).with_scale(Vec2::splat(CWEAMPUFF_DIAMETER).extend(CWEAMPUFF_Z_INDEX)),
-        Cweampuff { progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false },
+        Cweampuff { progression: Progression::MilkWokeUp, has_double_jump: true, has_wall_jump: true, has_dash: true },
         Sprite {
             image: cweampuff_model_handle,
             anchor: bevy::sprite::Anchor::Center,
