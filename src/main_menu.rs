@@ -81,7 +81,12 @@ pub fn spawn_main_menu(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut next_bgm_state: ResMut<NextState<LevelBGMState>>,
+    bgm_query: Query<Entity, With<LevelBGM>>,
 ) {    
+    for entity in bgm_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+    
     commands
         .spawn((Node {
             width: Val::Percent(10.0),
