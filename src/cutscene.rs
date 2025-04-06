@@ -6,6 +6,7 @@ use bevy::ui::widget::NodeImageMode;
 
 use crate::app_states::AppState;
 use crate::fade_in_fade_out::{FadeInFadeOutNode, FadeState};
+use crate::level::level_bgm::{LevelBGM, LevelBGMState};
 use crate::level::level_layout::starting_room_layout::StartingRoomInfo;
 use crate::level::progression::Progression;
 use crate::level::transition_states::TransitionState;
@@ -60,12 +61,14 @@ pub fn cutscene_event_reader(
     mut commands: Commands,
     current_level_layout: Query<Entity, With<LevelLayout>>,
     mut transition_state: ResMut<NextState<TransitionState>>,
+    mut next_bgm_state: ResMut<NextState<LevelBGMState>>,
 ) {
     for cutscene in cutscene_events.read() {
         if let CutsceneEvent::Started(infos, bgm, level) = cutscene {
             commands.spawn(Cutscene { infos, bgm, current_index: 0, post_cutscene_action: *level});
 
             state.set(AppState::Cutscene);
+            next_bgm_state.set(LevelBGMState::Changing);
         }
         if let CutsceneEvent::Stopped(cweampuff, post_cutscene_action, position) = cutscene {
             match post_cutscene_action {
@@ -88,14 +91,20 @@ pub fn cutscene_input_reader(
     current_cutscene: Single<&Cutscene, With<Cutscene>>,
     mut next_fade_state: ResMut<NextState<FadeState>>,
     current_fade_state: Res<State<FadeState>>,
-
+    mut next_bgm_state: ResMut<NextState<LevelBGMState>>,
 ) {
     if current_cutscene.current_index == 0 || 
        keyboard_input.any_just_pressed([KeyCode::Space, KeyCode::Enter]) ||
        mouse_input.any_just_pressed([MouseButton::Left, MouseButton::Right]) {
         match current_fade_state.get() {
             FadeState::FadeIn | FadeState::FadeInFinished | FadeState::FadeOut => (),
-            FadeState::None => next_fade_state.set(FadeState::FadeIn),
+            FadeState::None => {
+                next_fade_state.set(FadeState::FadeIn);
+
+                if let None = current_cutscene.infos.get(current_cutscene.current_index) {
+                    next_bgm_state.set(LevelBGMState::Changing);
+                }
+            },
         };
     }
 }
@@ -108,7 +117,15 @@ pub fn cutscene_player(
     cweampuff_query: Query<(&Cweampuff, &Transform), With<Cweampuff>>,
     asset_server: Res<AssetServer>,
     mut loading_assets: Single<&mut LoadingAssets, With<LoadingAssets>>,
+    mut commands: Commands,
+    bgm_query: Query<Entity, (With<LevelBGM>, Without<CutsceneAudio>)>,
 ) {    
+    if current_cutscene.current_index == 0 {
+        for entity in bgm_query.iter() {
+            commands.entity(entity).despawn_recursive();
+        }
+    }
+
     {
         let current_cutscene_info = match current_cutscene.infos.get(current_cutscene.current_index) {
             Some(info) => info,
@@ -169,6 +186,7 @@ pub fn spawn_cutscene_resources(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     current_cutscene: Single<&Cutscene, With<Cutscene>>,
+    mut next_bgm_state: ResMut<NextState<LevelBGMState>>,
 ) {
     commands
         .spawn((
@@ -212,14 +230,17 @@ pub fn spawn_cutscene_resources(
                 });
     });
 
-    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.01));
-    playback_settings.mode = PlaybackMode::Once;
+    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.));
+    playback_settings.mode = PlaybackMode::Loop;
 
     commands.spawn((
         AudioPlayer::new(asset_server.load(current_cutscene.bgm)),
+        LevelBGM,
         CutsceneAudio,
         playback_settings
     ));
+
+    next_bgm_state.set(LevelBGMState::Changing);
 
     commands.spawn(LoadingAssets { assets: vec![] });
 }
@@ -229,17 +250,12 @@ pub fn despawn_cutscene_resources(
     nodes: Query<Entity, (With<Node>, Without<Camera2d>, Without<FadeInFadeOutNode>)>,
     cutsnenes: Query<Entity, (With<Cutscene>, Without<Node>)>,
     loading_assets: Query<Entity, (With<LoadingAssets>, Without<Node>)>,
-    audio_players: Query<Entity, (With<AudioPlayer>, With<CutsceneAudio>)>
 ) {
     for entity in nodes.iter() {
         commands.entity(entity).despawn_recursive();
     }
 
     for entity in cutsnenes.iter() {
-        commands.entity(entity).despawn_recursive();
-    }
-
-    for entity in audio_players.iter() {
         commands.entity(entity).despawn_recursive();
     }
 

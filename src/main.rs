@@ -60,6 +60,7 @@ fn main() {
         .add_systems(Update, (
             button_visuals_handler,
             main_menu_button_interactions_handler,
+            fade_out_bgm.run_if(in_state(LevelBGMState::Changing))
         ).run_if(in_state(AppState::MainMenu)))
         .add_systems(OnExit(AppState::MainMenu), despawn_main_menu)
 
@@ -76,6 +77,7 @@ fn main() {
         .add_systems(OnEnter(AppState::Cutscene), spawn_cutscene_resources)
         .add_systems(Update, cutscene_event_reader)
         .add_systems(Update, cutscene_input_reader.run_if(in_state(AppState::Cutscene)))
+        .add_systems(FixedUpdate, fade_out_bgm.run_if(in_state(LevelBGMState::Changing)).run_if(in_state(AppState::Cutscene)).run_if(in_state(FadeState::FadeOut)))
         .add_systems(FixedUpdate, wait_for_resources_to_load.run_if(in_state(AppState::Cutscene)).run_if(in_state(FadeState::FadeInFinished)))
         .add_systems(OnEnter(FadeState::FadeInFinished), (despawn_current_level, cutscene_player).chain().run_if(in_state(AppState::Cutscene)))
         .add_systems(OnExit(AppState::Cutscene), despawn_cutscene_resources)
@@ -89,7 +91,7 @@ fn main() {
     // LEVEL TRANSITION SYSTEMS
         .add_systems(OnEnter(TransitionState::Started), (set_fade_in_state, set_bgm_state))
         .add_systems(FixedUpdate, fade_in_bgm.run_if(in_state(LevelBGMState::Changing)).run_if(in_state(FadeState::FadeIn)))
-        .add_systems(FixedUpdate, fade_out_bgm.run_if(in_state(LevelBGMState::Changing)).run_if(in_state(TransitionState::Finished)))
+        .add_systems(FixedUpdate, fade_out_bgm.run_if(in_state(LevelBGMState::Changing)).run_if(in_state(TransitionState::Finished)).run_if(in_state(AppState::InGame)))
         .add_systems(OnEnter(TransitionState::Finished), (set_fade_out_state, reset_abilities).chain())
         .add_systems(OnEnter(FadeState::FadeInFinished), (despawn_current_level, spawn_new_level).run_if(in_state(TransitionState::Started)).chain())
 

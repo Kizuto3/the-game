@@ -61,7 +61,6 @@ pub fn fade_out_bgm(
         }
         else {
             next_bgm_state.set(LevelBGMState::Changed);
-
             return;
         }
     }
@@ -74,8 +73,8 @@ pub fn fade_in_bgm(
     for settings in bgm_query.iter_mut() {
         if settings.volume() > 0.01 {
             let volume_step = audio_settings.bgm_volume * 0.05;
-
-            settings.set_volume((settings.volume() - volume_step).max(0.01));
+            
+            settings.set_volume((settings.volume() - volume_step).max(0.0));
         }
     }
 }

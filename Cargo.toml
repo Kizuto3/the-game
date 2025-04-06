@@ -2,12 +2,16 @@
 name = "Cweampuffs_Adventure"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 [dependencies]
 bevy = { version = "0.15.2", features = ["mp3", "wav"] }
 bevy_rapier2d = "0.28.0"
 image = "0.25.6"
 winit = "0.30.9"
+
+[build-dependencies]
+winres = "0.1.12"
 
 [profile.dev.package.bevy_rapier2d]
 opt-level = 3

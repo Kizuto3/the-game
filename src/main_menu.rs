@@ -1,6 +1,6 @@
-use bevy::{color::{palettes::css::RED, Color}, prelude::*};
+use bevy::{audio::{PlaybackMode, Volume}, color::{palettes::css::RED, Color}, prelude::*};
 
-use crate::{app_states::AppState, cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, fade_in_fade_out::FadeInFadeOutNode, level::{level_layout::starting_room_layout::StartingRoomInfo, Level}};
+use crate::{app_states::AppState, cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, fade_in_fade_out::FadeInFadeOutNode, level::{level_bgm::{LevelBGM, LevelBGMState}, level_layout::starting_room_layout::StartingRoomInfo, Level}};
 
 pub const DEFAULT_FONT: &str = "fonts/Shadows Into Light.ttf";
 
@@ -64,7 +64,7 @@ pub fn main_menu_button_interactions_handler(
                         CutsceneInfo { text: "A brave cweampuff decided to look for it...", background: "" },
                         CutsceneInfo { text: "", background: "cutscenes/opening/1.png" },
                         CutsceneInfo { text: "", background: "cutscenes/opening/2.png" },
-                    ], "vine-boom.mp3", PostCutsceneAction::TransitionTo(Level::StartingRoom(StartingRoomInfo))));
+                    ], "ost/factory.mp3", PostCutsceneAction::TransitionTo(Level::StartingRoom(StartingRoomInfo))));
                 },
                 ButtonAction::Settings => {
                     app_state.set(AppState::AudioMenu);
@@ -79,7 +79,8 @@ pub fn main_menu_button_interactions_handler(
 
 pub fn spawn_main_menu(
     mut commands: Commands,
-    asset_server: Res<AssetServer>
+    asset_server: Res<AssetServer>,
+    mut next_bgm_state: ResMut<NextState<LevelBGMState>>,
 ) {    
     commands
         .spawn((Node {
@@ -197,6 +198,17 @@ pub fn spawn_main_menu(
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
                 ));
         });
+
+    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.));
+    playback_settings.mode = PlaybackMode::Loop;
+
+    commands.spawn((
+        AudioPlayer::new(asset_server.load("ost/hell.mp3")),
+        LevelBGM,
+        playback_settings
+    ));
+
+    next_bgm_state.set(LevelBGMState::Changing);
 }
 
 pub fn despawn_main_menu(
