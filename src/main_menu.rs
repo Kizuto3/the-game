@@ -12,6 +12,9 @@ const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.75, 0.35);
 pub struct MainMenuComponent;
 
 #[derive(Component)]
+pub struct MainMenuAudio;
+
+#[derive(Component)]
 pub enum ButtonAction {
     StartGame,
     Settings,
@@ -81,12 +84,12 @@ pub fn spawn_main_menu(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut next_bgm_state: ResMut<NextState<LevelBGMState>>,
-    bgm_query: Query<Entity, With<LevelBGM>>,
+    bgm_query: Query<Entity, (With<LevelBGM>, Without<MainMenuAudio>)>,
 ) {    
     for entity in bgm_query.iter() {
         commands.entity(entity).despawn_recursive();
     }
-    
+
     commands
         .spawn((Node {
             width: Val::Percent(10.0),
@@ -210,6 +213,7 @@ pub fn spawn_main_menu(
     commands.spawn((
         AudioPlayer::new(asset_server.load("ost/hell.mp3")),
         LevelBGM,
+        MainMenuAudio,
         playback_settings
     ));
 
