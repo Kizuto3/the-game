@@ -85,6 +85,7 @@ pub fn spawn_main_menu(
     asset_server: Res<AssetServer>,
     mut next_bgm_state: ResMut<NextState<LevelBGMState>>,
     bgm_query: Query<Entity, (With<LevelBGM>, Without<MainMenuAudio>)>,
+    main_menu_bgm_query: Query<&MainMenuAudio>,
 ) {    
     for entity in bgm_query.iter() {
         commands.entity(entity).despawn_recursive();
@@ -207,17 +208,19 @@ pub fn spawn_main_menu(
                 ));
         });
 
-    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.));
-    playback_settings.mode = PlaybackMode::Loop;
-
-    commands.spawn((
-        AudioPlayer::new(asset_server.load("ost/hell.mp3")),
-        LevelBGM,
-        MainMenuAudio,
-        playback_settings
-    ));
-
-    next_bgm_state.set(LevelBGMState::Changing);
+    if main_menu_bgm_query.is_empty() {
+        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.));
+        playback_settings.mode = PlaybackMode::Loop;
+    
+        commands.spawn((
+            AudioPlayer::new(asset_server.load("ost/hell.mp3")),
+            LevelBGM,
+            MainMenuAudio,
+            playback_settings
+        ));
+    
+        next_bgm_state.set(LevelBGMState::Changing);
+    }
 }
 
 pub fn despawn_main_menu(
