@@ -12,7 +12,7 @@ impl Default for AudioSettings {
     fn default() -> Self {
         Self { 
             bgm_volume: 0.5,
-            sfx_volume: 1.0
+            sfx_volume: 0.5
         }
     }
 }
