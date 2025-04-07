@@ -8,7 +8,7 @@ use conversation_entry::{ConversationEntry, ConversationPosition};
 use conversation_state::ConversationState;
 use dialog_state::DialogState;
 
-use crate::{cutscene::CutsceneEvent, fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::{BreakableWall, EntityInfo}, main_menu::DEFAULT_FONT, Cweampuff};
+use crate::{audio_settings::AudioSettings, cutscene::CutsceneEvent, fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::{BreakableWall, EntityInfo}, main_menu::DEFAULT_FONT, Cweampuff};
 
 pub const CWEAMPUFF: &str = "cweampuff";
 pub const CWEAMPUFFS: &str = "cweampuffs";
@@ -106,7 +106,8 @@ pub fn npc_start_interaction_input_reader(
 
 pub fn spawn_conversation_resources(
     mut commands: Commands,
-    asset_server: Res<AssetServer>
+    asset_server: Res<AssetServer>,
+    mut audio_query: Query<&mut AudioSink>,
 ) {
     commands
         .spawn((
@@ -189,14 +190,24 @@ pub fn spawn_conversation_resources(
                     RightCharacterImageNode,
                 ));
         });
+
+    for audio in audio_query.iter_mut() {
+        audio.set_volume(audio.volume() / 2.);
+    }
 }
 
 pub fn despawn_conversation_resources(
     mut commands: Commands,
-    entities: Query<Entity, (With<DialogNode>, Without<Camera2d>)>
+    entities: Query<Entity, (With<DialogNode>, Without<Camera2d>)>,
+    mut audio_query: Query<&mut AudioSink>,
+    audio_settings: Res<AudioSettings>
 ) {
     for entity in entities.iter() {
         commands.entity(entity).despawn_recursive();
+    }
+
+    for audio in audio_query.iter_mut() {
+        audio.set_volume(audio_settings.bgm_volume);
     }
 }
 
