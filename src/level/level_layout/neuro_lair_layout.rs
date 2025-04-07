@@ -116,6 +116,9 @@ impl LevelInfo for NeuroLairInfo {
                 ConversationEntry { position: ConversationPosition::Right, npc_name: CLIPPER_DRONE, text: "This way, everyone can find them easily.", emotion: Emotion::Happy },
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I would love for you to take pictures of my hidden gem!", emotion: Emotion::Happy },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: CLIPPER_DRONE, text: "I will!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: CLIPPER_DRONE, text: "Now, if you excuse me, I haven't done my daily Beeble readings today.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: CLIPPER_DRONE, text: "I'm off to the Harrison Temple.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: CLIPPER_DRONE, text: "See you!", emotion: Emotion::Happy },
             ],
             name: CLIPPER_DRONE
         };
