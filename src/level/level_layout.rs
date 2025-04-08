@@ -17,6 +17,7 @@ pub mod factory_2_layout;
 pub mod factory_3_layout;
 pub mod factory_4_layout;
 pub mod neuro_lair_layout;
+pub mod factory_hidden_level_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
 
@@ -108,10 +109,26 @@ pub struct TimeTrial {
     pub is_active: bool
 }
 
+#[derive(Component, Clone, Copy)]
+pub struct IllusoryWall {
+    pub position: Vec3,
+    pub size: Vec2,
+    pub floor_asset: FloorAssetType
+}
+
+#[derive(Component, Clone, Copy)]
+pub struct Decoration {
+    pub position: Vec3,
+    pub size: Vec2,
+    pub asset: &'static str
+}
+
 pub enum FloorModification {
     JumpPad(JumpPad),
     GravityInverter(GravityInverter),
-    TimeTrial(TimeTrial)
+    TimeTrial(TimeTrial),
+    IllusoryWall(IllusoryWall),
+    Decoration(Decoration),
 }
 
 pub trait LevelInfo {

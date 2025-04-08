@@ -27,6 +27,7 @@ pub const OBSERVER_CREW_MEMBER: &str = "observer crew member";
 pub const GLORP: &str = "glorp";
 pub const DRONE: &str = "drone";
 pub const OG_DRONE: &str = "og drone";
+pub const GRIM: &str = "grim";
 pub const CLIPPER_DRONE: &str = "clipper drone";
 
 #[derive(Component)]

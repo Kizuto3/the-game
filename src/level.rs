@@ -9,6 +9,7 @@ use level_layout::factory_1_layout::Factory1Info;
 use level_layout::factory_2_layout::Factory2Info;
 use level_layout::factory_3_layout::Factory3Info;
 use level_layout::factory_4_layout::Factory4Info;
+use level_layout::factory_hidden_level_layout::FactoryHiddenLevelInfo;
 use level_layout::factory_transition_layout::FactoryTransitionInfo;
 use level_layout::hell_1_layout::Hell1Info;
 use level_layout::hell_2_layout::Hell2Info;
@@ -64,6 +65,7 @@ pub enum Level {
     Factory2(Factory2Info),
     Factory3(Factory3Info),
     Factory4(Factory4Info),
+    FactoryHiddenLevel(FactoryHiddenLevelInfo),
     NeuroLair(NeuroLairInfo)
 }
 
@@ -337,7 +339,51 @@ pub fn spawn_new_level(
                             .insert(Collider::cuboid(time_trial.lever_info.size.x / 2.0, time_trial.lever_info.size.y / 2.0))
                             .insert(Sensor)
                             .insert(ActiveEvents::COLLISION_EVENTS);
-                    }
+                    },
+                    FloorModification::IllusoryWall(illusory_wall) => {
+                        let illusory_wall_handle = match illusory_wall.floor_asset {
+                            FloorAssetType::Forest => asset_server.load("tiles/Forest.png"),
+                            FloorAssetType::CweamcatHouse => asset_server.load("tiles/CweamcatHouse.png"),
+                            FloorAssetType::Hell => asset_server.load("tiles/Hell.png"),
+                            FloorAssetType::Spaceship => asset_server.load("tiles/Spaceship.png"),
+                            FloorAssetType::Factory => asset_server.load("tiles/Factory.png")
+                        };
+
+                        commands
+                            .spawn((
+                                *illusory_wall,
+                                Transform::from_translation(illusory_wall.position),
+                                Sprite {
+                                    image: illusory_wall_handle,
+                                    anchor: bevy::sprite::Anchor::Center,
+                                    custom_size: Some(Vec2::new(illusory_wall.size.x, illusory_wall.size.y)),
+                                    image_mode: SpriteImageMode::Sliced(TextureSlicer {
+                                        border: BorderRect { left: 18., right: 15., top: 38., bottom: 11. },
+                                        center_scale_mode: SliceScaleMode::Tile { stretch_value: 1. },
+                                        sides_scale_mode: SliceScaleMode::Tile { stretch_value: 1. },
+                                        max_corner_scale: 1.0,
+                                        ..default()
+                                    }),
+                                    ..default()
+                                },
+                            ));
+                    },
+                    FloorModification::Decoration(decoration) => {
+                        let decoration_handle = asset_server.load(format!("decorations/{}.png", decoration.asset));
+
+                        commands
+                            .spawn((
+                                *decoration,
+                                Transform::from_translation(decoration.position),
+                                Sprite {
+                                    image: decoration_handle,
+                                    anchor: bevy::sprite::Anchor::Center,
+                                    custom_size: Some(Vec2::new(decoration.size.x, decoration.size.y)),
+                                    image_mode: SpriteImageMode::Auto,
+                                    ..default()
+                                },
+                            ));
+                    },
                 }
             }
         }
@@ -603,6 +649,17 @@ fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, tra
             });
         },
         Level::Factory4(layout_info) => {
+            commands.spawn(LevelLayout {
+                floor_layout: layout_info.get_floor_info(cweampuff),
+                transition_layout: layout_info.get_transitions_info(cweampuff),
+                npc_layout: layout_info.get_npcs(cweampuff),
+                door_layout: layout_info.get_doors(cweampuff),
+                floor_modifications: layout_info.get_floor_modifications(cweampuff),
+                transition_info,
+                bgm: layout_info.get_bgm()
+            });
+        },
+        Level::FactoryHiddenLevel(layout_info) => {
             commands.spawn(LevelLayout {
                 floor_layout: layout_info.get_floor_info(cweampuff),
                 transition_layout: layout_info.get_transitions_info(cweampuff),

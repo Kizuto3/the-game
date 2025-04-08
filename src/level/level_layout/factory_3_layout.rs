@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, MINAWAN, NPC}, CWEAMPUFF_Z_INDEX};
 
-use super::{factory_2_layout::Factory2Info, factory_4_layout::Factory4Info, BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TimeTrial, TransitionCollider};
+use super::{factory_2_layout::Factory2Info, factory_4_layout::Factory4Info, factory_hidden_level_layout::FactoryHiddenLevelInfo, BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, IllusoryWall, LevelInfo, TimeTrial, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct Factory3Info;
@@ -13,7 +13,8 @@ impl LevelInfo for Factory3Info {
             FloorInfo { position: Vec3::new(-1850.0, 175.0, 1.0), size: Vec2::new(300.0, 5950.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
             FloorInfo { position: Vec3::new(-125.0, 3000.0, 1.0), size: Vec2::new(3150.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
             FloorInfo { position: Vec3::new(0.0, -3150.0, 1.0), size: Vec2::new(4000.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
-            FloorInfo { position: Vec3::new(2150.0, 0.0, 1.0), size: Vec2::new(300.0, 6300.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
+            FloorInfo { position: Vec3::new(2150.0, 2400.0, 1.0), size: Vec2::new(300.0, 2100.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
+            FloorInfo { position: Vec3::new(2150.0, -850.0, 1.0), size: Vec2::new(300.0, 4000.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
             FloorInfo { position: Vec3::new(500.0, 1000.0, 1.0), size: Vec2::new(3000.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
             FloorInfo { position: Vec3::new(-1150.0, 1600.0, 1.0), size: Vec2::new(300.0, 1500.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
             FloorInfo { position: Vec3::new(-500.0, 2275.0, 1.0), size: Vec2::new(1000.0, 150.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
@@ -29,6 +30,7 @@ impl LevelInfo for Factory3Info {
         Some(Box::from([
             TransitionCollider { exit_index: 0, safe_position: Vec3::new(1725.0, 2950.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory2(Factory2Info), floor_info: EntityInfo { position: Vec3::new(1725.0, 3100.0, 2.0), size: Vec2::new(550.0, 100.0) }  },
             TransitionCollider { exit_index: 1, safe_position: Vec3::new(-1800.0, -2950.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory4(Factory4Info), floor_info: EntityInfo { position: Vec3::new(-1950.0, -2900.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
+            TransitionCollider { exit_index: 2, safe_position: Vec3::new(2050.0, 1150.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::FactoryHiddenLevel(FactoryHiddenLevelInfo), floor_info: EntityInfo { position: Vec3::new(2250.0, 1250.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
         ]))
     }
 
@@ -80,6 +82,9 @@ impl LevelInfo for Factory3Info {
                 TimeTrial { lever_info: EntityInfo { position: Vec3::new(-600.0, -2900.0, 0.0), size: Vec2::new(100.0, 200.0) }, seconds_to_complete: 8, id: 3, is_active: false,
                 floor_infos: TIME_TRIAL_3
             }),
+            FloorModification::IllusoryWall(
+                IllusoryWall { position: Vec3::new(2150.0, 1250.0, 4.0), size: Vec2::new(300.0, 200.0), floor_asset: FloorAssetType::Factory }
+            )
         ]))
     }
 
