@@ -34,7 +34,7 @@ impl LevelInfo for FactoryHiddenLevelInfo {
                                 ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Hello Cweampuff, I am your father!", emotion: Emotion::Regular },
                                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "W-what?!", emotion: Emotion::Sad },
                                 ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Is that reference too old for you?", emotion: Emotion::Regular },
-                                ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Anyways welcome to the factory!", emotion: Emotion::Regular },
+                                ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Anyways, welcome to the factory!", emotion: Emotion::Regular },
                                 ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "I appreciate you coming here for a bit, but you are close to your goal and Miruku needs you right now so keep moving!", emotion: Emotion::Regular },
                             ], 
                             after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
