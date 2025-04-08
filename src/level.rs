@@ -35,6 +35,7 @@ pub mod door;
 pub mod progression;
 pub mod floor_modification;
 pub mod level_bgm;
+pub mod cheats;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
 const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);

@@ -20,7 +20,7 @@ use camera::{cweampuff_camera_adjustment, spawn_camera};
 use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, despawn_cutscene_resources, spawn_cutscene_resources, wait_for_resources_to_load, CutsceneEvent};
 use fade_in_fade_out::{despawn_fade_in_fade_out_node, fade_in, fade_out, set_fade_in_state, set_fade_out_state, spawn_fade_in_fade_out_node, FadeState};
 use interactable::{despawn_interaction_prompt, interaction_state::InteractionState, spawn_interaction_prompt};
-use level::{despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, floor_modification::{gravity_inverter_collision_reader, jump_pad_collision_reader, tick_timer_trial_timer, time_trial_collision_reader, time_trial_start_interaction_input_reader}, level_bgm::{fade_in_bgm, fade_out_bgm, set_bgm_state, LevelBGMState}, level_layout::FloorCollider, level_transition_collision_reader, progression::Progression, spawn_new_level, transition_states::TransitionState};
+use level::{cheats::cheat_transition_to, despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, floor_modification::{gravity_inverter_collision_reader, jump_pad_collision_reader, tick_timer_trial_timer, time_trial_collision_reader, time_trial_start_interaction_input_reader}, level_bgm::{fade_in_bgm, fade_out_bgm, set_bgm_state, LevelBGMState}, level_layout::FloorCollider, level_transition_collision_reader, progression::Progression, spawn_new_level, transition_states::TransitionState};
 use main_menu::{button_visuals_handler, despawn_main_menu, main_menu_button_interactions_handler, spawn_main_menu};
 use movement::*;
 use animations::play_animations;
@@ -117,7 +117,8 @@ fn main() {
             cweampuff_move,
             cweampuff_camera_adjustment,
             door_start_interaction_input_reader.run_if(in_state(InteractionState::Ready)),
-            level_transition_collision_reader
+            level_transition_collision_reader,
+            cheat_transition_to
         ).chain().run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)).run_if(in_state(FadeState::None)))
         .add_systems(FixedUpdate, (
             dash_reset,
