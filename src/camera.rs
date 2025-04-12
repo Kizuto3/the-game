@@ -1,6 +1,6 @@
 use std::f32;
 
-use bevy::{core_pipeline::smaa::Smaa, prelude::*, render::camera::ScalingMode};
+use bevy::{prelude::*, render::camera::ScalingMode};
 
 use crate::{level::LevelLayout, Cweampuff};
 
@@ -26,10 +26,6 @@ pub fn spawn_camera (
         Camera {
             ..default()
         },
-        Smaa {
-            ..default()
-        },
-        Msaa::Off,
         CameraUpDownMovable { look_up_down_duration: 0., look_up_down_invoke_threshold: 0.3, camera_offset: 360. },
         projection
     ));
