@@ -394,13 +394,13 @@ pub fn spawn_new_level(
         if let Some(position) = level_layout.transition_info.transition_to_position {
             cweampuff_transform.translation = position;
 
-            let new_camera_position = get_adjusted_camera_position(&cweampuff_transform, &level_layout_query, None);
+            let new_camera_position = get_adjusted_camera_position(cweampuff_transform, &level_layout_query, None);
             camera.translation = new_camera_position;
         }
         else if let Some(transition_collider) = level_layout.transition_layout.as_deref().unwrap_or_default().iter().find(|f| f.exit_index == level_layout.transition_info.transition_to_index) {
             cweampuff_transform.translation = transition_collider.safe_position;
 
-            let new_camera_position = get_adjusted_camera_position(&cweampuff_transform, &level_layout_query, None);
+            let new_camera_position = get_adjusted_camera_position(cweampuff_transform, &level_layout_query, None);
             camera.translation = new_camera_position;
         }
     }
