@@ -178,8 +178,7 @@ pub fn time_trial_start_interaction_input_reader(
                         border: BorderRect { left: 18., right: 15., top: 38., bottom: 11. },
                         center_scale_mode: SliceScaleMode::Tile { stretch_value: 1. },
                         sides_scale_mode: SliceScaleMode::Tile { stretch_value: 1. },
-                        max_corner_scale: 1.0,
-                        ..default()
+                        max_corner_scale: 1.0
                     }),
                     ..default()
                 },
