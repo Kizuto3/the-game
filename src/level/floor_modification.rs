@@ -146,13 +146,13 @@ pub fn time_trial_start_interaction_input_reader(
             playback_settings
         ));
 
-        if !timers.is_empty() {
-            for timer in timers.iter_mut().find(|x| x.entity_id == time_trial.id).iter_mut() {
-                timer.timer.reset();
 
-                return;
-            }
+        if let Some(timer) = timers.iter_mut().find(|x| x.entity_id == time_trial.id).iter_mut().next() {
+            timer.timer.reset();
+
+            return;
         }
+
 
         commands.spawn(
             TimeTrialTimer { timer: Timer::new(Duration::from_secs(time_trial.seconds_to_complete), TimerMode::Once), entity_id: time_trial.id }
