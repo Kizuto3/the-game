@@ -245,14 +245,14 @@ pub fn spawn_cutscene_resources(
 pub fn despawn_cutscene_resources(
     mut commands: Commands,
     nodes: Query<Entity, (With<Node>, Without<Camera2d>, Without<FadeInFadeOutNode>)>,
-    cutsnenes: Query<Entity, (With<Cutscene>, Without<Node>)>,
+    cutscenes: Query<Entity, (With<Cutscene>, Without<Node>)>,
     loading_assets: Query<Entity, (With<LoadingAssets>, Without<Node>)>,
 ) {
     for entity in nodes.iter() {
         commands.entity(entity).despawn_recursive();
     }
 
-    for entity in cutsnenes.iter() {
+    for entity in cutscenes.iter() {
         commands.entity(entity).despawn_recursive();
     }
 

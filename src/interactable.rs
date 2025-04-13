@@ -36,10 +36,10 @@ pub fn spawn_interaction_prompt(
 }
 
 pub fn despawn_interaction_prompt(
-    propmpts: Query<Entity, (With<Node>, With<Interactable>, Without<Camera2d>)>,
+    prompts: Query<Entity, (With<Node>, With<Interactable>, Without<Camera2d>)>,
     mut commands: Commands
 ) {
-    for prompt in propmpts.iter() {
+    for prompt in prompts.iter() {
         commands.entity(prompt).despawn_recursive();
     }
 }
