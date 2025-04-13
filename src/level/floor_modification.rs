@@ -137,7 +137,7 @@ pub fn time_trial_start_interaction_input_reader(
         return;
     }
 
-    for time_trial in time_trials.iter().find(|f| f.is_active).iter() {
+    if let Some(time_trial) = time_trials.iter().find(|f| f.is_active) {
         let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
         playback_settings.mode = PlaybackMode::Despawn;
     
@@ -146,13 +146,11 @@ pub fn time_trial_start_interaction_input_reader(
             playback_settings
         ));
 
-
-        if let Some(timer) = timers.iter_mut().find(|x| x.entity_id == time_trial.id).iter_mut().next() {
+        if let Some(mut timer) = timers.iter_mut().find(|x| x.entity_id == time_trial.id) {
             timer.timer.reset();
 
             return;
         }
-
 
         commands.spawn(
             TimeTrialTimer { timer: Timer::new(Duration::from_secs(time_trial.seconds_to_complete), TimerMode::Once), entity_id: time_trial.id }

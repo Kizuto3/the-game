@@ -99,7 +99,7 @@ pub fn npc_start_interaction_input_reader(
         return;
     }
 
-    for _npc in npcs.iter().find(|f| f.is_active).iter() {
+    if npcs.iter().find(|f| f.is_active).is_some() {
         dialog_state.set(ConversationState::Started);
         npc_interaction_state.set(InteractionState::NotReady);
     }

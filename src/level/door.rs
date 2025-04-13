@@ -52,7 +52,7 @@ pub fn door_start_interaction_input_reader(
         return;
     }
 
-    for door in doors.iter().find(|f| f.is_active).iter() {
+    if let Some(door) = doors.iter().find(|f| f.is_active) {
         let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
         playback_settings.mode = PlaybackMode::Despawn;
     
