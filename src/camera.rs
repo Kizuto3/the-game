@@ -1,5 +1,3 @@
-use std::f32;
-
 use bevy::{prelude::*, render::camera::ScalingMode};
 
 use crate::{level::LevelLayout, Cweampuff};

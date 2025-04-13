@@ -146,13 +146,13 @@ pub fn time_trial_start_interaction_input_reader(
             playback_settings
         ));
 
-        if !timers.is_empty() {
-            for timer in timers.iter_mut().find(|x| x.entity_id == time_trial.id).iter_mut() {
-                timer.timer.reset();
 
-                return;
-            }
+        if let Some(timer) = timers.iter_mut().find(|x| x.entity_id == time_trial.id).iter_mut().next() {
+            timer.timer.reset();
+
+            return;
         }
+
 
         commands.spawn(
             TimeTrialTimer { timer: Timer::new(Duration::from_secs(time_trial.seconds_to_complete), TimerMode::Once), entity_id: time_trial.id }
@@ -178,8 +178,7 @@ pub fn time_trial_start_interaction_input_reader(
                         border: BorderRect { left: 18., right: 15., top: 38., bottom: 11. },
                         center_scale_mode: SliceScaleMode::Tile { stretch_value: 1. },
                         sides_scale_mode: SliceScaleMode::Tile { stretch_value: 1. },
-                        max_corner_scale: 1.0,
-                        ..default()
+                        max_corner_scale: 1.0
                     }),
                     ..default()
                 },

@@ -101,7 +101,7 @@ pub fn cutscene_input_reader(
             FadeState::None => {
                 next_fade_state.set(FadeState::FadeIn);
 
-                if let None = current_cutscene.infos.get(current_cutscene.current_index) {
+                if current_cutscene.infos.get(current_cutscene.current_index).is_none() {
                     next_bgm_state.set(LevelBGMState::Changing);
                 }
             },
@@ -168,13 +168,10 @@ pub fn wait_for_resources_to_load(
 ) {
     if loading_assets.assets.iter().all(|res| 
         if let Some(state) = server.get_load_state(*res) {
-            match state {
-                LoadState::Loaded | LoadState::Failed(_) => return true,
-                _ => return false
-            }
+            matches!(state, LoadState::Loaded | LoadState::Failed(_))
         }
         else {
-            return true;
+            true
         }
     ) {
         loading_assets.assets.clear();

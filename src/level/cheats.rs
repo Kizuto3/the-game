@@ -139,7 +139,5 @@ pub fn cheat_transition_to(
         cweampuff.has_wall_jump = true;
 
         manually_transition_to_level(&current_level_layout, &mut transition_state, &cweampuff, &mut commands, Level::Factory4(Factory4Info), Vec3::new(1100.0, -2650.0, CWEAMPUFF_Z_INDEX));
-
-        return;
     }
 }
