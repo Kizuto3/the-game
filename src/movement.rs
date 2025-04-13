@@ -129,7 +129,7 @@ pub fn cweampuff_jump(
             jumper.is_next_jump_doublejump = false;
         }
 
-        if let Some(_) = jumper.time_passed_since_stopped_touching_ground {
+        if jumper.time_passed_since_stopped_touching_ground.is_some() {
             jumper.is_next_jump_doublejump = true;
             movable.touching_ground = false;
             jumper.time_passed_since_stopped_touching_ground = None;
