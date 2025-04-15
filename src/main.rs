@@ -10,6 +10,7 @@ mod fade_in_fade_out;
 mod audio_settings;
 mod audio_settings_menu;
 mod animations;
+mod credits_menu;
 
 use app_states::AppState;
 use audio_settings::AudioSettings;
@@ -17,6 +18,7 @@ use audio_settings_menu::{audio_button_interactions_handler, despawn_audio_setti
 use bevy::{prelude::*, window::{PrimaryWindow, WindowMode}, winit::WinitWindows};
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collider, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
 use camera::{cweampuff_camera_adjustment, spawn_camera};
+use credits_menu::{credits_button_interactions_handler, despawn_credits_menu, spawn_credits_menu};
 use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, despawn_cutscene_resources, spawn_cutscene_resources, wait_for_resources_to_load, CutsceneEvent};
 use fade_in_fade_out::{despawn_fade_in_fade_out_node, fade_in, fade_out, set_fade_in_state, set_fade_out_state, spawn_fade_in_fade_out_node, FadeState};
 use interactable::{despawn_interaction_prompt, interaction_state::InteractionState, spawn_interaction_prompt};
@@ -72,6 +74,14 @@ fn main() {
             settings_menu_input_reader
         ).run_if(in_state(AppState::AudioMenu)))
         .add_systems(OnExit(AppState::AudioMenu), despawn_audio_settings)
+
+    // CREDITS MENU SYSTEMS
+        .add_systems(OnEnter(AppState::CreditsMenu), spawn_credits_menu)
+        .add_systems(Update, (
+            button_visuals_handler,
+            credits_button_interactions_handler
+        ).run_if(in_state(AppState::CreditsMenu)))
+        .add_systems(OnExit(AppState::CreditsMenu), despawn_credits_menu)
 
     // CUTSCENE SYSTEMS
         .add_systems(OnEnter(AppState::Cutscene), spawn_cutscene_resources)

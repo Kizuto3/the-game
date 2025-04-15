@@ -5,6 +5,7 @@ pub enum AppState {
     #[default]
     MainMenu,
     AudioMenu,
+    CreditsMenu,
     Cutscene,
     InGame
 }

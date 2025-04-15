@@ -1,4 +1,4 @@
-use bevy::{audio::{PlaybackMode, Volume}, color::{palettes::css::RED, Color}, prelude::*};
+use bevy::{audio::{PlaybackMode, Volume}, color::Color, prelude::*};
 
 use crate::{app_states::AppState, cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, fade_in_fade_out::FadeInFadeOutNode, level::{level_bgm::{LevelBGM, LevelBGMState}, level_layout::starting_room_layout::StartingRoomInfo, Level}};
 
@@ -6,7 +6,7 @@ pub const DEFAULT_FONT: &str = "fonts/Shadows Into Light.ttf";
 
 pub const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
-const PRESSED_BUTTON: Color = Color::srgb(0.35, 0.75, 0.35);
+const PRESSED_BUTTON: Color = Color::srgb(0.75, 0.75, 0.75);
 
 #[derive(Component)]
 pub struct MainMenuComponent;
@@ -18,6 +18,7 @@ pub struct MainMenuAudio;
 pub enum ButtonAction {
     StartGame,
     Settings,
+    Credits,
     Quit
 }
 
@@ -35,8 +36,7 @@ pub fn button_visuals_handler(
         match *interaction {
             Interaction::Pressed => {
                 *color = PRESSED_BUTTON.into();
-                border_color.0 = RED.into();
-                
+                border_color.0 = Color::WHITE;
             }
             Interaction::Hovered => {
                 *color = HOVERED_BUTTON.into();
@@ -67,11 +67,14 @@ pub fn main_menu_button_interactions_handler(
                         CutsceneInfo { text: "A brave cweampuff decided to look for it...", background: "" },
                         CutsceneInfo { text: "", background: "cutscenes/opening/1.png" },
                         CutsceneInfo { text: "", background: "cutscenes/opening/2.png" },
-                    ], "ost/factory.mp3", PostCutsceneAction::TransitionTo(Level::StartingRoom(StartingRoomInfo))));
+                    ], "ost/cutscene.mp3", PostCutsceneAction::TransitionTo(Level::StartingRoom(StartingRoomInfo))));
                 },
                 ButtonAction::Settings => {
                     app_state.set(AppState::AudioMenu);
-                }
+                },
+                ButtonAction::Credits => {
+                    app_state.set(AppState::CreditsMenu);
+                },
                 ButtonAction::Quit => {
                     exit.send(AppExit::Success);
                 }
@@ -134,7 +137,7 @@ pub fn spawn_main_menu(
         .spawn((Node {
             width: Val::Percent(10.0),
             height: Val::Percent(5.0),
-            top: Val::Percent(80.),
+            top: Val::Percent(77.5),
             left: Val::Percent(45.),
             justify_content: JustifyContent::Center,
             ..default()
@@ -173,7 +176,46 @@ pub fn spawn_main_menu(
         .spawn((Node {
             width: Val::Percent(10.0),
             height: Val::Percent(5.0),
-            top: Val::Percent(90.0),
+            top: Val::Percent(85.),
+            left: Val::Percent(45.),
+            justify_content: JustifyContent::Center,
+            ..default()
+        }, MainMenuComponent))
+        .with_children(|parent| {
+            parent
+                .spawn((
+                    Button,
+                    ButtonAction::Credits,
+                    Node {
+                        width: Val::Percent(100.0),
+                        height: Val::Percent(100.0),
+                        border: UiRect::all(Val::Percent(2.0)),
+                        // horizontally center child text
+                        justify_content: JustifyContent::Center,
+                        // vertically center child text
+                        align_items: AlignItems::Center,
+                        ..default()
+                    },
+                    BorderColor(Color::BLACK),
+                    BorderRadius::MAX,
+                    BackgroundColor(NORMAL_BUTTON),
+                ))
+                .with_child((
+                    Text::new("Credits"),
+                    TextFont {
+                        font: asset_server.load(DEFAULT_FONT),
+                        font_size: 33.0,
+                        ..default()
+                    },
+                    TextColor(Color::srgb(0.9, 0.9, 0.9)),
+                ));
+        });
+
+    commands
+        .spawn((Node {
+            width: Val::Percent(10.0),
+            height: Val::Percent(5.0),
+            top: Val::Percent(92.5),
             left: Val::Percent(45.),
             justify_content: JustifyContent::Center,
             ..default()
