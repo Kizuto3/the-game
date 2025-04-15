@@ -21,7 +21,7 @@ impl LevelInfo for Factory4Info {
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
             TransitionCollider { exit_index: 1, safe_position: Vec3::new(1100.0, -2650.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory3(Factory3Info), floor_info: EntityInfo { position: Vec3::new(1250.0, -2600.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(-1800.0, 3600.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::NeuroLair(NeuroLairInfo), floor_info: EntityInfo { position: Vec3::new(-1950.0, 3650.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(-1800.0, 3550.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::NeuroLair(NeuroLairInfo), floor_info: EntityInfo { position: Vec3::new(-1950.0, 3600.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
         ]))
     }
 
@@ -36,7 +36,7 @@ impl LevelInfo for Factory4Info {
     fn get_floor_modifications(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[FloorModification]>> {
         Some(Box::from([
             FloorModification::TimeTrial(
-                TimeTrial { lever_info: EntityInfo { position: Vec3::new(0.0, -2600.0, 0.0), size: Vec2::new(100.0, 200.0) }, seconds_to_complete: 9, id: 1, is_active: false,
+                TimeTrial { lever_info: EntityInfo { position: Vec3::new(0.0, -2600.0, 0.0), size: Vec2::new(100.0, 200.0) }, seconds_to_complete: 10, id: 1, is_active: false,
                 floor_infos: TIME_TRIAL_1
             }),
             FloorModification::TimeTrial(

@@ -23,7 +23,7 @@ use cutscene::{cutscene_event_reader, cutscene_input_reader, cutscene_player, de
 use fade_in_fade_out::{despawn_fade_in_fade_out_node, fade_in, fade_out, set_fade_in_state, set_fade_out_state, spawn_fade_in_fade_out_node, FadeState};
 use interactable::{despawn_interaction_prompt, interaction_state::InteractionState, spawn_interaction_prompt};
 use level::{cheats::cheat_transition_to, despawn_current_level, door::{door_start_interaction_input_reader, interactable_door_collision_reader}, floor_modification::{gravity_inverter_collision_reader, jump_pad_collision_reader, tick_timer_trial_timer, time_trial_collision_reader, time_trial_start_interaction_input_reader}, level_bgm::{fade_in_bgm, fade_out_bgm, set_bgm_state, LevelBGMState}, level_layout::FloorCollider, level_transition_collision_reader, progression::Progression, spawn_new_level, transition_states::TransitionState};
-use main_menu::{button_visuals_handler, despawn_main_menu, main_menu_button_interactions_handler, spawn_main_menu};
+use main_menu::{button_visuals_handler, despawn_background, despawn_main_menu, main_menu_button_interactions_handler, spawn_background_image, spawn_main_menu};
 use movement::*;
 use animations::play_animations;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
@@ -58,7 +58,7 @@ fn main() {
     app.add_systems(Startup, (set_window_icon, spawn_camera, setup_window))
 
     // MAIN MENU SYSTEMS
-        .add_systems(OnEnter(AppState::MainMenu), (despawn_current_level, despawn_cweampuff, spawn_main_menu).chain())
+        .add_systems(OnEnter(AppState::MainMenu), (despawn_current_level, despawn_cweampuff, spawn_background_image, spawn_main_menu).chain())
         .add_systems(Update, (
             button_visuals_handler,
             main_menu_button_interactions_handler,
@@ -89,7 +89,7 @@ fn main() {
         .add_systems(Update, cutscene_input_reader.run_if(in_state(AppState::Cutscene)))
         .add_systems(FixedUpdate, fade_out_bgm.run_if(in_state(LevelBGMState::Changing)).run_if(in_state(AppState::Cutscene)).run_if(in_state(FadeState::FadeOut)))
         .add_systems(FixedUpdate, wait_for_resources_to_load.run_if(in_state(AppState::Cutscene)).run_if(in_state(FadeState::FadeInFinished)))
-        .add_systems(OnEnter(FadeState::FadeInFinished), (despawn_current_level, cutscene_player).chain().run_if(in_state(AppState::Cutscene)))
+        .add_systems(OnEnter(FadeState::FadeInFinished), (despawn_background, despawn_current_level, cutscene_player).chain().run_if(in_state(AppState::Cutscene)))
         .add_systems(OnExit(AppState::Cutscene), despawn_cutscene_resources)
 
     // FADE IN FADE OUT SYSTEMS
@@ -120,7 +120,7 @@ fn main() {
         .add_systems(OnExit(ConversationState::Started), despawn_conversation_resources)
 
     // GAMEPLAY SYSTEMS
-        .add_systems(OnEnter(AppState::InGame), spawn_cweampuff)
+        .add_systems(OnEnter(AppState::InGame), (despawn_background, spawn_cweampuff))
         .add_systems(Update, (
             cweampuff_dash,
             cweampuff_jump,

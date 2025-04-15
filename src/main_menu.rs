@@ -1,4 +1,4 @@
-use bevy::{audio::{PlaybackMode, Volume}, color::Color, prelude::*};
+use bevy::{audio::{PlaybackMode, Volume}, color::Color, prelude::*, ui::widget::NodeImageMode};
 
 use crate::{app_states::AppState, cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, fade_in_fade_out::FadeInFadeOutNode, level::{level_bgm::{LevelBGM, LevelBGMState}, level_layout::starting_room_layout::StartingRoomInfo, Level}};
 
@@ -13,6 +13,9 @@ pub struct MainMenuComponent;
 
 #[derive(Component)]
 pub struct MainMenuAudio;
+
+#[derive(Component)]
+pub struct MainBackground;
 
 #[derive(Component)]
 pub enum ButtonAction {
@@ -83,11 +86,35 @@ pub fn main_menu_button_interactions_handler(
     }
 }
 
+pub fn spawn_background_image(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    background_query: Query<Entity, (With<Node>, With<MainBackground>)>,
+) {
+    if !background_query.is_empty() {
+        return;
+    }
+    
+    let background_image_handle = asset_server.load("cutscenes/main.png");
+
+    commands.spawn((
+        Node {
+            width: Val::Percent(100.0),
+            height: Val::Percent(100.0),
+            position_type: PositionType::Absolute,
+            ..default()
+        },
+        MainBackground,
+        ImageNode::new(background_image_handle).with_mode(NodeImageMode::Auto),
+    ));
+}
+
 pub fn spawn_main_menu(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut next_bgm_state: ResMut<NextState<LevelBGMState>>,
     bgm_query: Query<Entity, (With<LevelBGM>, Without<MainMenuAudio>)>,
+    background: Single<Entity, (With<Node>, With<MainBackground>)>,
     main_menu_bgm_query: Query<&MainMenuAudio>,
 ) {    
     for entity in bgm_query.iter() {
@@ -100,6 +127,7 @@ pub fn spawn_main_menu(
             height: Val::Percent(5.0),
             top: Val::Percent(70.),
             left: Val::Percent(45.),
+            position_type: PositionType::Absolute,
             justify_content: JustifyContent::Center,
             ..default()
         }, MainMenuComponent))
@@ -131,7 +159,7 @@ pub fn spawn_main_menu(
                     },
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
                 ));
-        });
+        }).set_parent(*background);
 
     commands
         .spawn((Node {
@@ -139,6 +167,7 @@ pub fn spawn_main_menu(
             height: Val::Percent(5.0),
             top: Val::Percent(77.5),
             left: Val::Percent(45.),
+            position_type: PositionType::Absolute,
             justify_content: JustifyContent::Center,
             ..default()
         }, MainMenuComponent))
@@ -170,7 +199,7 @@ pub fn spawn_main_menu(
                     },
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
                 ));
-        });
+        }).set_parent(*background);
 
     commands
         .spawn((Node {
@@ -178,6 +207,7 @@ pub fn spawn_main_menu(
             height: Val::Percent(5.0),
             top: Val::Percent(85.),
             left: Val::Percent(45.),
+            position_type: PositionType::Absolute,
             justify_content: JustifyContent::Center,
             ..default()
         }, MainMenuComponent))
@@ -209,7 +239,7 @@ pub fn spawn_main_menu(
                     },
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
                 ));
-        });
+        }).set_parent(*background);
 
     commands
         .spawn((Node {
@@ -217,6 +247,7 @@ pub fn spawn_main_menu(
             height: Val::Percent(5.0),
             top: Val::Percent(92.5),
             left: Val::Percent(45.),
+            position_type: PositionType::Absolute,
             justify_content: JustifyContent::Center,
             ..default()
         }, MainMenuComponent))
@@ -248,7 +279,7 @@ pub fn spawn_main_menu(
                     },
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
                 ));
-        });
+        }).set_parent(*background);
 
     if main_menu_bgm_query.is_empty() {
         let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.));
@@ -268,6 +299,15 @@ pub fn spawn_main_menu(
 pub fn despawn_main_menu(
     mut commands: Commands, 
     query: Query<Entity, (With<Node>, With<MainMenuComponent>, Without<Camera2d>, Without<FadeInFadeOutNode>)>
+) {
+    for entity in query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+}
+
+pub fn despawn_background(
+    mut commands: Commands, 
+    query: Query<Entity, (With<Node>, With<MainBackground>, Without<Camera2d>, Without<FadeInFadeOutNode>)>
 ) {
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();

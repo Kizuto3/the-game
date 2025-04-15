@@ -353,6 +353,7 @@ pub fn spawn_new_level(
                             .spawn((
                                 *illusory_wall,
                                 Transform::from_translation(illusory_wall.position),
+                                Sensor,
                                 Sprite {
                                     image: illusory_wall_handle,
                                     anchor: bevy::sprite::Anchor::Center,
@@ -374,6 +375,7 @@ pub fn spawn_new_level(
                             .spawn((
                                 *decoration,
                                 Transform::from_translation(decoration.position),
+                                Sensor,
                                 Sprite {
                                     image: decoration_handle,
                                     anchor: bevy::sprite::Anchor::Center,
