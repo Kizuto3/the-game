@@ -463,224 +463,77 @@ pub fn manually_transition_to_level(
 fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, transition_info: LevelTransitionInfo) {
     match level {
         Level::StartingRoom(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::CweamcatLair(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::CweamcatHouse(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Hell1(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Hell2(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Hell3(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Hell4(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::CerberLair(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Spaceship1(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Spaceship2(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Spaceship3(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Spaceship4(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::AquwaLair(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::FactoryTransition(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Factory1(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Factory2(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Factory3(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::Factory4(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::FactoryHiddenLevel(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
         Level::NeuroLair(layout_info) => {
-            commands.spawn(LevelLayout {
-                floor_layout: layout_info.get_floor_info(cweampuff),
-                transition_layout: layout_info.get_transitions_info(cweampuff),
-                npc_layout: layout_info.get_npcs(cweampuff),
-                door_layout: layout_info.get_doors(cweampuff),
-                floor_modifications: layout_info.get_floor_modifications(cweampuff),
-                transition_info,
-                bgm: layout_info.get_bgm()
-            });
+            spawn_level_with_info(layout_info, commands, cweampuff, transition_info);
         },
     }
+}
+
+fn spawn_level_with_info<T>(layout_info: T, commands: &mut Commands, cweampuff: &Cweampuff, transition_info: LevelTransitionInfo) where T: LevelInfo
+{
+    commands.spawn(LevelLayout {
+        floor_layout: layout_info.get_floor_info(cweampuff),
+        transition_layout: layout_info.get_transitions_info(cweampuff),
+        npc_layout: layout_info.get_npcs(cweampuff),
+        door_layout: layout_info.get_doors(cweampuff),
+        floor_modifications: layout_info.get_floor_modifications(cweampuff),
+        transition_info,
+        bgm: layout_info.get_bgm()
+    });
 }
