@@ -358,6 +358,8 @@ impl LevelInfo for CweamcatHouseInfo {
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Stop...", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "It's your hard work paying off!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: OG_CWEAMPUFF, text: "You being you is enough!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "We love to do everything we can for you!", emotion: Emotion::Happy },
+                    ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Because you give us so much more!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFFS, text: "WE LOVE YOU!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MILK, text: "Cweampuffs...", emotion: Emotion::Sad },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "But this is just the beginning, isn't it?", emotion: Emotion::Regular },
