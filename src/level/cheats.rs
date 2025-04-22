@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{Cweampuff, CWEAMPUFF_Z_INDEX};
 
-use super::{level_layout::{factory_1_layout::Factory1Info, factory_2_layout::Factory2Info, factory_3_layout::Factory3Info, factory_4_layout::Factory4Info, hell_1_layout::Hell1Info, hell_2_layout::Hell2Info, hell_3_layout::Hell3Info, hell_4_layout::Hell4Info, spaceship_1_layout::Spaceship1Info, spaceship_2_layout::Spaceship2Info, spaceship_3_layout::Spaceship3Info, spaceship_4_layout::Spaceship4Info}, manually_transition_to_level, progression::Progression, transition_states::TransitionState, Level, LevelLayout};
+use super::{level_layout::{aquwa_lair_layout::AquwaLairInfo, cerber_lair_layout::CerberLairInfo, factory_1_layout::Factory1Info, factory_2_layout::Factory2Info, factory_3_layout::Factory3Info, factory_4_layout::Factory4Info, hell_1_layout::Hell1Info, hell_2_layout::Hell2Info, hell_3_layout::Hell3Info, hell_4_layout::Hell4Info, neuro_lair_layout::NeuroLairInfo, spaceship_1_layout::Spaceship1Info, spaceship_2_layout::Spaceship2Info, spaceship_3_layout::Spaceship3Info, spaceship_4_layout::Spaceship4Info}, manually_transition_to_level, progression::Progression, transition_states::TransitionState, Level, LevelLayout};
 
 pub fn cheat_transition_to(
     keyboard_input: Res<ButtonInput<KeyCode>>,
@@ -55,6 +55,17 @@ pub fn cheat_transition_to(
         return;
     }
 
+    if keyboard_input.pressed(KeyCode::KeyH) && keyboard_input.just_pressed(KeyCode::Digit0) {
+        cweampuff.progression = Progression::MetMilk;
+        cweampuff.has_double_jump = true;
+        cweampuff.has_dash = false;
+        cweampuff.has_wall_jump = false;
+
+        manually_transition_to_level(&current_level_layout, &mut transition_state, &cweampuff, &mut commands, Level::CerberLair(CerberLairInfo), Vec3::new(2050.0, -700.0, CWEAMPUFF_Z_INDEX));
+
+        return;
+    }
+
     if keyboard_input.pressed(KeyCode::KeyS) && keyboard_input.just_pressed(KeyCode::Digit1) {
         cweampuff.progression = Progression::MilkWokeUp;
         cweampuff.has_double_jump = true;
@@ -99,6 +110,17 @@ pub fn cheat_transition_to(
         return;
     }
 
+    if keyboard_input.pressed(KeyCode::KeyS) && keyboard_input.just_pressed(KeyCode::Digit0) {
+        cweampuff.progression = Progression::MilkWokeUp;
+        cweampuff.has_double_jump = true;
+        cweampuff.has_dash = true;
+        cweampuff.has_wall_jump = false;
+
+        manually_transition_to_level(&current_level_layout, &mut transition_state, &cweampuff, &mut commands, Level::AquwaLair(AquwaLairInfo), Vec3::new(1950.0, -700.0, CWEAMPUFF_Z_INDEX));
+
+        return;
+    }
+
     if keyboard_input.pressed(KeyCode::KeyF) && keyboard_input.just_pressed(KeyCode::Digit1) {
         cweampuff.progression = Progression::GivenLetter;
         cweampuff.has_double_jump = true;
@@ -139,5 +161,16 @@ pub fn cheat_transition_to(
         cweampuff.has_wall_jump = true;
 
         manually_transition_to_level(&current_level_layout, &mut transition_state, &cweampuff, &mut commands, Level::Factory4(Factory4Info), Vec3::new(1100.0, -2650.0, CWEAMPUFF_Z_INDEX));
+
+        return;
+    }
+
+    if keyboard_input.pressed(KeyCode::KeyF) && keyboard_input.just_pressed(KeyCode::Digit0) {
+        cweampuff.progression = Progression::GivenLetter;
+        cweampuff.has_double_jump = true;
+        cweampuff.has_dash = true;
+        cweampuff.has_wall_jump = true;
+
+        manually_transition_to_level(&current_level_layout, &mut transition_state, &cweampuff, &mut commands, Level::NeuroLair(NeuroLairInfo), Vec3::new(1950.0, -700.0, CWEAMPUFF_Z_INDEX));
     }
 }
