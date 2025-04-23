@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 mod movement;
 mod app_states;
 mod main_menu;
