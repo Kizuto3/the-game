@@ -46,4 +46,8 @@ impl LevelInfo for StartingRoomInfo {
     fn get_bgm(&self) -> Option<&'static str> {
         None
     }
+
+    fn get_background(&self) -> FloorAssetType {
+        FloorAssetType::Forest
+    }
 }

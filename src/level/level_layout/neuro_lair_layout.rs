@@ -136,4 +136,8 @@ impl LevelInfo for NeuroLairInfo {
     fn get_bgm(&self) -> Option<&'static str> {
         Some("factory")
     }
+
+    fn get_background(&self) -> FloorAssetType {
+        FloorAssetType::Factory
+    }
 }

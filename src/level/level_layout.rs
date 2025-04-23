@@ -138,4 +138,5 @@ pub trait LevelInfo {
     fn get_npcs(&self, cweampuff: &Cweampuff) -> Option<Box<[NPC]>>;
     fn get_floor_modifications(&self, cweampuff: &Cweampuff) -> Option<Box<[FloorModification]>>;
     fn get_bgm(&self) -> Option<&'static str>;
+    fn get_background(&self) -> FloorAssetType;
 }

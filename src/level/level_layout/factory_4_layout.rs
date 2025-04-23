@@ -53,6 +53,10 @@ impl LevelInfo for Factory4Info {
     fn get_bgm(&self) -> Option<&'static str> {
         Some("factory")
     }
+
+    fn get_background(&self) -> FloorAssetType {
+        FloorAssetType::Factory
+    }
 }
 
 static TIME_TRIAL_1: &[FloorInfo] = &[

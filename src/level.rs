@@ -39,7 +39,7 @@ pub mod cheats;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
 const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);
-const GRAVITY_INVERTER_COLOR: Color = Color::srgb(0.1, 0.2, 0.2);
+const GRAVITY_INVERTER_COLOR: Color = Color::srgba(0.1, 0.2, 0.2, 0.5);
 const TIME_TRIAL_COLOR: Color = Color::srgb(0.9, 0.2, 0.2);
 
 #[derive(Component)]
@@ -82,7 +82,8 @@ pub struct LevelLayout {
     pub door_layout: Option<Box<[DoorCollider]>>,
     pub floor_modifications: Option<Box<[FloorModification]>>,
     pub transition_info: LevelTransitionInfo,
-    pub bgm: Option<&'static str>
+    pub bgm: Option<&'static str>,
+    pub background: FloorAssetType,
 }
 
 pub fn despawn_current_level(
@@ -214,13 +215,19 @@ pub fn spawn_new_level(
             }
         }
 
-        let background_image_handle = asset_server.load("forest.png");
+        let background_image_handle = match level_layout.background {
+            FloorAssetType::Forest => asset_server.load("forest.png"),
+            FloorAssetType::Hell => asset_server.load("hell.png"),
+            FloorAssetType::CweamcatHouse => asset_server.load("house.png"),
+            FloorAssetType::Factory => asset_server.load("factory.png"),
+            FloorAssetType::Spaceship => asset_server.load("spaceship.png"),
+        };
 
         let width = (max_x - min_x).abs();
         let height = (max_y - min_y).abs();
         let x = (max_x + min_x) / 2.;
         let y = (max_y + min_y) / 2.;
-        //TODO: Use TextureSlicer when background images are ready
+
         commands.spawn((
             Sprite {
                 image: background_image_handle,
@@ -533,6 +540,7 @@ fn spawn_level_with_info<T>(layout_info: T, commands: &mut Commands, cweampuff: 
         door_layout: layout_info.get_doors(cweampuff),
         floor_modifications: layout_info.get_floor_modifications(cweampuff),
         transition_info,
-        bgm: layout_info.get_bgm()
+        bgm: layout_info.get_bgm(),
+        background: layout_info.get_background()
     });
 }

@@ -56,4 +56,8 @@ impl LevelInfo for FactoryHiddenLevelInfo {
     fn get_bgm(&self) -> Option<&'static str> {
         Some("factory_vocals")
     }
+
+    fn get_background(&self) -> FloorAssetType {
+        FloorAssetType::Factory
+    }
 }

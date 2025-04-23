@@ -64,4 +64,8 @@ impl LevelInfo for Hell4Info {
     fn get_bgm(&self) -> Option<&'static str> {
         Some("hell")
     }
+
+    fn get_background(&self) -> FloorAssetType {
+        FloorAssetType::Hell
+    }
 }

@@ -419,4 +419,8 @@ impl LevelInfo for CweamcatHouseInfo {
     fn get_bgm(&self) -> Option<&'static str> {
         Some("forest")
     }
+
+    fn get_background(&self) -> FloorAssetType {
+        FloorAssetType::CweamcatHouse
+    }
 }

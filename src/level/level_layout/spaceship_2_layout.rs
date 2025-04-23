@@ -67,4 +67,8 @@ impl LevelInfo for Spaceship2Info {
     fn get_bgm(&self) -> Option<&'static str> {
         Some("spaceship")
     }
+
+    fn get_background(&self) -> FloorAssetType {
+        FloorAssetType::Spaceship
+    }
 }
