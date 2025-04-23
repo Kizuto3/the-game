@@ -374,6 +374,10 @@ impl LevelInfo for CweamcatHouseInfo {
                         CutsceneInfo { text: "", background: "cutscenes/rising star/1.png" },
                         CutsceneInfo { text: "", background: "cutscenes/rising star/2.png" },
                         CutsceneInfo { text: "", background: "cutscenes/rising star/3.png" },
+                        CutsceneInfo { text: "Thus, a new Rising Star was born.", background: "" },
+                        CutsceneInfo { text: "Shining ever so brightly.", background: "" },
+                        CutsceneInfo { text: "Minawan, The Crew, The Swarm, and Cweampuffs all bathed in her light.", background: "" },
+                        CutsceneInfo { text: "Thank you for playing.", background: "" },
                     ], "ost/cutscene.mp3", PostCutsceneAction::EndGame));
                 };
 

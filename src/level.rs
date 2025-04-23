@@ -39,7 +39,6 @@ pub mod cheats;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
 const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);
-//const JUMP_PAD_COLOR: Color = Color::srgb(0.2, 0.9, 0.9);
 const GRAVITY_INVERTER_COLOR: Color = Color::srgb(0.1, 0.2, 0.2);
 const TIME_TRIAL_COLOR: Color = Color::srgb(0.9, 0.2, 0.2);
 
@@ -294,7 +293,7 @@ pub fn spawn_new_level(
                     FloorModification::JumpPad(jump_pad) => {
                         let texture = asset_server.load("floor_modifications/Wind_animation.png");
 
-                        // the sprite sheet has 2 sprites arranged in a row, and they are all 200px x 200px
+                        // the sprite sheet has 3 sprites arranged in a row, and they are all 200px x 200px
                         let layout = TextureAtlasLayout::from_grid(UVec2::splat(200), 3, 1, None, None);
                         let texture_atlas_layout = texture_atlas_layouts.add(layout);
 

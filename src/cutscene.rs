@@ -150,6 +150,9 @@ pub fn cutscene_player(
         if !current_cutscene_info.background.is_empty() {
             background_image.image = asset_server.load(current_cutscene_info.background);
         }
+        else {
+            background_image.image = asset_server.load("cutscenes/placeholder.png");
+        }
         
         loading_assets.assets.push(background_image.image.id().untyped());
 
