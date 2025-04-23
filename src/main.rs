@@ -15,7 +15,7 @@ mod credits_menu;
 use app_states::AppState;
 use audio_settings::AudioSettings;
 use audio_settings_menu::{audio_button_interactions_handler, despawn_audio_settings, settings_menu_input_reader, spawn_audio_menu};
-use bevy::{prelude::*, window::{PrimaryWindow, WindowMode}, winit::WinitWindows};
+use bevy::{log::LogPlugin, prelude::*, window::{PrimaryWindow, WindowMode}, winit::WinitWindows};
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, prelude::{Collider, Friction, GravityScale, LockedAxes, RigidBody, Velocity}};
 use camera::{cweampuff_camera_adjustment, spawn_camera};
 use credits_menu::{credits_button_interactions_handler, despawn_credits_menu, spawn_credits_menu};
@@ -40,8 +40,14 @@ pub const CWEAMPUFF_GRAVITY_SCALE: f32 = 1.5;
 fn main() {
     let mut app = App::new();
 
-    app.add_plugins(DefaultPlugins)
-       .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(125.0));
+    if !cfg!(debug_assertions) {
+        app.add_plugins(DefaultPlugins.build().disable::<LogPlugin>())
+            .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(125.0));
+    }
+    else {
+        app.add_plugins(DefaultPlugins)
+            .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(125.0));
+    }
 
     app.init_state::<AppState>();
     app.init_state::<TransitionState>();
