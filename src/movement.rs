@@ -407,8 +407,7 @@ fn detect_floor_and_wall_collision(
 
     if let CollisionEvent::Started(h1, h2, _flags) = event {
         for (collider_entity, collider_transform, collider, mut floor_collider) in colliders.iter_mut() {
-            if h1.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) && 
-               h2.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) {
+            if check_entities(h1, h2, &collider_entity, &cweampuff_entity) {
                 if let Some(cuboid) = collider.as_cuboid() {
                     let cweampuff_bounds = BoundingCircle::new(cweampuff_transform.translation.truncate(), CWEAMPUFF_DIAMETER / 2.);
                     let collider_bounds = Aabb2d::new(collider_transform.translation.truncate(),
@@ -494,4 +493,8 @@ fn check_collision(cweampuff_bounds: BoundingCircle, wall_bounds: Aabb2d) -> Col
     }
 
     CollisionType::Ceiling
+}
+
+pub fn check_entities(h1: &Entity, h2: &Entity, collider: &Entity, cweampuff: &Entity) -> bool {
+    h1.entities().iter().any(|f| *f == *collider || *f == *cweampuff) && h2.entities().iter().any(|f| *f == *collider || *f == *cweampuff)
 }

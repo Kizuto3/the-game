@@ -9,6 +9,7 @@ use conversation_state::ConversationState;
 use dialog_state::DialogState;
 
 use crate::{audio_settings::AudioSettings, cutscene::CutsceneEvent, fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::{BreakableWall, EntityInfo}, main_menu::DEFAULT_FONT, Cweampuff};
+use crate::movement::check_entities;
 
 pub const CWEAMPUFF: &str = "cweampuff";
 pub const CWEAMPUFFS: &str = "cweampuffs";
@@ -65,8 +66,7 @@ pub fn npc_collision_reader(
     for event in contact_events.read() {
         if let CollisionEvent::Stopped(h1, h2, _flags) = event {
             for (npc_entity, mut npc) in npcs.iter_mut() {
-                if h1.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) && 
-                   h2.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) {
+                if check_entities(h1, h2, &npc_entity, &cweampuff) {
                     npc.is_active = false;
                     npc_interaction_state.set(InteractionState::NotReady);
 
@@ -77,8 +77,7 @@ pub fn npc_collision_reader(
     
         if let CollisionEvent::Started(h1, h2, _flags) = event {
             for (npc_entity, mut npc) in npcs.iter_mut() {
-                if h1.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) && 
-                   h2.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) {
+                if check_entities(h1, h2, &npc_entity, &cweampuff) {
                     npc.is_active = true;
                     npc_interaction_state.set(InteractionState::Ready);
 
