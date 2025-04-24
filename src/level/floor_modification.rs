@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use bevy::{audio::{PlaybackMode, Volume}, ecs::observer::TriggerTargets, prelude::*};
+use bevy::{audio::{PlaybackMode, Volume}, prelude::*};
 use bevy_rapier2d::prelude::*;
 
 use crate::{audio_settings::AudioSettings, interactable::{interaction_state::InteractionState, Interactable}, movement::{Jumper, Movable}, npc::NPC, Cweampuff};

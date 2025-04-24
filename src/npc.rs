@@ -2,7 +2,7 @@ pub mod conversation_state;
 pub mod conversation_entry;
 pub mod dialog_state;
 
-use bevy::{ecs::observer::TriggerTargets, prelude::*, ui::widget::NodeImageMode};
+use bevy::{prelude::*, ui::widget::NodeImageMode};
 use bevy_rapier2d::prelude::CollisionEvent;
 use conversation_entry::{ConversationEntry, ConversationPosition};
 use conversation_state::ConversationState;
