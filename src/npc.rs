@@ -98,7 +98,7 @@ pub fn npc_start_interaction_input_reader(
         return;
     }
 
-    if npcs.iter().find(|f| f.is_active).is_some() {
+    if npcs.iter().any(|f| f.is_active) {
         dialog_state.set(ConversationState::Started);
         npc_interaction_state.set(InteractionState::NotReady);
     }
