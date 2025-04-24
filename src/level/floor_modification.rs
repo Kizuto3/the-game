@@ -25,7 +25,7 @@ pub fn jump_pad_collision_reader(
 ) {
     let (cweampuff_entity, cweampuff_velocity, cweampuff_jumper) = &mut *cweampuff;
     for event in contact_events.read() {    
-        if let CollisionEvent::Started(h1, h2, _flags) = event {
+        if let CollisionEvent::Started(h1, h2, _) = event {
             for jump_pad_entity in jump_pads.iter() {
                 if check_entities(h1, h2, &jump_pad_entity, cweampuff_entity) {
                     cweampuff_velocity.linvel.y = cweampuff_jumper.jump_impulse * JUMP_PAD_VELOCITY_DELTA;
@@ -55,7 +55,7 @@ pub fn gravity_inverter_collision_reader(
 ) {
     let (cweampuff_entity, cweampuff_jumper, cweampuff_gravity, cweampuff_movable) = &mut *cweampuff;
     for event in contact_events.read() {    
-        if let CollisionEvent::Started(h1, h2, _flags) = event {
+        if let CollisionEvent::Started(h1, h2, _) = event {
             for jump_pad_entity in jump_pads.iter() {
                 if check_entities(h1, h2, &jump_pad_entity, cweampuff_entity) {
                     cweampuff_gravity.0 = -cweampuff_gravity.0;
@@ -75,7 +75,7 @@ pub fn gravity_inverter_collision_reader(
             }
         }
 
-        if let CollisionEvent::Stopped(h1, h2, _flags) = event {
+        if let CollisionEvent::Stopped(h1, h2, _) = event {
             for jump_pad_entity in jump_pads.iter() {
                 if check_entities(h1, h2, &jump_pad_entity, cweampuff_entity) {
                     cweampuff_gravity.0 = cweampuff_gravity.0.abs();
@@ -96,7 +96,7 @@ pub fn time_trial_collision_reader(
     mut interaction_state: ResMut<NextState<InteractionState>> 
 ) {
     for event in contact_events.read() {
-        if let CollisionEvent::Stopped(h1, h2, _flags) = event {
+        if let CollisionEvent::Stopped(h1, h2, _) = event {
             for (time_trial_entity, mut time_trial) in time_trials.iter_mut() {
                 if check_entities(h1, h2, &time_trial_entity, &cweampuff) {
                     time_trial.is_active = false;
@@ -107,7 +107,7 @@ pub fn time_trial_collision_reader(
             }
         }
     
-        if let CollisionEvent::Started(h1, h2, _flags) = event {
+        if let CollisionEvent::Started(h1, h2, _) = event {
             for (door_entity, mut door) in time_trials.iter_mut() {
                 if check_entities(h1, h2, &door_entity, &cweampuff) {
                     door.is_active = true;

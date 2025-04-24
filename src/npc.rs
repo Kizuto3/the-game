@@ -64,7 +64,7 @@ pub fn npc_collision_reader(
     mut npc_interaction_state: ResMut<NextState<InteractionState>> 
 ) {
     for event in contact_events.read() {
-        if let CollisionEvent::Stopped(h1, h2, _flags) = event {
+        if let CollisionEvent::Stopped(h1, h2, _) = event {
             for (npc_entity, mut npc) in npcs.iter_mut() {
                 if check_entities(h1, h2, &npc_entity, &cweampuff) {
                     npc.is_active = false;
@@ -75,7 +75,7 @@ pub fn npc_collision_reader(
             }
         }
     
-        if let CollisionEvent::Started(h1, h2, _flags) = event {
+        if let CollisionEvent::Started(h1, h2, _) = event {
             for (npc_entity, mut npc) in npcs.iter_mut() {
                 if check_entities(h1, h2, &npc_entity, &cweampuff) {
                     npc.is_active = true;

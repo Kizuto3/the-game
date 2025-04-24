@@ -12,7 +12,7 @@ pub fn interactable_door_collision_reader(
     mut interaction_state: ResMut<NextState<InteractionState>> 
 ) {
     for event in contact_events.read() {
-        if let CollisionEvent::Stopped(h1, h2, _flags) = event {
+        if let CollisionEvent::Stopped(h1, h2, _) = event {
             for (door_entity, mut door) in doors.iter_mut() {
                 if check_entities(h1, h2, &door_entity, &cweampuff) {
                     door.is_active = false;
@@ -23,7 +23,7 @@ pub fn interactable_door_collision_reader(
             }
         }
     
-        if let CollisionEvent::Started(h1, h2, _flags) = event {
+        if let CollisionEvent::Started(h1, h2, _) = event {
             for (door_entity, mut door) in doors.iter_mut() {
                 if check_entities(h1, h2, &door_entity, &cweampuff) {
                     door.is_active = true;
