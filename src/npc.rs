@@ -2,13 +2,14 @@ pub mod conversation_state;
 pub mod conversation_entry;
 pub mod dialog_state;
 
-use bevy::{ecs::observer::TriggerTargets, prelude::*, ui::widget::NodeImageMode};
+use bevy::{prelude::*, ui::widget::NodeImageMode};
 use bevy_rapier2d::prelude::CollisionEvent;
 use conversation_entry::{ConversationEntry, ConversationPosition};
 use conversation_state::ConversationState;
 use dialog_state::DialogState;
 
 use crate::{audio_settings::AudioSettings, cutscene::CutsceneEvent, fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::{BreakableWall, EntityInfo}, main_menu::DEFAULT_FONT, Cweampuff};
+use crate::movement::check_entities;
 
 pub const CWEAMPUFF: &str = "cweampuff";
 pub const CWEAMPUFFS: &str = "cweampuffs";
@@ -63,10 +64,9 @@ pub fn npc_collision_reader(
     mut npc_interaction_state: ResMut<NextState<InteractionState>> 
 ) {
     for event in contact_events.read() {
-        if let CollisionEvent::Stopped(h1, h2, _flags) = event {
+        if let CollisionEvent::Stopped(h1, h2, _) = event {
             for (npc_entity, mut npc) in npcs.iter_mut() {
-                if h1.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) && 
-                   h2.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) {
+                if check_entities(h1, h2, &npc_entity, &cweampuff) {
                     npc.is_active = false;
                     npc_interaction_state.set(InteractionState::NotReady);
 
@@ -75,10 +75,9 @@ pub fn npc_collision_reader(
             }
         }
     
-        if let CollisionEvent::Started(h1, h2, _flags) = event {
+        if let CollisionEvent::Started(h1, h2, _) = event {
             for (npc_entity, mut npc) in npcs.iter_mut() {
-                if h1.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) && 
-                   h2.entities().iter().any(|f| *f == npc_entity || *f == *cweampuff) {
+                if check_entities(h1, h2, &npc_entity, &cweampuff) {
                     npc.is_active = true;
                     npc_interaction_state.set(InteractionState::Ready);
 
@@ -99,7 +98,7 @@ pub fn npc_start_interaction_input_reader(
         return;
     }
 
-    if npcs.iter().find(|f| f.is_active).is_some() {
+    if npcs.iter().any(|f| f.is_active) {
         dialog_state.set(ConversationState::Started);
         npc_interaction_state.set(InteractionState::NotReady);
     }

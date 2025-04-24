@@ -426,7 +426,7 @@ pub fn level_transition_collision_reader(
 ) {
     let (cweampuff_entity, cweampuff, cweampuff_velocity, cweampuff_gravity) = &mut *cweampuff;
     for contact_event in contact_events.read() {
-        if let CollisionEvent::Started(h1, h2, _flags) = contact_event {
+        if let CollisionEvent::Started(h1, h2, _) = contact_event {
             for (collider_entity, transition_collider) in transition_colliders.iter() {
                 if h1.entities().iter().any(|f| *f == collider_entity || *f == *cweampuff_entity) && 
                    h2.entities().iter().any(|f| *f == collider_entity || *f == *cweampuff_entity) {

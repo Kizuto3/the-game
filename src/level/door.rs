@@ -1,8 +1,8 @@
-use bevy::{audio::{PlaybackMode, Volume}, ecs::observer::TriggerTargets, prelude::*};
+use bevy::{audio::{PlaybackMode, Volume}, prelude::*};
 use bevy_rapier2d::prelude::CollisionEvent;
 
 use crate::{audio_settings::AudioSettings, interactable::{interaction_state::InteractionState, Interactable}, npc::NPC, Cweampuff};
-
+use crate::movement::check_entities;
 use super::{level_layout::{DoorCollider, DoorType}, manually_transition_to_level, transition_states::TransitionState, LevelLayout};
 
 pub fn interactable_door_collision_reader(
@@ -12,10 +12,9 @@ pub fn interactable_door_collision_reader(
     mut interaction_state: ResMut<NextState<InteractionState>> 
 ) {
     for event in contact_events.read() {
-        if let CollisionEvent::Stopped(h1, h2, _flags) = event {
+        if let CollisionEvent::Stopped(h1, h2, _) = event {
             for (door_entity, mut door) in doors.iter_mut() {
-                if h1.entities().iter().any(|f| *f == door_entity || *f == *cweampuff) && 
-                   h2.entities().iter().any(|f| *f == door_entity || *f == *cweampuff) {
+                if check_entities(h1, h2, &door_entity, &cweampuff) {
                     door.is_active = false;
                     interaction_state.set(InteractionState::NotReady);
 
@@ -24,10 +23,9 @@ pub fn interactable_door_collision_reader(
             }
         }
     
-        if let CollisionEvent::Started(h1, h2, _flags) = event {
+        if let CollisionEvent::Started(h1, h2, _) = event {
             for (door_entity, mut door) in doors.iter_mut() {
-                if h1.entities().iter().any(|f| *f == door_entity || *f == *cweampuff) && 
-                   h2.entities().iter().any(|f| *f == door_entity || *f == *cweampuff) {
+                if check_entities(h1, h2, &door_entity, &cweampuff) {
                     door.is_active = true;
                     interaction_state.set(InteractionState::Ready);
 

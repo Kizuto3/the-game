@@ -1,10 +1,10 @@
 use std::time::Duration;
 
-use bevy::{audio::{PlaybackMode, Volume}, ecs::observer::TriggerTargets, prelude::*};
+use bevy::{audio::{PlaybackMode, Volume}, prelude::*};
 use bevy_rapier2d::prelude::*;
 
 use crate::{audio_settings::AudioSettings, interactable::{interaction_state::InteractionState, Interactable}, movement::{Jumper, Movable}, npc::NPC, Cweampuff};
-
+use crate::movement::check_entities;
 use super::level_layout::{BreakableWall, DoorCollider, FloorAssetType, FloorCollider, GravityInverter, JumpPad, TimeTrial};
 
 const JUMP_PAD_VELOCITY_DELTA: f32 = 2.;
@@ -25,10 +25,9 @@ pub fn jump_pad_collision_reader(
 ) {
     let (cweampuff_entity, cweampuff_velocity, cweampuff_jumper) = &mut *cweampuff;
     for event in contact_events.read() {    
-        if let CollisionEvent::Started(h1, h2, _flags) = event {
+        if let CollisionEvent::Started(h1, h2, _) = event {
             for jump_pad_entity in jump_pads.iter() {
-                if h1.entities().iter().any(|f| *f == jump_pad_entity || *f == *cweampuff_entity) && 
-                   h2.entities().iter().any(|f| *f == jump_pad_entity || *f == *cweampuff_entity) {
+                if check_entities(h1, h2, &jump_pad_entity, cweampuff_entity) {
                     cweampuff_velocity.linvel.y = cweampuff_jumper.jump_impulse * JUMP_PAD_VELOCITY_DELTA;
 
                     let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
@@ -56,10 +55,9 @@ pub fn gravity_inverter_collision_reader(
 ) {
     let (cweampuff_entity, cweampuff_jumper, cweampuff_gravity, cweampuff_movable) = &mut *cweampuff;
     for event in contact_events.read() {    
-        if let CollisionEvent::Started(h1, h2, _flags) = event {
+        if let CollisionEvent::Started(h1, h2, _) = event {
             for jump_pad_entity in jump_pads.iter() {
-                if h1.entities().iter().any(|f| *f == jump_pad_entity || *f == *cweampuff_entity) && 
-                   h2.entities().iter().any(|f| *f == jump_pad_entity || *f == *cweampuff_entity) {
+                if check_entities(h1, h2, &jump_pad_entity, cweampuff_entity) {
                     cweampuff_gravity.0 = -cweampuff_gravity.0;
                     cweampuff_jumper.jump_impulse = -cweampuff_jumper.jump_impulse;
                     cweampuff_movable.is_upside_down = true;
@@ -77,10 +75,9 @@ pub fn gravity_inverter_collision_reader(
             }
         }
 
-        if let CollisionEvent::Stopped(h1, h2, _flags) = event {
+        if let CollisionEvent::Stopped(h1, h2, _) = event {
             for jump_pad_entity in jump_pads.iter() {
-                if h1.entities().iter().any(|f| *f == jump_pad_entity || *f == *cweampuff_entity) && 
-                   h2.entities().iter().any(|f| *f == jump_pad_entity || *f == *cweampuff_entity) {
+                if check_entities(h1, h2, &jump_pad_entity, cweampuff_entity) {
                     cweampuff_gravity.0 = cweampuff_gravity.0.abs();
                     cweampuff_jumper.jump_impulse = cweampuff_jumper.jump_impulse.abs();
                     cweampuff_movable.is_upside_down = false;
@@ -99,10 +96,9 @@ pub fn time_trial_collision_reader(
     mut interaction_state: ResMut<NextState<InteractionState>> 
 ) {
     for event in contact_events.read() {
-        if let CollisionEvent::Stopped(h1, h2, _flags) = event {
+        if let CollisionEvent::Stopped(h1, h2, _) = event {
             for (time_trial_entity, mut time_trial) in time_trials.iter_mut() {
-                if h1.entities().iter().any(|f| *f == time_trial_entity || *f == *cweampuff) && 
-                   h2.entities().iter().any(|f| *f == time_trial_entity || *f == *cweampuff) {
+                if check_entities(h1, h2, &time_trial_entity, &cweampuff) {
                     time_trial.is_active = false;
                     interaction_state.set(InteractionState::NotReady);
 
@@ -111,10 +107,9 @@ pub fn time_trial_collision_reader(
             }
         }
     
-        if let CollisionEvent::Started(h1, h2, _flags) = event {
+        if let CollisionEvent::Started(h1, h2, _) = event {
             for (door_entity, mut door) in time_trials.iter_mut() {
-                if h1.entities().iter().any(|f| *f == door_entity || *f == *cweampuff) && 
-                   h2.entities().iter().any(|f| *f == door_entity || *f == *cweampuff) {
+                if check_entities(h1, h2, &door_entity, &cweampuff) {
                     door.is_active = true;
                     interaction_state.set(InteractionState::Ready);
 
