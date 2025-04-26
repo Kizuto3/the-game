@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use bevy::{audio::{PlaybackMode, Volume}, prelude::*};
-use bevy_rapier2d::prelude::*;
+use bevy_rapier2d::{prelude::*, rapier::prelude::CollisionEventFlags};
 
 use crate::{audio_settings::AudioSettings, interactable::{interaction_state::InteractionState, Interactable}, movement::{Jumper, Movable}, npc::NPC, Cweampuff};
 use crate::movement::check_entities;
@@ -75,7 +75,13 @@ pub fn gravity_inverter_collision_reader(
             }
         }
 
-        if let CollisionEvent::Stopped(h1, h2, _) = event {
+        if let CollisionEvent::Stopped(h1, h2, flags) = event {
+            if *flags == CollisionEventFlags::REMOVED {
+                cweampuff_gravity.0 = cweampuff_gravity.0.abs();
+                cweampuff_jumper.jump_impulse = cweampuff_jumper.jump_impulse.abs();
+                cweampuff_movable.is_upside_down = false;
+            }
+            
             for jump_pad_entity in jump_pads.iter() {
                 if check_entities(h1, h2, &jump_pad_entity, cweampuff_entity) {
                     cweampuff_gravity.0 = cweampuff_gravity.0.abs();
