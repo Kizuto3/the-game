@@ -182,7 +182,7 @@ fn set_window_icon(
 fn setup_window(
     mut window_query: Query<&mut Window, With<PrimaryWindow>>,
 ) {
-    if let Ok(mut window) = window_query.get_single_mut() {
+    if let Ok(mut window) = window_query.single_mut() {
         window.title = "Cweampuff's Adventure".to_string();
         window.mode = WindowMode::BorderlessFullscreen(MonitorSelection::Current);
         window.resizable = false;
@@ -231,7 +231,7 @@ fn despawn_cweampuff(
     mut commands: Commands
 ) {
     for entity in cweampuff_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }
 

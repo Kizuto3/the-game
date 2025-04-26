@@ -40,6 +40,6 @@ pub fn despawn_interaction_prompt(
     mut commands: Commands
 ) {
     for prompt in prompts.iter() {
-        commands.entity(prompt).despawn_recursive();
+        commands.entity(prompt).despawn();
     }
 }

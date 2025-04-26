@@ -36,7 +36,6 @@ pub fn spawn_credits_menu(
             position_type: PositionType::Absolute,
             ..default()
         },
-        PickingBehavior::IGNORE,
         BackgroundColor(Color::Srgba(Srgba { red: 0.1, green: 0.1, blue: 0.1, alpha: 0. })),
         CreditsMenuComponent
     )).with_children(|main_parent| {
@@ -54,6 +53,10 @@ pub fn spawn_credits_menu(
             parent
                 .spawn((
                     Text::new("Credits"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 40.0,
@@ -90,6 +93,10 @@ pub fn spawn_credits_menu(
                 ))
                 .with_child((
                     Text::new("-Game design, Programming, Story-"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 33.0,
@@ -115,6 +122,10 @@ pub fn spawn_credits_menu(
                 ))
                 .with_child((
                     Text::new("Kizuto"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 30.0,
@@ -140,6 +151,10 @@ pub fn spawn_credits_menu(
                 ))
                 .with_child((
                     Text::new("-Code review, Story editing-"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 33.0,
@@ -165,6 +180,10 @@ pub fn spawn_credits_menu(
                 ))
                 .with_child((
                     Text::new("CPU_Blanc"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 30.0,
@@ -190,6 +209,10 @@ pub fn spawn_credits_menu(
                 ))
                 .with_child((
                     Text::new("-Art-"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 40.0,
@@ -215,6 +238,10 @@ pub fn spawn_credits_menu(
                 ))
                 .with_child((
                     Text::new("Grim"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 30.0,
@@ -240,6 +267,10 @@ pub fn spawn_credits_menu(
                 ))
                 .with_child((
                     Text::new("-Music-"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 40.0,
@@ -265,6 +296,10 @@ pub fn spawn_credits_menu(
                 ))
                 .with_child((
                     Text::new("Avilia"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 30.0,
@@ -314,6 +349,6 @@ pub fn despawn_credits_menu(
     query: Query<Entity, (With<Node>, With<CreditsMenuComponent>, Without<Camera2d>, Without<FadeInFadeOutNode>)>
 ) {
     for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }

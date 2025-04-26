@@ -122,7 +122,7 @@ pub fn cutscene_player(
 ) {    
     if current_cutscene.current_index == 0 {
         for entity in bgm_query.iter() {
-            commands.entity(entity).despawn_recursive();
+            commands.entity(entity).despawn();
         }
     }
 
@@ -131,7 +131,7 @@ pub fn cutscene_player(
             Some(info) => info,
             None => {
                 if cweampuff_query.is_empty() {
-                    cutscene_events.send(CutsceneEvent::Stopped(
+                    cutscene_events.write(CutsceneEvent::Stopped(
                         Cweampuff {progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false}, 
                         PostCutsceneAction::TransitionTo(Level::StartingRoom(StartingRoomInfo)),
                         CWEAMPUFF_STARTING_POSITION
@@ -139,9 +139,9 @@ pub fn cutscene_player(
                     return;
                 };
                 
-                let (cweampuff, transform) = cweampuff_query.single();
-
-                cutscene_events.send(CutsceneEvent::Stopped(*cweampuff, current_cutscene.post_cutscene_action, transform.translation));
+                if let Ok((cweampuff, transform)) = cweampuff_query.single() {
+                    cutscene_events.write(CutsceneEvent::Stopped(*cweampuff, current_cutscene.post_cutscene_action, transform.translation));
+                }
 
                 return;
             }
@@ -230,7 +230,7 @@ pub fn spawn_cutscene_resources(
                 });
     });
 
-    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.));
+    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(0.));
     playback_settings.mode = PlaybackMode::Loop;
 
     commands.spawn((
@@ -252,14 +252,14 @@ pub fn despawn_cutscene_resources(
     loading_assets: Query<Entity, (With<LoadingAssets>, Without<Node>)>,
 ) {
     for entity in nodes.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 
     for entity in cutscenes.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 
     for entity in loading_assets.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }

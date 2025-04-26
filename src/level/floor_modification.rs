@@ -30,7 +30,7 @@ pub fn jump_pad_collision_reader(
                 if check_entities(h1, h2, &jump_pad_entity, cweampuff_entity) {
                     cweampuff_velocity.linvel.y = cweampuff_jumper.jump_impulse * JUMP_PAD_VELOCITY_DELTA;
 
-                    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+                    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(audio_settings.sfx_volume));
                     playback_settings.mode = PlaybackMode::Despawn;
                 
                     commands.spawn((
@@ -62,7 +62,7 @@ pub fn gravity_inverter_collision_reader(
                     cweampuff_jumper.jump_impulse = -cweampuff_jumper.jump_impulse;
                     cweampuff_movable.is_upside_down = true;
 
-                    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+                    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(audio_settings.sfx_volume));
                     playback_settings.mode = PlaybackMode::Despawn;
                 
                     commands.spawn((
@@ -81,7 +81,7 @@ pub fn gravity_inverter_collision_reader(
                 cweampuff_jumper.jump_impulse = cweampuff_jumper.jump_impulse.abs();
                 cweampuff_movable.is_upside_down = false;
             }
-            
+
             for jump_pad_entity in jump_pads.iter() {
                 if check_entities(h1, h2, &jump_pad_entity, cweampuff_entity) {
                     cweampuff_gravity.0 = cweampuff_gravity.0.abs();
@@ -139,7 +139,7 @@ pub fn time_trial_start_interaction_input_reader(
     }
 
     if let Some(time_trial) = time_trials.iter().find(|f| f.is_active) {
-        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(audio_settings.sfx_volume));
         playback_settings.mode = PlaybackMode::Despawn;
     
         commands.spawn((
@@ -204,14 +204,14 @@ pub fn tick_timer_trial_timer(
         timer.timer.tick(time.delta());
 
         if timer.timer.finished() {
-            commands.entity(timer_entity).despawn_recursive();
+            commands.entity(timer_entity).despawn();
 
             for (floor_entity, breakable_wall) in floors.iter() {
                 if breakable_wall.index != timer.entity_id {
                     continue;
                 }
                 
-                commands.entity(floor_entity).despawn_recursive();
+                commands.entity(floor_entity).despawn();
             }
         }
     }

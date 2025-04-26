@@ -63,7 +63,7 @@ pub fn main_menu_button_interactions_handler(
         if let Interaction::Pressed = *interaction  {
             match action {
                 ButtonAction::StartGame => {
-                    cutscene.send(CutsceneEvent::Started(&[
+                    cutscene.write(CutsceneEvent::Started(&[
                         CutsceneInfo { text: "The legend has it...", background: "" },
                         CutsceneInfo { text: "Somewhere in these lands, there is a hidden gem.", background: ""  },
                         CutsceneInfo { text: "Capable of giving eternal happiness to those who find it.", background: "" },
@@ -79,7 +79,7 @@ pub fn main_menu_button_interactions_handler(
                     app_state.set(AppState::CreditsMenu);
                 },
                 ButtonAction::Quit => {
-                    exit.send(AppExit::Success);
+                    exit.write(AppExit::Success);
                 }
             };
         }
@@ -118,7 +118,7 @@ pub fn spawn_main_menu(
     main_menu_bgm_query: Query<&MainMenuAudio>,
 ) {    
     for entity in bgm_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 
     commands
@@ -159,7 +159,7 @@ pub fn spawn_main_menu(
                     },
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
                 ));
-        }).set_parent(*background);
+        }).insert(ChildOf(*background));
 
     commands
         .spawn((Node {
@@ -199,7 +199,7 @@ pub fn spawn_main_menu(
                     },
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
                 ));
-        }).set_parent(*background);
+        }).insert(ChildOf(*background));
 
     commands
         .spawn((Node {
@@ -239,7 +239,7 @@ pub fn spawn_main_menu(
                     },
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
                 ));
-        }).set_parent(*background);
+        }).insert(ChildOf(*background));
 
     commands
         .spawn((Node {
@@ -279,10 +279,10 @@ pub fn spawn_main_menu(
                     },
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
                 ));
-        }).set_parent(*background);
+        }).insert(ChildOf(*background));
 
     if main_menu_bgm_query.is_empty() {
-        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.));
+        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(0.));
         playback_settings.mode = PlaybackMode::Loop;
     
         commands.spawn((
@@ -301,7 +301,7 @@ pub fn despawn_main_menu(
     query: Query<Entity, (With<Node>, With<MainMenuComponent>, Without<Camera2d>, Without<FadeInFadeOutNode>)>
 ) {
     for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }
 
@@ -310,6 +310,6 @@ pub fn despawn_background(
     query: Query<Entity, (With<Node>, With<MainBackground>, Without<Camera2d>, Without<FadeInFadeOutNode>)>
 ) {
     for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }

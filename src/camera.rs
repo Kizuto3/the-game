@@ -21,11 +21,11 @@ pub fn spawn_camera (
     // Camera
     commands.spawn((
         Camera2d,
+        CameraUpDownMovable { look_up_down_duration: 0., look_up_down_invoke_threshold: 0.3, camera_offset: 360. },
         Camera {
             ..default()
         },
-        CameraUpDownMovable { look_up_down_duration: 0., look_up_down_invoke_threshold: 0.3, camera_offset: 360. },
-        projection
+        Projection::Orthographic(projection)
     ));
 }
 

@@ -1,4 +1,4 @@
-use bevy::{color::Color, prelude::*};
+use bevy::{audio::Volume, color::Color, prelude::*};
 
 use crate::{app_states::AppState, audio_settings::{AudioSettings, MAX_VOLUME}, fade_in_fade_out::FadeInFadeOutNode, main_menu::{DEFAULT_FONT, NORMAL_BUTTON}, Cweampuff};
 
@@ -91,8 +91,8 @@ pub fn audio_button_interactions_handler(
                 **music_text = format!("{}", music_text_value);
             }
 
-            for settings in audio_query.iter_mut() {        
-                settings.set_volume(audio_settings.bgm_volume);
+            for mut settings in audio_query.iter_mut() {        
+                settings.set_volume(Volume::Linear(audio_settings.bgm_volume));
             }
         }
     }
@@ -124,7 +124,6 @@ pub fn spawn_audio_menu(
             position_type: PositionType::Absolute,
             ..default()
         },
-        PickingBehavior::IGNORE,
         BackgroundColor(Color::Srgba(Srgba { red: 0.1, green: 0.1, blue: 0.1, alpha: background_alpha })),
         AudioSettingsComponent
     )).with_children(|main_parent| {
@@ -142,6 +141,10 @@ pub fn spawn_audio_menu(
             parent
                 .spawn((
                     Text::new("Audio"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 40.0,
@@ -178,6 +181,10 @@ pub fn spawn_audio_menu(
                 ))
                 .with_child((
                     Text::new("Music Volume:"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 33.0,
@@ -203,6 +210,10 @@ pub fn spawn_audio_menu(
                 ))
                 .with_child((
                     Text::new(music_text_value),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     MusicVolumeText,
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
@@ -291,6 +302,10 @@ pub fn spawn_audio_menu(
                 ))
                 .with_child((
                     Text::new("Sound Volume:"),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 33.0,
@@ -317,6 +332,10 @@ pub fn spawn_audio_menu(
                 .with_child((
                     Text::new(sound_text_value),
                     SoundVolumeText,
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
                         font_size: 33.0,
@@ -428,6 +447,6 @@ pub fn despawn_audio_settings(
     query: Query<Entity, (With<Node>, With<AudioSettingsComponent>, Without<Camera2d>, Without<FadeInFadeOutNode>)>
 ) {
     for entity in query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }

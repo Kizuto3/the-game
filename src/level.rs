@@ -98,16 +98,16 @@ pub fn despawn_current_level(
         gravity.0 = 0.;
     }
     for entity in transitions_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
     for entity in floor_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
     for entity in interactable_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
     for entity in background_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }
 
@@ -129,7 +129,7 @@ pub fn spawn_new_level(
                 if bgm_query.is_empty() {
                     let audio_handle = asset_server.load(format!("ost/{}.mp3", bgm));
 
-                    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.0));
+                    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(0.0));
                     playback_settings.mode = PlaybackMode::Loop;
                                         commands.spawn((
                         AudioPlayer::new(audio_handle),
@@ -142,9 +142,9 @@ pub fn spawn_new_level(
                     let audio_handle = asset_server.load(format!("ost/{}.mp3", bgm));
                     
                     if current_bgm.0 != audio_handle {
-                        commands.entity(current_bgm_entity).despawn_recursive();
+                        commands.entity(current_bgm_entity).despawn();
     
-                        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(0.0));
+                        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(0.0));
                         playback_settings.mode = PlaybackMode::Loop;
                     
                         commands.spawn((
@@ -157,7 +157,7 @@ pub fn spawn_new_level(
             }
             None => {
                 for (current_bgm_entity, _) in bgm_query.iter() {
-                    commands.entity(current_bgm_entity).despawn_recursive();
+                    commands.entity(current_bgm_entity).despawn();
                 }
             }
         }
@@ -428,10 +428,10 @@ pub fn level_transition_collision_reader(
     for contact_event in contact_events.read() {
         if let CollisionEvent::Started(h1, h2, _) = contact_event {
             for (collider_entity, transition_collider) in transition_colliders.iter() {
-                if h1.entities().iter().any(|f| *f == collider_entity || *f == *cweampuff_entity) && 
-                   h2.entities().iter().any(|f| *f == collider_entity || *f == *cweampuff_entity) {
+                if h1.entities().any(|f| f == collider_entity || f == *cweampuff_entity) && 
+                   h2.entities().any(|f| f == collider_entity || f == *cweampuff_entity) {
                     for layout_entity in current_level_layout.iter() {
-                        commands.entity(layout_entity).despawn_recursive();
+                        commands.entity(layout_entity).despawn();
                     }
 
                     let transition_info = LevelTransitionInfo { transition_to_index: transition_collider.exit_index, transition_to_position: None };
@@ -457,7 +457,7 @@ pub fn manually_transition_to_level(
     position: Vec3
 ) {
     for layout_entity in current_level_layout.iter() {
-        commands.entity(layout_entity).despawn_recursive();
+        commands.entity(layout_entity).despawn();
     }
 
     let transition_info = LevelTransitionInfo { transition_to_index: 0, transition_to_position: Some(position) };

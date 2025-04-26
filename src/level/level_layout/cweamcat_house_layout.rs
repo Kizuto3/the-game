@@ -156,7 +156,7 @@ impl LevelInfo for CweamcatHouseInfo {
                         cweampuff.progression = Progression::MilkWokeUp;
                     }
 
-                    cutscene.send(CutsceneEvent::Started(&[
+                    cutscene.write(CutsceneEvent::Started(&[
                         CutsceneInfo { text: "Milk is still sleeping", background: "cutscenes/milk wakes up/1.png" },
                         CutsceneInfo { text: "Milk slightly opens her eye", background: "cutscenes/milk wakes up/2.png" },
                         CutsceneInfo { text: "Milk wakes up", background: "cutscenes/milk wakes up/3.png" },
@@ -282,7 +282,7 @@ impl LevelInfo for CweamcatHouseInfo {
                         cweampuff.progression = Progression::GivenLetter;
                     }
 
-                    cutscene.send(CutsceneEvent::Started(&[
+                    cutscene.write(CutsceneEvent::Started(&[
                         CutsceneInfo { text: "*** Milk reads letter ***", background: "cutscenes/letter/1.png" },
                         CutsceneInfo { text: "*** Looks at the picture ***", background: "cutscenes/letter/2.png" },
                         CutsceneInfo { text: "*** Ghost appears ***", background: "cutscenes/letter/3.png" },
@@ -370,7 +370,7 @@ impl LevelInfo for CweamcatHouseInfo {
                 ];
 
                 milk.after_conversation_func = |_cweampuff, _commands, _breakable_walls, cutscene| { 
-                    cutscene.send(CutsceneEvent::Started(&[
+                    cutscene.write(CutsceneEvent::Started(&[
                         CutsceneInfo { text: "", background: "cutscenes/rising star/1.png" },
                         CutsceneInfo { text: "", background: "cutscenes/rising star/2.png" },
                         CutsceneInfo { text: "", background: "cutscenes/rising star/3.png" },

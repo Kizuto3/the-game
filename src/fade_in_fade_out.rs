@@ -36,7 +36,7 @@ pub fn despawn_fade_in_fade_out_node(
     mut commands: Commands
 ) {
     for entity in fade_in_entities.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }
 

@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{audio::Volume, prelude::*};
 
 use crate::audio_settings::AudioSettings;
 
@@ -53,11 +53,13 @@ pub fn fade_out_bgm(
     audio_settings: Res<AudioSettings>,
     mut next_bgm_state: ResMut<NextState<LevelBGMState>>,
 ) {
-    for settings in bgm_query.iter_mut() {
-        if settings.volume() < audio_settings.bgm_volume {
+    for mut settings in bgm_query.iter_mut() {
+        let volume = settings.volume().to_linear();
+
+        if volume < audio_settings.bgm_volume {
             let volume_step = audio_settings.bgm_volume * 0.05;
 
-            settings.set_volume((settings.volume() + volume_step).min(audio_settings.bgm_volume));
+            settings.set_volume(Volume::Linear((volume + volume_step).min(audio_settings.bgm_volume)));
         }
         else {
             next_bgm_state.set(LevelBGMState::Changed);
@@ -70,11 +72,13 @@ pub fn fade_in_bgm(
     mut bgm_query: Query<&mut AudioSink, With<LevelBGM>>,
     audio_settings: Res<AudioSettings>
 ) {
-    for settings in bgm_query.iter_mut() {
-        if settings.volume() > 0.01 {
+    for mut settings in bgm_query.iter_mut() {
+        let volume = settings.volume().to_linear();
+
+        if volume > 0.01 {
             let volume_step = audio_settings.bgm_volume * 0.05;
             
-            settings.set_volume((settings.volume() - volume_step).max(0.0));
+            settings.set_volume(Volume::Linear((volume - volume_step).max(0.0)));
         }
     }
 }

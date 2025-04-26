@@ -5,8 +5,8 @@ edition = "2021"
 build = "build.rs"
 
 [dependencies]
-bevy = { version = "0.15.2", features = ["mp3", "wav"] }
-bevy_rapier2d = "0.28.0"
+bevy = { version = "0.16.0", features = ["mp3", "wav"] }
+bevy_rapier2d = { git = 'https://github.com/mnmaita/bevy_rapier.git', branch = "mnmaita/bevy-0.16" }
 image = "0.25.6"
 winit = "0.30.9"
 

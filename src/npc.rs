@@ -2,7 +2,7 @@ pub mod conversation_state;
 pub mod conversation_entry;
 pub mod dialog_state;
 
-use bevy::{prelude::*, ui::widget::NodeImageMode};
+use bevy::{audio::Volume, prelude::*, ui::widget::NodeImageMode};
 use bevy_rapier2d::prelude::CollisionEvent;
 use conversation_entry::{ConversationEntry, ConversationPosition};
 use conversation_state::ConversationState;
@@ -117,7 +117,6 @@ pub fn spawn_conversation_resources(
                 position_type: PositionType::Absolute,
                 ..default()
             },
-            PickingBehavior::IGNORE,
             BackgroundColor(Color::Srgba(Srgba { red: 0.1, green: 0.1, blue: 0.1, alpha: 0.95 })),
             DialogNode
         ))
@@ -191,8 +190,9 @@ pub fn spawn_conversation_resources(
                 ));
         });
 
-    for audio in audio_query.iter_mut() {
-        audio.set_volume(audio.volume() / 2.);
+    for mut audio in audio_query.iter_mut() {
+        let volume = audio.volume().to_linear();
+        audio.set_volume(Volume::Linear(volume / 2.));
     }
 }
 
@@ -203,11 +203,11 @@ pub fn despawn_conversation_resources(
     audio_settings: Res<AudioSettings>
 ) {
     for entity in entities.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 
-    for audio in audio_query.iter_mut() {
-        audio.set_volume(audio_settings.bgm_volume);
+    for mut audio in audio_query.iter_mut() {
+        audio.set_volume(Volume::Linear(audio_settings.bgm_volume));
     }
 }
 

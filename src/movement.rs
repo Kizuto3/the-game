@@ -117,7 +117,7 @@ pub fn cweampuff_jump(
         jumper.is_jumping = true;
         jumper.is_jump_available = false;
 
-        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+        let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(audio_settings.sfx_volume));
         playback_settings.mode = PlaybackMode::Despawn;
     
         commands.spawn((
@@ -190,7 +190,7 @@ pub fn cweampuff_dash(
         return;
     }
 
-    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::new(audio_settings.sfx_volume));
+    let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(audio_settings.sfx_volume));
     playback_settings.mode = PlaybackMode::Despawn;
 
     commands.spawn((
@@ -353,8 +353,8 @@ fn detect_floor_and_wall_collision(
         }
 
         for (collider_entity, _collider_transform, _collider, mut floor_collider) in colliders.iter_mut() {
-            if h1.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) && 
-               h2.entities().iter().any(|f| *f == collider_entity || *f == cweampuff_entity) {
+            if h1.entities().any(|f| f == collider_entity || f == cweampuff_entity) && 
+               h2.entities().any(|f| f == collider_entity || f == cweampuff_entity) {
                 if let Some(touching_side) = &floor_collider.currently_touching_side {
                     match touching_side {
                         CollisionType::Ceiling => { },
@@ -496,5 +496,5 @@ fn check_collision(cweampuff_bounds: BoundingCircle, wall_bounds: Aabb2d) -> Col
 }
 
 pub fn check_entities(h1: &Entity, h2: &Entity, collider: &Entity, cweampuff: &Entity) -> bool {
-    h1.entities().iter().any(|f| *f == *collider || *f == *cweampuff) && h2.entities().iter().any(|f| *f == *collider || *f == *cweampuff)
+    h1.entities().any(|f| f == *collider || f == *cweampuff) && h2.entities().any(|f| f == *collider || f == *cweampuff)
 }
