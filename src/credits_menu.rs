@@ -208,7 +208,7 @@ pub fn spawn_credits_menu(
                     },
                 ))
                 .with_child((
-                    Text::new("-Art-"),
+                    Text::new("-Amazing Art-"),
                     TextShadow {
                         offset: Vec2::splat(2.),
                         color: Color::linear_rgba(0., 0., 0., 1.),
@@ -237,7 +237,7 @@ pub fn spawn_credits_menu(
                     },
                 ))
                 .with_child((
-                    Text::new("Grim"),
+                    Text::new("Grim Capricorn"),
                     TextShadow {
                         offset: Vec2::splat(2.),
                         color: Color::linear_rgba(0., 0., 0., 1.),
@@ -266,7 +266,7 @@ pub fn spawn_credits_menu(
                     },
                 ))
                 .with_child((
-                    Text::new("-Music-"),
+                    Text::new("-Banger Music-"),
                     TextShadow {
                         offset: Vec2::splat(2.),
                         color: Color::linear_rgba(0., 0., 0., 1.),
