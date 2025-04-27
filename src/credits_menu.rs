@@ -99,7 +99,7 @@ pub fn spawn_credits_menu(
                     },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
-                        font_size: 33.0,
+                        font_size: 40.0,
                         ..default()
                     },
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
@@ -157,7 +157,7 @@ pub fn spawn_credits_menu(
                     },
                     TextFont {
                         font: asset_server.load(DEFAULT_FONT),
-                        font_size: 33.0,
+                        font_size: 40.0,
                         ..default()
                     },
                     TextColor(Color::srgb(0.9, 0.9, 0.9)),
