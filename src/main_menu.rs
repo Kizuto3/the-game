@@ -4,9 +4,9 @@ use crate::{app_states::AppState, cutscene::{CutsceneEvent, CutsceneInfo, PostCu
 
 pub const DEFAULT_FONT: &str = "fonts/Shadows Into Light.ttf";
 
-pub const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
-const HOVERED_BUTTON: Color = Color::srgb(0.25, 0.25, 0.25);
-const PRESSED_BUTTON: Color = Color::srgb(0.75, 0.75, 0.75);
+pub const NORMAL_BUTTON: Color = Color::srgba(0.15, 0.15, 0.15, 0.75);
+const HOVERED_BUTTON: Color = Color::srgba(0.25, 0.25, 0.25, 0.75);
+const PRESSED_BUTTON: Color = Color::srgba(0.75, 0.75, 0.75, 0.75);
 
 #[derive(Component)]
 pub struct MainMenuComponent;
@@ -95,7 +95,7 @@ pub fn spawn_background_image(
         return;
     }
     
-    let background_image_handle = asset_server.load("cutscenes/main.png");
+    let background_image_handle = asset_server.load("main.png");
 
     commands.spawn((
         Node {
@@ -286,7 +286,7 @@ pub fn spawn_main_menu(
         playback_settings.mode = PlaybackMode::Loop;
     
         commands.spawn((
-            AudioPlayer::new(asset_server.load("ost/hell.mp3")),
+            AudioPlayer::new(asset_server.load("ost/main.mp3")),
             LevelBGM,
             MainMenuAudio,
             playback_settings
