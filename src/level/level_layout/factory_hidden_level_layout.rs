@@ -31,11 +31,11 @@ impl LevelInfo for FactoryHiddenLevelInfo {
         let grim = NPC { floor_info: EntityInfo { position: Vec3::new(750.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                             name: GRIM,
                             conversation: &[
-                                ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Hello Cweampuff, I am your father!", emotion: Emotion::Regular },
+                                ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Hello Cweampuff, I am your father!", emotion: Emotion::Happy },
                                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "W-what?!", emotion: Emotion::Sad },
-                                ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Is that reference too old for you?", emotion: Emotion::Regular },
+                                ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Is that reference too old for you?", emotion: Emotion::Sad },
                                 ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Anyways, welcome to the factory!", emotion: Emotion::Regular },
-                                ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "I appreciate you coming here for a bit, but you are close to your goal and Miruku needs you right now so keep moving!", emotion: Emotion::Regular },
+                                ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "I appreciate you coming here for a bit, but you are close to your goal and Miruku needs you right now so keep moving!", emotion: Emotion::Happy },
                             ], 
                             after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
         };
