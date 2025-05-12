@@ -101,7 +101,40 @@ impl LevelInfo for CerberLairInfo {
             ];
         }
         
-        let scientist_minawan = NPC { 
+        if cweampuff.progression >= Progression::MilkWokeUp && cweampuff.progression < Progression::GivenLetter {
+            og_minawan.conversation = &[
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "Wan! Wan!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wan wan!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Old Minawan, Old Minawan!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "My hidden gem woke up!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "Oh what lovely news!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "You were right! Thank you!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "You are most welcome Cweampuff!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "Don't forget to cherish your hidden gem!", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I won't!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "Wan! Wan!", emotion: Emotion::Happy },
+            ];
+        }
+
+        if cweampuff.progression >= Progression::GivenLetter && cweampuff.progression < Progression::RisingStar {
+            og_minawan.conversation = &[
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wan wan!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "Wan! Wan!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "The winds whisper...", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "'They' are about to hear of your hidden gem...", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "The swarm.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "They sound scary...", emotion: Emotion::Sad },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "You have nothing to worry about, Cweampuff.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "They're mostly all talk.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "Their dedication is quite lacking...", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "I'd even say they're the least dedicated of all.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Huh?", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "Don't worry about it.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "I'm sure you'll like each other!", emotion: Emotion::Happy },
+            ];
+        }
+
+        let mut scientist_minawan = NPC { 
             floor_info: EntityInfo { position: Vec3::new(-1550.0, -650.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
             after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
             conversation: &[
@@ -120,6 +153,37 @@ impl LevelInfo for CerberLairInfo {
             ],
             name: SCIENTIST_MINAWAN
         };
+
+        if cweampuff.progression >= Progression::MilkWokeUp && cweampuff.progression < Progression::RisingStar {
+            scientist_minawan.conversation = &[
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Triangulating her smile didn't work, derivative of her laugh is way to big but that's expected...", emotion: Emotion::Sad },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "What am I missing...", emotion: Emotion::Sad },
+            ];
+        }
+
+        if cweampuff.progression >= Progression::RisingStar {
+            scientist_minawan.conversation = &[
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Eureka!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Did you finish your research?", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "I found the missing piece!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "It was in plain site the whole time!", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "How could I've missed it?!", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "The answer to her cuteness...", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Is chocolate horns!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Your rising star's chocolate horns are very cute indeed.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "I have to share the result of my findings with other minawan!", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "They're going to be delighted!", emotion: Emotion::Happy },
+            ];
+
+            og_minawan.conversation = &[
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wan wan!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "Wan! Wan!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "The winds whisper of a new star...", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: OG_MINAWAN, text: "Maybe one day our rising stars will shine together!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I'd love our rising stars to be friends!", emotion: Emotion::Happy },
+                ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "That'd be great!", emotion: Emotion::Happy },
+            ];
+        }
 
         Some(Box::from([
             og_minawan,
