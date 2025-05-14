@@ -48,11 +48,11 @@ pub fn cweampuff_move(
         return;
     }
 
-    if keyboard_input.just_released(KeyCode::ArrowLeft) || keyboard_input.just_released(KeyCode::ArrowRight) {
+    if keyboard_input.any_just_released([KeyCode::ArrowLeft, KeyCode::KeyA, KeyCode::KeyD, KeyCode::ArrowRight]) {
         cweampuff_velocity.linvel.x = 0.;
     } 
 
-    if keyboard_input.pressed(KeyCode::ArrowLeft) {
+    if keyboard_input.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
         if cweampuff_movable.hugging_right_wall {
             cweampuff_velocity.linvel.x = 0.;
             return;
@@ -67,7 +67,7 @@ pub fn cweampuff_move(
         }
     }
 
-    if keyboard_input.pressed(KeyCode::ArrowRight) {
+    if keyboard_input.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         if cweampuff_movable.hugging_left_wall {
             cweampuff_velocity.linvel.x = 0.;
             return;
