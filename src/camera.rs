@@ -40,18 +40,18 @@ pub fn cweampuff_camera_adjustment(
 
     let time_passed = time.delta_secs();
 
-    if keyboard_input.just_released(KeyCode::ArrowUp) || keyboard_input.just_released(KeyCode::ArrowDown) {
+    if keyboard_input.any_just_released([KeyCode::ArrowUp, KeyCode::KeyW, KeyCode::ArrowDown, KeyCode::KeyS]) {
         camera_movable.look_up_down_duration = 0.;
     }
 
     let mut direction = 1.;
 
-    if keyboard_input.pressed(KeyCode::ArrowUp) || keyboard_input.pressed(KeyCode::ArrowDown) {
+    if keyboard_input.any_pressed([KeyCode::ArrowUp, KeyCode::KeyW, KeyCode::ArrowDown, KeyCode::KeyS]) {
         if camera_movable.look_up_down_duration < camera_movable.look_up_down_invoke_threshold {
             camera_movable.look_up_down_duration += time_passed;
         }
 
-        if keyboard_input.pressed(KeyCode::ArrowDown) {
+        if keyboard_input.any_pressed([KeyCode::ArrowDown, KeyCode::KeyS]) {
             direction = -1.;
         }
     }
