@@ -56,7 +56,7 @@ impl LevelInfo for Factory3Info {
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Swarm installed these things that make platforms appear.", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "But they disappear too fast!", emotion: Emotion::Sad },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "I can't jump through all of them fast enough!", emotion: Emotion::Sad },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "When I was struggling on the spaceship I just copied what you did.", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "When I was struggling on the spaceship, I just copied what you did.", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "So how about you show me how it's done here too?", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Okay! Watch and learn, Minawan! Wan, Wan!", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Wan! Wan!", emotion: Emotion::Happy },
