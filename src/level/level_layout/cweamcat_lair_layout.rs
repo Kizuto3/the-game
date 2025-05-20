@@ -221,7 +221,7 @@ impl LevelInfo for CweamcatLairInfo {
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "That makes me so happy!", emotion: Emotion::Surprised },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Are you going to stay here for a bit?", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Wan is on a mission, so I'll have to go soon.", emotion: Emotion::Regular },
-                    ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "But be sure I'll come back!", emotion: Emotion::Happy },   //A little awkward phrasing? ~Blanc
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Don't worry, I'll be sure to come back!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "I'll be waiting for you!", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Oh, I even found Cool Cweampuff while I was traveling.", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Make sure to say 'Hi' to him!", emotion: Emotion::Happy },

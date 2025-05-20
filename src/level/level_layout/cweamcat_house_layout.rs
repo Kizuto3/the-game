@@ -241,7 +241,7 @@ impl LevelInfo for CweamcatHouseInfo {
                     ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "I don't really want to talk about it in front of our hidden gem.", emotion: Emotion::Regular },
                     ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "We're here to make her happy, aren't we?", emotion: Emotion::Happy },
                     ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Well, you can always talk to me if you need to.", emotion: Emotion::Sad },
-                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Thanks, Cweampuff. You've become a bit cooler since last we met.", emotion: Emotion::Regular }, //A little awkward? Consider "since last time we met" ~Blanc
+                    ConversationEntry { position: ConversationPosition::Right, npc_name: COOL_CWEAMPUFF, text: "Thanks, Cweampuff. You've become a bit cooler since last time we met.", emotion: Emotion::Regular },
                 ];
 
                 npcs.push(cool_cweampuff);

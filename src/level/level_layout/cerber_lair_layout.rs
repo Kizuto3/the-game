@@ -141,10 +141,10 @@ impl LevelInfo for CerberLairInfo {
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wan! Wan!", emotion: Emotion::Happy },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "...", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Wan Wan?..", emotion: Emotion::Regular },
-                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Oh, I beg your pardon, I hadn't noticed you.", emotion: Emotion::Regular },
-                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Excuse me, but I am very busy at the moment.", emotion: Emotion::Regular }, //Does this character use contractions or not? Either all lines should use them for this char, or the previous line should be "Hadn't" -> "Had not" to make it more consistent
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Oh, I beg your pardon, I had not noticed you.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Excuse me, but I am very busy at the moment.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "What are you doing?", emotion: Emotion::Regular },
-                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "I'm very close to a scientific breakthrough.", emotion: Emotion::Regular },
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "I am very close to a scientific breakthrough.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "You see, our rising star exudes unnatural amounts of cuteness.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "I almost figured out how wan can be this cute.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "But some things are still missing.", emotion: Emotion::Regular },    //Kinda weird phrasing? Consider: "But there's something I am missing..." ~Blanc
@@ -156,7 +156,7 @@ impl LevelInfo for CerberLairInfo {
 
         if cweampuff.progression >= Progression::MilkWokeUp && cweampuff.progression < Progression::RisingStar {
             scientist_minawan.conversation = &[
-                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Triangulating her smile didn't work; the derivative of her laugh is way too big but that's expected...", emotion: Emotion::Sad }, //Same as before re: contractions
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Triangulating her smile did not work; the derivative of her laugh is way too big, but that is expected...", emotion: Emotion::Sad },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "What am I missing...", emotion: Emotion::Sad },
             ];
         }
@@ -167,12 +167,12 @@ impl LevelInfo for CerberLairInfo {
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Did you finish your research?", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "I found the missing piece!", emotion: Emotion::Happy },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "It was in plain sight the whole time!", emotion: Emotion::Regular },
-                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "How could I've missed it?!", emotion: Emotion::Regular },    //Contraction
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "How could I have missed it?!", emotion: Emotion::Regular },    //Contraction
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "The answer to her cuteness...", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "Is chocolate horns!", emotion: Emotion::Happy },
                 ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Your rising star's chocolate horns are very cute indeed.", emotion: Emotion::Regular },
                 ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "I have to share the result of my findings with other Minawan!", emotion: Emotion::Regular },
-                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "They're going to be delighted!", emotion: Emotion::Happy },  //Contraction
+                ConversationEntry { position: ConversationPosition::Right, npc_name: SCIENTIST_MINAWAN, text: "They are going to be delighted!", emotion: Emotion::Happy },  //Contraction
             ];
 
             og_minawan.conversation = &[
