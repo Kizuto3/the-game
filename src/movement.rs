@@ -1,7 +1,7 @@
 use bevy::{audio::{PlaybackMode, Volume}, ecs::observer::TriggerTargets, math::bounding::{Aabb2d, BoundingCircle, BoundingVolume}, prelude::*};
 use bevy_rapier2d::{prelude::{Collider, CollisionEvent, Velocity}, rapier::prelude::CollisionEventFlags};
 
-use crate::{audio_settings::AudioSettings, level::level_layout::CollisionType, Cweampuff, FloorCollider, CWEAMPUFF_DIAMETER};
+use crate::{audio_settings::AudioSettings, camera::CameraUpDownMovable, level::level_layout::CollisionType, Cweampuff, FloorCollider, CWEAMPUFF_DIAMETER};
 
 const CWEAMPUFF_SPEED: f32 = 500.0;
 const MAX_CWEAMPUFF_VERTICAL_VELOCITY: f32 = 800.0;
@@ -224,7 +224,10 @@ pub fn cweampuff_dash(
     }
 }
 
-pub fn reset_abilities(mut cweampuff: Query<(&mut Jumper, &mut Movable, &mut Dasher), With<Cweampuff>>) {
+pub fn reset_abilities(
+    mut cweampuff: Query<(&mut Jumper, &mut Movable, &mut Dasher), With<Cweampuff>>,
+    mut camera: Single<&mut CameraUpDownMovable, With<Camera2d>>
+) {
     for (mut jumper, mut movable, mut dasher) in cweampuff.iter_mut() {
         jumper.is_jumping = false;
         jumper.is_next_jump_doublejump = false;
@@ -239,6 +242,8 @@ pub fn reset_abilities(mut cweampuff: Query<(&mut Jumper, &mut Movable, &mut Das
         dasher.time_passed_since_dash = dasher.dash_cooldown + 0.1;
         dasher.is_dash_available = true;
     }
+
+    camera.look_up_down_duration = 0.;
 }
 
 pub fn velocity_limiter(mut cweampuff: Single<(&mut Velocity, &Cweampuff, &Movable), With<Cweampuff>>) {

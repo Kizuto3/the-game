@@ -8,7 +8,7 @@ const CAMERA_DECAY_RATE: f32 = 10.;
 #[derive(Component)]
 pub struct CameraUpDownMovable {
     look_up_down_invoke_threshold: f32,
-    look_up_down_duration: f32,
+    pub look_up_down_duration: f32,
     camera_offset: f32,
 }
 

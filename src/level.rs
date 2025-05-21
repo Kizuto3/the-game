@@ -25,6 +25,7 @@ use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout:
 use transition_states::TransitionState;
 
 use crate::animations::AnimationConfig;
+use crate::npc::{MILK, MILK_ASLEEP};
 use crate::CWEAMPUFF_GRAVITY_SCALE;
 use crate::{camera::get_adjusted_camera_position, interactable::Interactable, npc::NPC, Cweampuff};
 use crate::level::level_layout::LevelInfo;
@@ -254,18 +255,24 @@ pub fn spawn_new_level(
             }
         }
 
-
         if let Some(npcs) = &level_layout.npc_layout {
             for npc in npcs {
                 let image_handle = asset_server.load(format!("npcs/{}/Model.png", npc.name));
+
+                let (sprite_size, anchor) = if npc.name == MILK || npc.name == MILK_ASLEEP {
+                    (Vec2::new(200., 200.), Vec2::new(0., 0.))
+                }
+                else {
+                    (Vec2::new(40., 30.), Vec2::new(0., 1.2))
+                };
 
                 commands
                     .spawn(npc.clone())
                     .insert((
                         Sprite {
                             image: image_handle,
-                            anchor: bevy::sprite::Anchor::Custom(Vec2::new(0., 1.2)),
-                            custom_size: Some(Vec2::new(40., 30.)),
+                            anchor: bevy::sprite::Anchor::Custom(anchor),
+                            custom_size: Some(sprite_size),
                             ..default()
                         },
                         Transform::from_translation(npc.floor_info.position)
@@ -276,7 +283,6 @@ pub fn spawn_new_level(
                     .insert(Interactable);
             }
         }
-
 
         if let Some(doors) = &level_layout.door_layout {
             for door in doors {
