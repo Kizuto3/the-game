@@ -224,10 +224,10 @@ pub fn spawn_credits_menu(
             parent
                 .spawn((
                     Node {
-                        width: Val::Percent(20.0),
+                        width: Val::Percent(25.0),
                         height: Val::Percent(20.0),
                         top: Val::Percent(60.),
-                        left: Val::Percent(48.),
+                        left: Val::Percent(45.5),
                         position_type: PositionType::Absolute,
                         // horizontally center child text
                         justify_content: JustifyContent::Center,
@@ -237,7 +237,7 @@ pub fn spawn_credits_menu(
                     },
                 ))
                 .with_child((
-                    Text::new("Grim Capricorn"),
+                    Text::new("Grim Capricorn, Ruxiyel"),
                     TextShadow {
                         offset: Vec2::splat(2.),
                         color: Color::linear_rgba(0., 0., 0., 1.),
