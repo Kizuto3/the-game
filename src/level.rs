@@ -20,7 +20,7 @@ use level_layout::spaceship_1_layout::Spaceship1Info;
 use level_layout::spaceship_2_layout::Spaceship2Info;
 use level_layout::spaceship_3_layout::Spaceship3Info;
 use level_layout::spaceship_4_layout::Spaceship4Info;
-use level_layout::{DoorCollider, FloorAssetType, FloorInfo, FloorModification};
+use level_layout::{DoorCollider, DoorType, FloorAssetType, FloorInfo, FloorModification};
 use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, TransitionCollider};
 use transition_states::TransitionState;
 
@@ -39,9 +39,7 @@ pub mod level_bgm;
 pub mod cheats;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
-const DOOR_COLOR: Color = Color::srgb(0.9, 0.2, 0.9);
 const GRAVITY_INVERTER_COLOR: Color = Color::srgba(0.1, 0.2, 0.2, 0.5);
-const TIME_TRIAL_COLOR: Color = Color::srgb(0.9, 0.2, 0.2);
 
 #[derive(Component)]
 pub struct BackgroundComponent;
@@ -286,17 +284,26 @@ pub fn spawn_new_level(
 
         if let Some(doors) = &level_layout.door_layout {
             for door in doors {
-                commands
-                    .spawn(*door)
-                    .insert((
-                        Mesh2d(meshes.add(Rectangle::new(door.floor_info.size.x, door.floor_info.size.y))),
-                        MeshMaterial2d(materials.add(DOOR_COLOR)),
-                        Transform::from_translation(door.floor_info.position)
-                    ))
-                    .insert(Collider::cuboid(door.floor_info.size.x / 2.0, door.floor_info.size.y / 2.0))
-                    .insert(Sensor)
-                    .insert(ActiveEvents::COLLISION_EVENTS)
-                    .insert(Interactable);
+                let mut door_commands = commands.spawn((
+                    *door,
+                    Transform::from_translation(door.floor_info.position),
+                    Collider::cuboid(door.floor_info.size.x / 2.0, door.floor_info.size.y / 2.0),
+                    Sensor,
+                    ActiveEvents::COLLISION_EVENTS,
+                    Interactable
+                ));
+
+                if let DoorType::Teleport = door.door_type {
+                    let texture = asset_server.load("floor_modifications/Teleporter.png");
+
+                    door_commands.insert(
+                        Sprite {
+                            image: texture,
+                            anchor: bevy::sprite::Anchor::Center,
+                            custom_size: Some(Vec2::new(door.floor_info.size.x, door.floor_info.size.y)),
+                            ..default()
+                        });
+                }
             }
         }
 
@@ -340,11 +347,17 @@ pub fn spawn_new_level(
                             .insert(ActiveEvents::COLLISION_EVENTS);
                     },
                     FloorModification::TimeTrial(time_trial) => {
+                        let texture = asset_server.load("floor_modifications/Lever1.png");
+
                         commands
                             .spawn(*time_trial)
                             .insert((
-                                Mesh2d(meshes.add(Rectangle::new(time_trial.lever_info.size.x, time_trial.lever_info.size.y))),
-                                MeshMaterial2d(materials.add(TIME_TRIAL_COLOR)),
+                                Sprite {
+                                    image: texture,
+                                    anchor: bevy::sprite::Anchor::Center,
+                                    custom_size: Some(Vec2::new(time_trial.lever_info.size.x, time_trial.lever_info.size.y)),
+                                    ..default()
+                                },
                                 Transform::from_translation(time_trial.lever_info.position),
                                 Interactable
                             ))

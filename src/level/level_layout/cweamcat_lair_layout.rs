@@ -71,7 +71,7 @@ impl LevelInfo for CweamcatLairInfo {
     fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
         Some(Box::from([
             DoorCollider { floor_info: EntityInfo { position: Vec3 { x: 1350., y: -50., z: 0.0 }, size: Vec2 { x: 100., y: 200. } }, door_type: DoorType::Door,
-                transition_to_level: Level::CweamcatHouse(CweamcatHouseInfo), safe_position: Vec3 { x: -750.0, y: -375.0, z: CWEAMPUFF_Z_INDEX }, is_active: false }
+                transition_to_level: Level::CweamcatHouse(CweamcatHouseInfo), safe_position: Vec3 { x: -680.0, y: -375.0, z: CWEAMPUFF_Z_INDEX }, is_active: false }
         ]))
     }
     

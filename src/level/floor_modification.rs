@@ -128,7 +128,7 @@ pub fn time_trial_collision_reader(
 
 pub fn time_trial_start_interaction_input_reader(
     keyboard_input: Res<ButtonInput<KeyCode>>, 
-    time_trials: Query<&TimeTrial, (With<Interactable>, Without<NPC>)>,
+    mut time_trials: Query<(&TimeTrial, &mut Sprite), (With<Interactable>, Without<NPC>)>,
     mut timers: Query<&mut TimeTrialTimer>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -138,7 +138,7 @@ pub fn time_trial_start_interaction_input_reader(
         return;
     }
 
-    if let Some(time_trial) = time_trials.iter().find(|f| f.is_active) {
+    if let Some((time_trial, mut time_trial_sprite)) = time_trials.iter_mut().find(|f| f.0.is_active) {
         let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(audio_settings.sfx_volume));
         playback_settings.mode = PlaybackMode::Despawn;
     
@@ -152,6 +152,9 @@ pub fn time_trial_start_interaction_input_reader(
 
             return;
         }
+
+        let texture = asset_server.load("floor_modifications/Lever2.png");
+        time_trial_sprite.image = texture;
 
         commands.spawn(
             TimeTrialTimer { timer: Timer::new(Duration::from_secs(time_trial.seconds_to_complete), TimerMode::Once), entity_id: time_trial.id }
@@ -197,13 +200,20 @@ pub fn time_trial_start_interaction_input_reader(
 pub fn tick_timer_trial_timer(
     mut commands: Commands,
     mut timers: Query<(Entity, &mut TimeTrialTimer)>,
+    mut time_trials: Query<(&TimeTrial, &mut Sprite), (With<Interactable>, With<TimeTrial>, Without<NPC>)>,
     floors: Query<(Entity, &BreakableWall), With<BreakableWall>>,
     time: Res<Time>,
+    asset_server: Res<AssetServer>,
 ) {
     for (timer_entity, mut timer) in timers.iter_mut() {
         timer.timer.tick(time.delta());
 
         if timer.timer.finished() {
+            if let Some((_, mut time_trial_sprite)) = time_trials.iter_mut().find(|f| f.0.id == timer.entity_id) {
+                let texture = asset_server.load("floor_modifications/Lever1.png");
+                time_trial_sprite.image = texture;
+            }
+
             commands.entity(timer_entity).despawn();
 
             for (floor_entity, breakable_wall) in floors.iter() {
