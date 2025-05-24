@@ -157,9 +157,9 @@ impl LevelInfo for CweamcatHouseInfo {
                     }
 
                     cutscene.write(CutsceneEvent::Started(&[
-                        CutsceneInfo { text: "Milk is still sleeping", background: "cutscenes/milk wakes up/1.png" },
-                        CutsceneInfo { text: "Milk slightly opens her eye", background: "cutscenes/milk wakes up/2.png" },
-                        CutsceneInfo { text: "Milk wakes up", background: "cutscenes/milk wakes up/3.png" },
+                        CutsceneInfo { text: "", background: "cutscenes/milk wakes up/1.png" },
+                        CutsceneInfo { text: "", background: "cutscenes/milk wakes up/2.png" },
+                        CutsceneInfo { text: "", background: "cutscenes/milk wakes up/3.png" },
                     ], "ost/cutscene.mp3", PostCutsceneAction::TransitionTo(Level::CweamcatHouse(CweamcatHouseInfo))));
                 };
             },
@@ -283,9 +283,9 @@ impl LevelInfo for CweamcatHouseInfo {
                     }
 
                     cutscene.write(CutsceneEvent::Started(&[
-                        CutsceneInfo { text: "*** Milk reads letter ***", background: "cutscenes/letter/1.png" },
-                        CutsceneInfo { text: "*** Looks at the picture ***", background: "cutscenes/letter/2.png" },
-                        CutsceneInfo { text: "*** Ghost appears ***", background: "cutscenes/letter/3.png" },
+                        CutsceneInfo { text: "", background: "cutscenes/letter/1.png" },
+                        CutsceneInfo { text: "", background: "cutscenes/letter/2.png" },
+                        CutsceneInfo { text: "", background: "cutscenes/letter/3.png" },
                     ], "ost/cutscene.mp3", PostCutsceneAction::TransitionTo(Level::CweamcatHouse(CweamcatHouseInfo))));
                 };
             },

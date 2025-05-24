@@ -123,6 +123,33 @@ pub fn spawn_main_menu(
 
     commands
         .spawn((Node {
+            width: Val::Percent(50.0),
+            height: Val::Percent(25.0),
+            top: Val::Percent(35.),
+            left: Val::Percent(25.),
+            position_type: PositionType::Absolute,
+            justify_content: JustifyContent::Center,
+            ..default()
+        }, MainMenuComponent))
+        .with_children(|parent| {
+            parent
+                .spawn((
+                    Text::new("CWEAMPUFF'S ADVENTURE"),
+                    TextFont {
+                        font: asset_server.load(DEFAULT_FONT),
+                        font_size: 90.0,
+                        ..default()
+                    },
+                    TextColor(Color::srgb(0.9, 0.9, 0.9)),
+                    TextShadow {
+                        offset: Vec2::splat(2.),
+                        color: Color::linear_rgba(0., 0., 0., 1.),
+                    },
+                ));
+        }).insert(ChildOf(*background));
+
+    commands
+        .spawn((Node {
             width: Val::Percent(10.0),
             height: Val::Percent(5.0),
             top: Val::Percent(70.),
