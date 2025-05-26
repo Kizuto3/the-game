@@ -134,5 +134,5 @@ jobs:
 
       - name: push build
         run: |
-          tag=${{ needs.check-tag.new-tag }}
-          ./butler push ./temp/ $ITCH_USERNAME/$ITCH_PROJECT_NAME:${{ matrix.platform }} --userversion ${{ tag:1 }}
+          tag=${{ needs.check-tag.outputs.new-tag }}
+          ./butler push ./temp/ $ITCH_USERNAME/$ITCH_PROJECT_NAME:${{ matrix.platform }} --userversion ${tag:1}
