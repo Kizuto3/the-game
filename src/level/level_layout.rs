@@ -20,7 +20,7 @@ pub mod neuro_lair_layout;
 pub mod factory_hidden_level_layout;
 
 use bevy::{ecs::component::Component, math::{Vec2, Vec3}};
-
+use enum_dispatch::enum_dispatch;
 use crate::{npc::NPC, Cweampuff};
 
 use super::Level;
@@ -131,6 +131,7 @@ pub enum FloorModification {
     Decoration(Decoration),
 }
 
+#[enum_dispatch(Level)]
 pub trait LevelInfo {
     fn get_floor_info(&self, cweampuff: &Cweampuff) -> Box<[FloorInfo]>;
     fn get_transitions_info(&self, cweampuff: &Cweampuff) -> Option<Box<[TransitionCollider]>>;
