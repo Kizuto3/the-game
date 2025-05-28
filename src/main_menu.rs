@@ -1,6 +1,6 @@
 use bevy::{audio::{PlaybackMode, Volume}, color::Color, prelude::*, ui::widget::NodeImageMode};
 
-use crate::{app_states::AppState, cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, fade_in_fade_out::FadeInFadeOutNode, level::{level_bgm::{LevelBGM, LevelBGMState}, level_layout::starting_room_layout::StartingRoomInfo, Level}};
+use crate::{app_states::AppState, cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, fade_in_fade_out::FadeInFadeOutNode, level::{level_bgm::{LevelBGM, LevelBGMState}, Level}};
 
 pub const DEFAULT_FONT: &str = "fonts/Shadows Into Light.ttf";
 
@@ -70,7 +70,7 @@ pub fn main_menu_button_interactions_handler(
                         CutsceneInfo { text: "A brave cweampuff decided to look for it...", background: "" },
                         CutsceneInfo { text: "", background: "cutscenes/opening/1.png" },
                         CutsceneInfo { text: "", background: "cutscenes/opening/2.png" },
-                    ], "ost/cutscene.mp3", PostCutsceneAction::TransitionTo(Level::StartingRoom(StartingRoomInfo))));
+                    ], "ost/cutscene.mp3", PostCutsceneAction::TransitionTo(Level::StartingRoom)));
                 },
                 ButtonAction::Settings => {
                     app_state.set(AppState::AudioMenu);

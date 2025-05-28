@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, MINAWAN, NPC}, CWEAMPUFF_Z_INDEX};
 
-use super::{spaceship_2_layout::Spaceship2Info, spaceship_4_layout::Spaceship4Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, GravityInverter, LevelInfo, TransitionCollider};
+use super::{DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, GravityInverter, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct Spaceship3Info;
@@ -57,8 +57,8 @@ impl LevelInfo for Spaceship3Info {
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
-            TransitionCollider { exit_index: 1, safe_position: Vec3::new(-4600.0, -1600.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship2(Spaceship2Info), floor_info: EntityInfo { position: Vec3::new(-4750.0, -2000.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(2750.0, 1800.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship4(Spaceship4Info), floor_info: EntityInfo { position: Vec3::new(2750.0, 1900.0, 2.0), size: Vec2::new(200.0, 100.0) }  }
+            TransitionCollider { exit_index: 1, safe_position: Vec3::new(-4600.0, -1600.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship2, floor_info: EntityInfo { position: Vec3::new(-4750.0, -2000.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(2750.0, 1800.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship4, floor_info: EntityInfo { position: Vec3::new(2750.0, 1900.0, 2.0), size: Vec2::new(200.0, 100.0) }  }
         ]))
     }
 

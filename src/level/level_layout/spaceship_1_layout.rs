@@ -1,8 +1,8 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CREW_MEMBER, CWEAMPUFF, NPC}, CWEAMPUFF_Z_INDEX};
+use crate::{level::{progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CREW_MEMBER, CWEAMPUFF, NPC}, CWEAMPUFF_Z_INDEX};
 
-use super::{spaceship_2_layout::Spaceship2Info, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct Spaceship1Info;
@@ -56,8 +56,8 @@ impl LevelInfo for Spaceship1Info {
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
-            TransitionCollider { exit_index: 3, safe_position: Vec3::new(-5600.0, -1950.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: EntityInfo { position: Vec3::new(-5850.0, -2300.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(-6100.0, -150.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship2(Spaceship2Info), floor_info: EntityInfo { position: Vec3::new(-6200.0, -100.0, 2.0), size: Vec2::new(100.0, 200.0) }  }
+            TransitionCollider { exit_index: 3, safe_position: Vec3::new(-5600.0, -1950.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::CweamcatLair, floor_info: EntityInfo { position: Vec3::new(-5850.0, -2300.0, 2.0), size: Vec2::new(300.0, 100.0) }  },
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(-6100.0, -150.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship2, floor_info: EntityInfo { position: Vec3::new(-6200.0, -100.0, 2.0), size: Vec2::new(100.0, 200.0) }  }
         ]))
     }
 

@@ -7,7 +7,6 @@ use bevy::ui::widget::NodeImageMode;
 use crate::app_states::AppState;
 use crate::fade_in_fade_out::{FadeInFadeOutNode, FadeState};
 use crate::level::level_bgm::{LevelBGM, LevelBGMState};
-use crate::level::level_layout::starting_room_layout::StartingRoomInfo;
 use crate::level::progression::Progression;
 use crate::level::transition_states::TransitionState;
 use crate::level::{manually_transition_to_level, Level, LevelLayout};
@@ -133,7 +132,7 @@ pub fn cutscene_player(
                 if cweampuff_query.is_empty() {
                     cutscene_events.write(CutsceneEvent::Stopped(
                         Cweampuff {progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false}, 
-                        PostCutsceneAction::TransitionTo(Level::StartingRoom(StartingRoomInfo)),
+                        PostCutsceneAction::TransitionTo(Level::StartingRoom),
                         CWEAMPUFF_STARTING_POSITION
                     ));
                     return;
