@@ -1,8 +1,7 @@
 use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, NPC, OBSERVER_CREW_MEMBER, OG_CREW_MEMBER}, CWEAMPUFF_Z_INDEX};
-
-use super::{cweamcat_lair_layout::CweamcatLairInfo, spaceship_4_layout::Spaceship4Info, BreakableWall, DoorCollider, DoorType, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{BreakableWall, DoorCollider, DoorType, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct AquwaLairInfo;
@@ -30,14 +29,14 @@ impl LevelInfo for AquwaLairInfo {
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
-            TransitionCollider { exit_index: 1, safe_position: Vec3::new(1950.0, -700.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship4(Spaceship4Info), floor_info: EntityInfo { position: Vec3::new(2100.0, -700.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
+            TransitionCollider { exit_index: 1, safe_position: Vec3::new(1950.0, -700.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Spaceship4, floor_info: EntityInfo { position: Vec3::new(2100.0, -700.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
         ]))
     }
 
     fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
         Some(Box::from([
             DoorCollider { floor_info: EntityInfo { position: Vec3 { x: -1550.0, y: -600.0, z: 0.0 }, size: Vec2 { x: 100., y: 200. } }, door_type: DoorType::Teleport,
-                transition_to_level: Level::CweamcatLair(CweamcatLairInfo), safe_position: Vec3 { x: 2450., y: 1550., z: CWEAMPUFF_Z_INDEX }, is_active: false }
+                transition_to_level: Level::CweamcatLair, safe_position: Vec3 { x: 2450., y: 1550., z: CWEAMPUFF_Z_INDEX }, is_active: false }
         ]))
     }
 
@@ -91,7 +90,7 @@ impl LevelInfo for AquwaLairInfo {
             ];
         }
         
-        let observer_crew_member = NPC { 
+        let observer_crew_member = NPC {
             name: OBSERVER_CREW_MEMBER,
             floor_info: EntityInfo { position: Vec3::new(-1550.0, 100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
             after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },

@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{progression::Progression, Level}, npc::NPC, CWEAMPUFF_Z_INDEX};
 
-use super::{cweamcat_lair_layout::CweamcatLairInfo, factory_1_layout::Factory1Info, neuro_lair_layout::NeuroLairInfo, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct FactoryTransitionInfo;
@@ -31,13 +31,13 @@ impl LevelInfo for FactoryTransitionInfo {
 
     fn get_transitions_info(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         let mut transitions = vec![
-            TransitionCollider { exit_index: 4, safe_position: Vec3::new(-950.0, -750.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::CweamcatLair(CweamcatLairInfo), floor_info: EntityInfo { position: Vec3::new(-1100.0, -675.0, 2.0), size: Vec2::new(100.0, 350.0) }  },
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(1150.0, 100.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory1(Factory1Info), floor_info: EntityInfo { position: Vec3::new(1250.0, 150.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
+            TransitionCollider { exit_index: 4, safe_position: Vec3::new(-950.0, -750.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::CweamcatLair, floor_info: EntityInfo { position: Vec3::new(-1100.0, -675.0, 2.0), size: Vec2::new(100.0, 350.0) }  },
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(1150.0, 100.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory1, floor_info: EntityInfo { position: Vec3::new(1250.0, 150.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
         ];
 
         if cweampuff.progression > Progression::GivenLetter {
             transitions.push(
-                TransitionCollider { exit_index: 1, safe_position: Vec3::new(1150.0, -900.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::NeuroLair(NeuroLairInfo), floor_info: EntityInfo { position: Vec3::new(1250.0, -750.0, 2.0), size: Vec2::new(100.0, 600.0) }  }
+                TransitionCollider { exit_index: 1, safe_position: Vec3::new(1150.0, -900.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::NeuroLair, floor_info: EntityInfo { position: Vec3::new(1250.0, -750.0, 2.0), size: Vec2::new(100.0, 600.0) }  }
             );
         }
 

@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::Level, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CWEAMPUFF, GRIM, NPC}, CWEAMPUFF_Z_INDEX};
 
-use super::{factory_3_layout::Factory3Info, Decoration, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{Decoration, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct FactoryHiddenLevelInfo;
@@ -19,7 +19,7 @@ impl LevelInfo for FactoryHiddenLevelInfo {
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
-            TransitionCollider { exit_index: 2, safe_position: Vec3::new(-1100.0, -350.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory3(Factory3Info), floor_info: EntityInfo { position: Vec3::new(-1300.0, -300.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
+            TransitionCollider { exit_index: 2, safe_position: Vec3::new(-1100.0, -350.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory3, floor_info: EntityInfo { position: Vec3::new(-1300.0, -300.0, 2.0), size: Vec2::new(100.0, 200.0) }  },
         ]))
     }
 
@@ -36,7 +36,7 @@ impl LevelInfo for FactoryHiddenLevelInfo {
                                 ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Is that reference too old for you?", emotion: Emotion::Regular },
                                 ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Anyways, welcome to the factory!", emotion: Emotion::Regular },
                                 ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "I appreciate you coming here for a bit, but you are close to your goal and Miruku needs you right now, so keep moving!", emotion: Emotion::Happy },
-                            ], 
+                            ],
                             after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
         };
 

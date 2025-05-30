@@ -3,15 +3,6 @@ use bevy::prelude::*;
 use crate::{Cweampuff, CWEAMPUFF_Z_INDEX};
 
 use super::{
-    level_layout::{
-        aquwa_lair_layout::AquwaLairInfo, cerber_lair_layout::CerberLairInfo,
-        factory_1_layout::Factory1Info, factory_2_layout::Factory2Info,
-        factory_3_layout::Factory3Info, factory_4_layout::Factory4Info, hell_1_layout::Hell1Info,
-        hell_2_layout::Hell2Info, hell_3_layout::Hell3Info, hell_4_layout::Hell4Info,
-        neuro_lair_layout::NeuroLairInfo, spaceship_1_layout::Spaceship1Info,
-        spaceship_2_layout::Spaceship2Info, spaceship_3_layout::Spaceship3Info,
-        spaceship_4_layout::Spaceship4Info,
-    },
     manually_transition_to_level,
     progression::Progression,
     transition_states::TransitionState,
@@ -70,7 +61,7 @@ fn f_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Factory1(Factory1Info),
+            Level::Factory1,
             Vec3::new(-2450.0, -1450.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit2) {
@@ -84,7 +75,7 @@ fn f_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Factory2(Factory2Info),
+            Level::Factory2,
             Vec3::new(-3450.0, -1450.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit3) {
@@ -98,7 +89,7 @@ fn f_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Factory3(Factory3Info),
+            Level::Factory3,
             Vec3::new(1725.0, 2950.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit4) {
@@ -112,7 +103,7 @@ fn f_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Factory4(Factory4Info),
+            Level::Factory4,
             Vec3::new(1100.0, -2650.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit0) {
@@ -126,7 +117,7 @@ fn f_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::NeuroLair(NeuroLairInfo),
+            Level::NeuroLair,
             Vec3::new(1950.0, -700.0, CWEAMPUFF_Z_INDEX),
         );
     }
@@ -150,7 +141,7 @@ fn s_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Spaceship1(Spaceship1Info),
+            Level::Spaceship1,
             Vec3::new(-5600.0, -1950.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit2) {
@@ -164,7 +155,7 @@ fn s_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Spaceship2(Spaceship2Info),
+            Level::Spaceship2,
             Vec3::new(2400.0, -1300.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit3) {
@@ -178,7 +169,7 @@ fn s_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Spaceship3(Spaceship3Info),
+            Level::Spaceship3,
             Vec3::new(-4600.0, -1600.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit4) {
@@ -192,7 +183,7 @@ fn s_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Spaceship4(Spaceship4Info),
+            Level::Spaceship4,
             Vec3::new(1100.0, -2600.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit0) {
@@ -206,7 +197,7 @@ fn s_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::AquwaLair(AquwaLairInfo),
+            Level::AquwaLair,
             Vec3::new(1950.0, -700.0, CWEAMPUFF_Z_INDEX),
         );
     }
@@ -230,7 +221,7 @@ fn h_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Hell1(Hell1Info),
+            Level::Hell1,
             Vec3::new(150.0, 1500.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit2) {
@@ -243,7 +234,7 @@ fn h_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Hell2(Hell2Info),
+            Level::Hell2,
             Vec3::new(150.0, 1500.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit3) {
@@ -257,7 +248,7 @@ fn h_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Hell3(Hell3Info),
+            Level::Hell3,
             Vec3::new(2400.0, 1350.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit4) {
@@ -271,7 +262,7 @@ fn h_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::Hell4(Hell4Info),
+            Level::Hell4,
             Vec3::new(1550.0, -2850.0, CWEAMPUFF_Z_INDEX),
         );
     } else if keyboard_input.just_pressed(KeyCode::Digit0) {
@@ -285,7 +276,7 @@ fn h_cheats(
             &mut transition_state,
             &cweampuff,
             &mut commands,
-            Level::CerberLair(CerberLairInfo),
+            Level::CerberLair,
             Vec3::new(2050.0, -700.0, CWEAMPUFF_Z_INDEX),
         );
     }

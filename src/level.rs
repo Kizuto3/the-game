@@ -1,74 +1,108 @@
-use bevy::audio::{PlaybackMode, Volume};
-use bevy::{ecs::observer::TriggerTargets, prelude::*};
+use bevy::{
+    audio::{PlaybackMode, Volume},
+    ecs::observer::TriggerTargets,
+    prelude::*,
+};
 use bevy_rapier2d::prelude::*;
-use enum_dispatch::enum_dispatch;
 use level_bgm::LevelBGM;
-use level_layout::aquwa_lair_layout::AquwaLairInfo;
-use level_layout::cerber_lair_layout::CerberLairInfo;
-use level_layout::cweamcat_house_layout::CweamcatHouseInfo;
-use level_layout::factory_1_layout::Factory1Info;
-use level_layout::factory_2_layout::Factory2Info;
-use level_layout::factory_3_layout::Factory3Info;
-use level_layout::factory_4_layout::Factory4Info;
-use level_layout::factory_hidden_level_layout::FactoryHiddenLevelInfo;
-use level_layout::factory_transition_layout::FactoryTransitionInfo;
-use level_layout::hell_1_layout::Hell1Info;
-use level_layout::hell_2_layout::Hell2Info;
-use level_layout::hell_3_layout::Hell3Info;
-use level_layout::hell_4_layout::Hell4Info;
-use level_layout::neuro_lair_layout::NeuroLairInfo;
-use level_layout::spaceship_1_layout::Spaceship1Info;
-use level_layout::spaceship_2_layout::Spaceship2Info;
-use level_layout::spaceship_3_layout::Spaceship3Info;
-use level_layout::spaceship_4_layout::Spaceship4Info;
-use level_layout::{DoorCollider, DoorType, FloorAssetType, FloorInfo, FloorModification};
-use level_layout::{cweamcat_lair_layout::CweamcatLairInfo, starting_room_layout::StartingRoomInfo, FloorCollider, TransitionCollider};
+use std::{collections::HashMap, sync::LazyLock};
 use transition_states::TransitionState;
 
 use crate::animations::AnimationConfig;
+use crate::level::level_layout::{
+    aquwa_lair_layout::AquwaLairInfo, cerber_lair_layout::CerberLairInfo,
+    cweamcat_house_layout::CweamcatHouseInfo, cweamcat_lair_layout::CweamcatLairInfo,
+    factory_1_layout::Factory1Info, factory_2_layout::Factory2Info, factory_3_layout::Factory3Info,
+    factory_4_layout::Factory4Info, factory_hidden_level_layout::FactoryHiddenLevelInfo,
+    factory_transition_layout::FactoryTransitionInfo, hell_1_layout::Hell1Info,
+    hell_2_layout::Hell2Info, hell_3_layout::Hell3Info, hell_4_layout::Hell4Info,
+    neuro_lair_layout::NeuroLairInfo, spaceship_1_layout::Spaceship1Info,
+    spaceship_2_layout::Spaceship2Info, spaceship_3_layout::Spaceship3Info,
+    spaceship_4_layout::Spaceship4Info, starting_room_layout::StartingRoomInfo, DoorCollider,
+    DoorType, FloorAssetType, FloorCollider, FloorInfo, FloorModification, LevelInfo,
+    TransitionCollider,
+};
 use crate::npc::{MILK, MILK_ASLEEP};
 use crate::CWEAMPUFF_GRAVITY_SCALE;
-use crate::{camera::get_adjusted_camera_position, interactable::Interactable, npc::NPC, Cweampuff};
-use crate::level::level_layout::LevelInfo;
+use crate::{
+    camera::get_adjusted_camera_position, interactable::Interactable, npc::NPC, Cweampuff,
+};
 
-pub mod transition_states;
-pub mod level_layout;
+pub mod cheats;
 pub mod door;
-pub mod progression;
 pub mod floor_modification;
 pub mod level_bgm;
-pub mod cheats;
+pub mod level_layout;
+pub mod progression;
+pub mod transition_states;
 
 const TRANSITION_COLOR: Color = Color::srgb(0.5, 1.0, 0.5);
 const GRAVITY_INVERTER_COLOR: Color = Color::srgba(0.1, 0.2, 0.2, 0.5);
 
+pub static LEVELS: LazyLock<LevelMap> = LazyLock::new(|| {
+    let mut levels: HashMap<Level, Box<dyn LevelInfo>> = HashMap::with_capacity(20);    //Increment this as needed to avoid over allocating/reallocations
+    levels.insert(Level::StartingRoom, Box::new(StartingRoomInfo));
+    levels.insert(Level::CweamcatLair, Box::new(CweamcatLairInfo));
+    levels.insert(Level::CweamcatHouse, Box::new(CweamcatHouseInfo));
+    levels.insert(Level::Hell1, Box::new(Hell1Info));
+    levels.insert(Level::Hell2, Box::new(Hell2Info));
+    levels.insert(Level::Hell3, Box::new(Hell3Info));
+    levels.insert(Level::Hell4, Box::new(Hell4Info));
+    levels.insert(Level::CerberLair, Box::new(CerberLairInfo));
+    levels.insert(Level::Spaceship1, Box::new(Spaceship1Info));
+    levels.insert(Level::Spaceship2, Box::new(Spaceship2Info));
+    levels.insert(Level::Spaceship3, Box::new(Spaceship3Info));
+    levels.insert(Level::Spaceship4, Box::new(Spaceship4Info));
+    levels.insert(Level::AquwaLair, Box::new(AquwaLairInfo));
+    levels.insert(Level::FactoryTransition, Box::new(FactoryTransitionInfo));
+    levels.insert(Level::Factory1, Box::new(Factory1Info));
+    levels.insert(Level::Factory2, Box::new(Factory2Info));
+    levels.insert(Level::Factory3, Box::new(Factory3Info));
+    levels.insert(Level::Factory4, Box::new(Factory4Info));
+    levels.insert(Level::FactoryHiddenLevel, Box::new(FactoryHiddenLevelInfo));
+    levels.insert(Level::NeuroLair, Box::new(NeuroLairInfo));
+    LevelMap { levels }
+});
+
+pub struct LevelMap {
+    levels: HashMap<Level, Box<dyn LevelInfo>>,
+}
+
+impl LevelMap {
+    pub fn get_level_info(&self, level_name: &Level) -> &dyn LevelInfo {
+        self.levels
+            .get(level_name)
+            .unwrap_or_else(|| panic!("Attempted to load level info for None level: {level_name:#?}"))
+            .as_ref()
+    }
+}
+
+#[derive(Clone, Copy, Hash, Eq, PartialEq, Debug)]
+pub enum Level {
+    StartingRoom,
+    CweamcatLair,
+    CweamcatHouse,
+    Hell1,
+    Hell2,
+    Hell3,
+    Hell4,
+    CerberLair,
+    Spaceship1,
+    Spaceship2,
+    Spaceship3,
+    Spaceship4,
+    AquwaLair,
+    FactoryTransition,
+    Factory1,
+    Factory2,
+    Factory3,
+    Factory4,
+    FactoryHiddenLevel,
+    NeuroLair,
+}
+
 #[derive(Component)]
 pub struct BackgroundComponent;
-
-#[enum_dispatch]
-#[derive(Clone, Copy)]
-pub enum Level {
-    StartingRoom(StartingRoomInfo),
-    CweamcatLair(CweamcatLairInfo),
-    CweamcatHouse(CweamcatHouseInfo),
-    Hell1(Hell1Info),
-    Hell2(Hell2Info),
-    Hell3(Hell3Info),
-    Hell4(Hell4Info),
-    CerberLair(CerberLairInfo),
-    Spaceship1(Spaceship1Info),
-    Spaceship2(Spaceship2Info),
-    Spaceship3(Spaceship3Info),
-    Spaceship4(Spaceship4Info),
-    AquwaLair(AquwaLairInfo),
-    FactoryTransition(FactoryTransitionInfo),
-    Factory1(Factory1Info),
-    Factory2(Factory2Info),
-    Factory3(Factory3Info),
-    Factory4(Factory4Info),
-    FactoryHiddenLevel(FactoryHiddenLevelInfo),
-    NeuroLair(NeuroLairInfo)
-}
 
 pub struct LevelTransitionInfo {
     pub transition_to_index: u32,
@@ -261,8 +295,7 @@ pub fn spawn_new_level(
 
                 let (sprite_size, anchor) = if npc.name == MILK || npc.name == MILK_ASLEEP {
                     (Vec2::new(200., 200.), Vec2::new(0., 0.))
-                }
-                else {
+                } else {
                     (Vec2::new(40., 30.), Vec2::new(0., 1.2))
                 };
 
@@ -488,12 +521,8 @@ pub fn manually_transition_to_level(
 }
 
 fn spawn_level(commands: &mut Commands, level: Level, cweampuff: &Cweampuff, transition_info: LevelTransitionInfo) {
-    let level_info = Box::new(level);
-    spawn_level_with_info(level_info, commands, cweampuff, transition_info);
-}
+    let layout_info = LEVELS.get_level_info(&level);
 
-fn spawn_level_with_info(layout_info: Box<dyn LevelInfo>, commands: &mut Commands, cweampuff: &Cweampuff, transition_info: LevelTransitionInfo) 
-{
     commands.spawn(LevelLayout {
         floor_layout: layout_info.get_floor_info(cweampuff),
         transition_layout: layout_info.get_transitions_info(cweampuff),

@@ -7,7 +7,6 @@ build = "build.rs"
 [dependencies]
 bevy = { version = "0.16.0", features = ["mp3", "wav"] }
 bevy_rapier2d = { version = "0.30.0" }
-enum_dispatch = "0.3"
 image = "0.25.6"
 winit = "0.30.9"
 

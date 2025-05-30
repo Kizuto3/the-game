@@ -2,7 +2,7 @@ use bevy::math::{Vec2, Vec3};
 
 use crate::{level::{progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, CLIPPER_DRONE, CWEAMPUFF, NPC, OG_DRONE}, CWEAMPUFF_Z_INDEX};
 
-use super::{factory_4_layout::Factory4Info, factory_transition_layout::FactoryTransitionInfo, BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
+use super::{BreakableWall, DoorCollider, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
 pub struct NeuroLairInfo;
@@ -30,8 +30,8 @@ impl LevelInfo for NeuroLairInfo {
 
     fn get_transitions_info(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[TransitionCollider]>> {
         Some(Box::from([
-            TransitionCollider { exit_index: 0, safe_position: Vec3::new(1950.0, -700.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory4(Factory4Info), floor_info: EntityInfo { position: Vec3::new(2100.0, -700.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
-            TransitionCollider { exit_index: 1, safe_position: Vec3::new(-1900.0, 250.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::FactoryTransition(FactoryTransitionInfo), floor_info: EntityInfo { position: Vec3::new(-2100.0, 450.0, 0.0), size: Vec2::new(100.0, 500.0) }  },
+            TransitionCollider { exit_index: 0, safe_position: Vec3::new(1950.0, -700.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::Factory4, floor_info: EntityInfo { position: Vec3::new(2100.0, -700.0, 2.0), size: Vec2::new(200.0, 200.0) }  },
+            TransitionCollider { exit_index: 1, safe_position: Vec3::new(-1900.0, 250.0, CWEAMPUFF_Z_INDEX), transition_to_level: Level::FactoryTransition, floor_info: EntityInfo { position: Vec3::new(-2100.0, 450.0, 0.0), size: Vec2::new(100.0, 500.0) }  },
         ]))
     }
 
@@ -104,7 +104,7 @@ impl LevelInfo for NeuroLairInfo {
             ];
         }
         
-        let clipper_drone = NPC { 
+        let clipper_drone = NPC {
             floor_info: EntityInfo { position: Vec3::new(-1550.0, -650.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
             after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
             conversation: &[

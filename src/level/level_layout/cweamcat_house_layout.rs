@@ -1,7 +1,6 @@
 use bevy::math::{Vec2, Vec3};
 
-use crate::{cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, level::{level_layout::cweamcat_lair_layout::CweamcatLairInfo, progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, CWEAMPUFFS, MASKED_CWEAMPUFF, MILK, MILK_ASLEEP, NPC, OG_CWEAMPUFF, RICH_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
-
+use crate::{cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, level::{progression::Progression, Level}, npc::{conversation_entry::{ConversationEntry, ConversationPosition, Emotion}, COOL_CWEAMPUFF, CWEAMPUFF, CWEAMPUFFS, MASKED_CWEAMPUFF, MILK, MILK_ASLEEP, NPC, OG_CWEAMPUFF, RICH_CWEAMPUFF}, CWEAMPUFF_Z_INDEX};
 use super::{DoorCollider, DoorType, EntityInfo, FloorAssetType, FloorInfo, FloorModification, LevelInfo, TransitionCollider};
 
 #[derive(Clone, Copy)]
@@ -24,7 +23,7 @@ impl LevelInfo for CweamcatHouseInfo {
     fn get_doors(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[DoorCollider]>> {
         Some(Box::from([
             DoorCollider { floor_info: EntityInfo { position: Vec3 { x: -850., y: -300., z: 0.0 }, size: Vec2 { x: 300., y: 200. } }, door_type: DoorType::Door,
-                transition_to_level: Level::CweamcatLair(CweamcatLairInfo), safe_position: Vec3 { x: 1350., y: -125., z: CWEAMPUFF_Z_INDEX }, is_active: false }
+                transition_to_level: Level::CweamcatLair, safe_position: Vec3 { x: 1350., y: -125., z: CWEAMPUFF_Z_INDEX }, is_active: false }
         ]))
     }
     
@@ -160,7 +159,7 @@ impl LevelInfo for CweamcatHouseInfo {
                         CutsceneInfo { text: "", background: "cutscenes/milk wakes up/1.png" },
                         CutsceneInfo { text: "", background: "cutscenes/milk wakes up/2.png" },
                         CutsceneInfo { text: "", background: "cutscenes/milk wakes up/3.png" },
-                    ], "ost/cutscene.mp3", PostCutsceneAction::TransitionTo(Level::CweamcatHouse(CweamcatHouseInfo))));
+                    ], "ost/cutscene.mp3", PostCutsceneAction::TransitionTo(Level::CweamcatHouse)));
                 };
             },
             Progression::MilkWokeUp => {
@@ -286,7 +285,7 @@ impl LevelInfo for CweamcatHouseInfo {
                         CutsceneInfo { text: "", background: "cutscenes/letter/1.png" },
                         CutsceneInfo { text: "", background: "cutscenes/letter/2.png" },
                         CutsceneInfo { text: "", background: "cutscenes/letter/3.png" },
-                    ], "ost/cutscene.mp3", PostCutsceneAction::TransitionTo(Level::CweamcatHouse(CweamcatHouseInfo))));
+                    ], "ost/cutscene.mp3", PostCutsceneAction::TransitionTo(Level::CweamcatHouse)));
                 };
             },
             Progression::GivenLetter => {
