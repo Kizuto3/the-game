@@ -77,37 +77,37 @@ impl LevelInfo for CweamcatLairInfo {
     fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
         let mut npcs = vec![];
         
-        let mut og_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(750.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let mut og_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(750.0, -100.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                       conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                                       name: OG_CWEAMPUFF
         };
 
-        let mut minawan = NPC { floor_info: EntityInfo { position: Vec3::new(1750.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let mut minawan = NPC { floor_info: EntityInfo { position: Vec3::new(1750.0, -100.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                         conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                                         name: MINAWAN
         };
 
-        let mut cool_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(2050.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let mut cool_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(2050.0, -100.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                       conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                                       name: COOL_CWEAMPUFF
         };
 
-        let mut crew_member = NPC { floor_info: EntityInfo { position: Vec3::new(1750.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let mut crew_member = NPC { floor_info: EntityInfo { position: Vec3::new(1750.0, -100.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                         conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                                         name: CREW_MEMBER
         };
 
-        let mut masked_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(2050.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let mut masked_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(2050.0, -100.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                       conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                                       name: MASKED_CWEAMPUFF
         };
 
-        let mut drone = NPC { floor_info: EntityInfo { position: Vec3::new(2800.0, 450.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let mut drone = NPC { floor_info: EntityInfo { position: Vec3::new(2800.0, 450.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                     conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                                     name: DRONE
         };
 
-        let mut rich_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(1050.0, -100.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let mut rich_cweampuff = NPC { floor_info: EntityInfo { position: Vec3::new(1050.0, -100.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                             conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                                             name: RICH_CWEAMPUFF
         };

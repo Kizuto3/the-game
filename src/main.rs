@@ -207,8 +207,8 @@ fn spawn_cweampuff(
         Cweampuff { progression: Progression::None, has_double_jump: false, has_wall_jump: false, has_dash: false },
         Sprite {
             image: cweampuff_model_handle,
-            anchor: bevy::sprite::Anchor::Center,
-            custom_size: Some(Vec2::new(1.25, 1.)),
+            custom_size: Some(Vec2::new(2.0, 1.5)),
+            anchor: bevy::sprite::Anchor::Custom(Vec2::new(0., -0.1)),
             image_mode: SpriteImageMode::Auto,
             ..default()
         },

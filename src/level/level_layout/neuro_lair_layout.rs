@@ -40,7 +40,7 @@ impl LevelInfo for NeuroLairInfo {
     }
 
     fn get_npcs(&self, cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
-        let mut og_drone = NPC { floor_info: EntityInfo { position: Vec3::new(0.0, -650.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let mut og_drone = NPC { floor_info: EntityInfo { position: Vec3::new(0.0, -650.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                                       conversation: &[], after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                                       name: OG_DRONE
         };
@@ -105,7 +105,7 @@ impl LevelInfo for NeuroLairInfo {
         }
         
         let clipper_drone = NPC {
-            floor_info: EntityInfo { position: Vec3::new(-1550.0, -650.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+            floor_info: EntityInfo { position: Vec3::new(-1550.0, -650.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
             after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
             conversation: &[
                 ConversationEntry { position: ConversationPosition::Right, npc_name: CLIPPER_DRONE, text: "Your hidden gem will make a fine addition to my collection.", emotion: Emotion::Regular },   //Feel free to change it back. I saw the chance to sneak a reference in xdx ~Blanc

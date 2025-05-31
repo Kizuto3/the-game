@@ -232,7 +232,7 @@ pub fn spawn_new_level(
                     anchor: bevy::sprite::Anchor::Center,
                     custom_size: Some(Vec2::new(floor.size.x, floor.size.y)),
                     image_mode: SpriteImageMode::Sliced(TextureSlicer {
-                        border: BorderRect { left: 18., right: 15., top: 38., bottom: 11. },
+                        border: BorderRect { left: 0., right: 0., top: 40., bottom: 0. },
                         center_scale_mode: SliceScaleMode::Tile { stretch_value: 1. },
                         sides_scale_mode: SliceScaleMode::Tile { stretch_value: 1. },
                         max_corner_scale: 1.0
@@ -296,7 +296,7 @@ pub fn spawn_new_level(
                 let (sprite_size, anchor) = if npc.name == MILK || npc.name == MILK_ASLEEP {
                     (Vec2::new(200., 200.), Vec2::new(0., 0.))
                 } else {
-                    (Vec2::new(40., 30.), Vec2::new(0., 1.2))
+                    (Vec2::new(60., 45.), Vec2::new(0., 0.65))
                 };
 
                 commands

@@ -46,7 +46,7 @@ impl LevelInfo for Factory1Info {
             return Some(Box::from([
                 NPC {
                     name: DRONE,
-                    floor_info: EntityInfo { position: Vec3::new(-1900.0, -1450.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                    floor_info: EntityInfo { position: Vec3::new(-1900.0, -1450.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                     after_conversation_func: |cweampuff, _commands, _breakable_walls, _cutscene| { cweampuff.has_wall_jump = true; },
                     conversation: &[
                         ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "I LOVE OUR AI OVERLORD!!!!!", emotion: Emotion::Regular },

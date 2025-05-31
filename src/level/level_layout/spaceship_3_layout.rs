@@ -70,7 +70,7 @@ impl LevelInfo for Spaceship3Info {
         if cweampuff.progression <= Progression::MilkWokeUp {
             return Some(Box::from([
                 NPC {
-                    floor_info: EntityInfo { position: Vec3::new(-4000.0, -1650.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                    floor_info: EntityInfo { position: Vec3::new(-4000.0, -1650.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                     after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                     conversation: &[
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Minawan? You're here too?", emotion: Emotion::Regular },

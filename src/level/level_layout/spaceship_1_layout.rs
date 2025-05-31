@@ -69,7 +69,7 @@ impl LevelInfo for Spaceship1Info {
         if cweampuff.progression <= Progression::MilkWokeUp {
             return Some(Box::from([
                 NPC {
-                    floor_info: EntityInfo { position: Vec3::new(-5000.0, -2000.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                    floor_info: EntityInfo { position: Vec3::new(-5000.0, -2000.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                     after_conversation_func: |cweampuff, _commands, _breakable_walls, _cutscene| { cweampuff.has_dash = true; },
                     conversation: &[
                         ConversationEntry { position: ConversationPosition::Right, npc_name: CREW_MEMBER, text: "Pumpkin to Otter, Pumpkin to Otter, do you copy, over?", emotion: Emotion::Regular },

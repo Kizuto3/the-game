@@ -28,7 +28,7 @@ impl LevelInfo for FactoryHiddenLevelInfo {
     }
 
     fn get_npcs(&self, _cweampuff: &crate::Cweampuff) -> Option<Box<[NPC]>> {
-        let grim = NPC { floor_info: EntityInfo { position: Vec3::new(750.0, -350.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+        let grim = NPC { floor_info: EntityInfo { position: Vec3::new(750.0, -350.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                             name: GRIM,
                             conversation: &[
                                 ConversationEntry { position: ConversationPosition::Right, npc_name: GRIM, text: "Hello Cweampuff, I am your father!", emotion: Emotion::Happy },

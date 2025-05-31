@@ -14,7 +14,7 @@ impl LevelInfo for Factory3Info {
             FloorInfo { position: Vec3::new(-125.0, 3000.0, 1.0), size: Vec2::new(3150.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
             FloorInfo { position: Vec3::new(0.0, -3150.0, 1.0), size: Vec2::new(4000.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
             FloorInfo { position: Vec3::new(2150.0, 2400.0, 1.0), size: Vec2::new(300.0, 2100.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
-            FloorInfo { position: Vec3::new(2150.0, -850.0, 1.0), size: Vec2::new(300.0, 4000.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
+            FloorInfo { position: Vec3::new(2150.0, -1150.0, 1.0), size: Vec2::new(300.0, 4600.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
             FloorInfo { position: Vec3::new(500.0, 1000.0, 1.0), size: Vec2::new(3000.0, 300.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
             FloorInfo { position: Vec3::new(-1150.0, 1600.0, 1.0), size: Vec2::new(300.0, 1500.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
             FloorInfo { position: Vec3::new(-500.0, 2275.0, 1.0), size: Vec2::new(1000.0, 150.0), breakable_wall: None, floor_asset: FloorAssetType::Factory },
@@ -43,7 +43,7 @@ impl LevelInfo for Factory3Info {
             return Some(Box::from([
                 NPC {
                     name: MINAWAN,
-                    floor_info: EntityInfo { position: Vec3::new(1600.0, 1200.0, 0.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
+                    floor_info: EntityInfo { position: Vec3::new(1600.0, 1200.0, 2.0), size: Vec2::new(200.0, 100.0) }, is_active: false, current_conversation_index: 0,
                     after_conversation_func: |_cweampuff, _commands, _breakable_walls, _cutscene| { },
                     conversation: &[
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Minawan! Wan, wan!", emotion: Emotion::Happy },
