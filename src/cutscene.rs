@@ -13,6 +13,7 @@ use crate::level::{manually_transition_to_level, Level, LevelLayout};
 use crate::main_menu::DEFAULT_FONT;
 use crate::npc::{LeftCharacterImageNode, RightCharacterImageNode};
 use crate::{Cweampuff, CWEAMPUFF_STARTING_POSITION};
+use crate::asset_loader::load_asset;
 
 #[derive(Component)]
 pub struct LoadingAssets{
@@ -147,10 +148,10 @@ pub fn cutscene_player(
         };
 
         if !current_cutscene_info.background.is_empty() {
-            background_image.image = asset_server.load(current_cutscene_info.background);
+            background_image.image = load_asset(&asset_server, current_cutscene_info.background);
         }
         else {
-            background_image.image = asset_server.load("cutscenes/placeholder.png");
+            background_image.image = load_asset(&asset_server, "cutscenes/placeholder.png");
         }
         
         loading_assets.assets.push(background_image.image.id().untyped());
@@ -233,7 +234,7 @@ pub fn spawn_cutscene_resources(
     playback_settings.mode = PlaybackMode::Loop;
 
     commands.spawn((
-        AudioPlayer::new(asset_server.load(current_cutscene.bgm)),
+        AudioPlayer::new(load_asset(&asset_server, current_cutscene.bgm)),
         LevelBGM,
         CutsceneAudio,
         playback_settings

@@ -13,7 +13,9 @@ mod audio_settings;
 mod audio_settings_menu;
 mod animations;
 mod credits_menu;
+mod asset_loader;
 
+use std::sync::atomic::AtomicBool;
 use app_states::AppState;
 use audio_settings::AudioSettings;
 use audio_settings_menu::{audio_button_interactions_handler, despawn_audio_settings, settings_menu_input_reader, spawn_audio_menu};
@@ -30,6 +32,7 @@ use movement::*;
 use animations::play_animations;
 use npc::{conversation_input_reader, conversation_state::ConversationState, despawn_conversation_resources, dialog_box_text_writer, dialog_state::DialogState, left_character_talking, npc_collision_reader, npc_start_interaction_input_reader, right_character_talking, spawn_conversation_resources};
 use winit::window::Icon;
+use asset_loader::load_asset;
 
 // We set the z-value of Cweampuff to 2 so it renders on top in the case of overlapping sprites.
 pub const CWEAMPUFF_Z_INDEX: f32 = 2.0;
@@ -38,6 +41,8 @@ const CWEAMPUFF_JUMP_IMPULSE: f32 = 800.;
 const CWEAMPUFF_DASH_IMPULSE: f32 = 650.;
 pub const CWEAMPUFF_DIAMETER: f32 = 30.;
 pub const CWEAMPUFF_GRAVITY_SCALE: f32 = 1.5;
+
+pub static USE_PROGRAMMER_ART: AtomicBool = AtomicBool::new(false);
 
 fn main() {
     let mut app = App::new();
@@ -198,7 +203,7 @@ fn spawn_cweampuff(
         return;
     }
 
-    let cweampuff_model_handle = asset_server.load("npcs/cweampuff/Model.png");
+    let cweampuff_model_handle = load_asset(&asset_server,"npcs/cweampuff/Model.png");
     
     // Cweampuff
     commands.spawn((

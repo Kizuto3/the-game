@@ -1,6 +1,7 @@
 use bevy::{audio::{PlaybackMode, Volume}, color::Color, prelude::*, ui::widget::NodeImageMode};
 
 use crate::{app_states::AppState, cutscene::{CutsceneEvent, CutsceneInfo, PostCutsceneAction}, fade_in_fade_out::FadeInFadeOutNode, level::{level_bgm::{LevelBGM, LevelBGMState}, Level}};
+use crate::asset_loader::load_asset;
 
 pub const DEFAULT_FONT: &str = "fonts/Shadows Into Light.ttf";
 
@@ -95,7 +96,7 @@ pub fn spawn_background_image(
         return;
     }
     
-    let background_image_handle = asset_server.load("main.png");
+    let background_image_handle = load_asset(&asset_server, "main.png");
 
     commands.spawn((
         Node {
@@ -313,7 +314,7 @@ pub fn spawn_main_menu(
         playback_settings.mode = PlaybackMode::Loop;
     
         commands.spawn((
-            AudioPlayer::new(asset_server.load("ost/main.mp3")),
+            AudioPlayer::new(load_asset(&asset_server, "ost/main.mp3")),
             LevelBGM,
             MainMenuAudio,
             playback_settings
