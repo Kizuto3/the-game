@@ -1,3 +1,4 @@
+use std::sync::atomic::Ordering::{Acquire, SeqCst};
 use bevy::prelude::*;
 
 use crate::{Cweampuff, CWEAMPUFF_Z_INDEX, USE_PROGRAMMER_ART};
@@ -13,8 +14,7 @@ pub fn programmer_art_cheats(
     keyboard_input: Res<ButtonInput<KeyCode>>,
 ) {
     if keyboard_input.all_pressed([KeyCode::KeyA, KeyCode::KeyR]) && keyboard_input.just_pressed(KeyCode::KeyT) {
-        // Change value here
-        // USE_PROGRAMMER_ART
+        USE_PROGRAMMER_ART.store(!USE_PROGRAMMER_ART.load(Acquire), SeqCst);
     }
 }
 
