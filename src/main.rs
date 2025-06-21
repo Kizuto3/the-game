@@ -144,7 +144,8 @@ fn main() {
             cweampuff_camera_adjustment,
             door_start_interaction_input_reader.run_if(in_state(InteractionState::Ready)),
             level_transition_collision_reader,
-            cheat_transition_to
+            cheat_transition_to,
+            programmer_art_cheats
         ).chain().run_if(in_state(AppState::InGame)).run_if(in_state(TransitionState::Finished)).run_if(in_state(ConversationState::Finished)).run_if(in_state(FadeState::None)))
         .add_systems(FixedUpdate, (
             dash_reset,

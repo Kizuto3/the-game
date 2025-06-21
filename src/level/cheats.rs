@@ -1,7 +1,7 @@
 use std::sync::atomic::Ordering::{Acquire, SeqCst};
-use bevy::prelude::*;
+use bevy::{audio::{PlaybackMode, Volume}, prelude::*};
 
-use crate::{Cweampuff, CWEAMPUFF_Z_INDEX, USE_PROGRAMMER_ART};
+use crate::{asset_loader::load_asset, audio_settings::AudioSettings, level::level_bgm::LevelBGM, main_menu::MainMenuAudio, Cweampuff, CWEAMPUFF_Z_INDEX, USE_PROGRAMMER_ART};
 
 use super::{
     manually_transition_to_level,
@@ -11,10 +11,32 @@ use super::{
 };
 
 pub fn programmer_art_cheats(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
+    audio_settings: Res<AudioSettings>,
+    bgm_query: Query<(Entity, &AudioPlayer), (With<LevelBGM>, With<MainMenuAudio>)>,
 ) {
     if keyboard_input.all_pressed([KeyCode::KeyA, KeyCode::KeyR]) && keyboard_input.just_pressed(KeyCode::KeyT) {
         USE_PROGRAMMER_ART.store(!USE_PROGRAMMER_ART.load(Acquire), SeqCst);
+
+        for (current_bgm_entity, current_bgm) in bgm_query.iter() {
+            let audio_handle = load_asset(&asset_server, "ost/main.mp3");
+            
+            if current_bgm.0 != audio_handle {
+                commands.entity(current_bgm_entity).despawn();
+    
+                let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(audio_settings.bgm_volume));
+                playback_settings.mode = PlaybackMode::Loop;
+            
+                commands.spawn((
+                    AudioPlayer::new(audio_handle),
+                    LevelBGM,
+                    MainMenuAudio,
+                    playback_settings
+                ));
+            }
+        }
     }
 }
 
