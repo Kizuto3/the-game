@@ -55,7 +55,7 @@ pub fn door_start_interaction_input_reader(
         playback_settings.mode = PlaybackMode::Despawn;
     
         match door.door_type {
-            DoorType::Door => {
+            DoorType::Door | DoorType::MilkHouse => {
                 commands.spawn((
                     AudioPlayer::new(asset_server.load("sfx/door.wav")),
                     playback_settings

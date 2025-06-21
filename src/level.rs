@@ -8,7 +8,7 @@ use level_bgm::LevelBGM;
 use std::{collections::HashMap, sync::LazyLock};
 use transition_states::TransitionState;
 
-use crate::animations::AnimationConfig;
+use crate::{animations::AnimationConfig, interactable::interaction_state::InteractionState};
 use crate::level::level_layout::{
     aquwa_lair_layout::AquwaLairInfo, cerber_lair_layout::CerberLairInfo,
     cweamcat_house_layout::CweamcatHouseInfo, cweamcat_lair_layout::CweamcatLairInfo,
@@ -127,7 +127,8 @@ pub fn despawn_current_level(
     floor_query: Query<Entity, (With<FloorCollider>, Without<Camera2d>)>,
     transitions_query: Query<Entity, (With<Sensor>, Without<Camera2d>)>,
     interactable_query: Query<Entity, (With<Interactable>, Without<Camera2d>)>,
-    background_query: Query<Entity, (With<BackgroundComponent>, Without<Camera2d>)>
+    background_query: Query<Entity, (With<BackgroundComponent>, Without<Camera2d>)>,
+    mut interaction_state: ResMut<NextState<InteractionState>>
 ) {
     for mut gravity in cweampuff.iter_mut() {
         gravity.0 = 0.;
@@ -144,6 +145,8 @@ pub fn despawn_current_level(
     for entity in background_query.iter() {
         commands.entity(entity).despawn();
     }
+
+    interaction_state.set(InteractionState::NotReady);
 }
 
 pub fn spawn_new_level(
@@ -294,7 +297,7 @@ pub fn spawn_new_level(
                 let image_handle = asset_server.load(format!("npcs/{}/Model.png", npc.name));
 
                 let (sprite_size, anchor) = if npc.name == MILK || npc.name == MILK_ASLEEP {
-                    (Vec2::new(200., 200.), Vec2::new(0., 0.))
+                    (Vec2::new(435., 280.), Vec2::new(0., -0.14))
                 } else {
                     (Vec2::new(60., 45.), Vec2::new(0., 0.65))
                 };
@@ -328,16 +331,30 @@ pub fn spawn_new_level(
                     Interactable
                 ));
 
-                if let DoorType::Teleport = door.door_type {
-                    let texture = asset_server.load("floor_modifications/Teleporter.png");
+                match door.door_type {
+                    DoorType::Door => (),
+                    DoorType::Teleport => {
+                        let texture = asset_server.load("floor_modifications/Teleporter.png");
 
-                    door_commands.insert(
-                        Sprite {
-                            image: texture,
-                            anchor: bevy::sprite::Anchor::Center,
-                            custom_size: Some(Vec2::new(door.floor_info.size.x, door.floor_info.size.y)),
-                            ..default()
-                        });
+                        door_commands.insert(
+                            Sprite {
+                                image: texture,
+                                anchor: bevy::sprite::Anchor::Center,
+                                custom_size: Some(Vec2::new(door.floor_info.size.x, door.floor_info.size.y)),
+                                ..default()
+                            });
+                    },
+                    DoorType::MilkHouse => {
+                        let texture = asset_server.load("floor_modifications/House.png");
+
+                        door_commands.insert(
+                            Sprite {
+                                image: texture,
+                                anchor: bevy::sprite::Anchor::Custom(Vec2::new(0., -0.35)),
+                                custom_size: Some(Vec2::new(767., 742.)),
+                                ..default()
+                            });
+                    }
                 }
             }
         }

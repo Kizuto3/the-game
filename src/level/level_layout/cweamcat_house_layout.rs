@@ -377,6 +377,7 @@ impl LevelInfo for CweamcatHouseInfo {
                         CutsceneInfo { text: "Shining ever so brightly.", background: "" },
                         CutsceneInfo { text: "Minawan, The Crew, The Swarm, and Cweampuffs all bathed in her light.", background: "" },
                         CutsceneInfo { text: "Thank you for playing.", background: "" },
+                        CutsceneInfo { text: "Made with love by Cweampuffs.", background: "" },
                     ], "ost/cutscene.mp3", PostCutsceneAction::EndGame));
                 };
 

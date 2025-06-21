@@ -63,7 +63,8 @@ pub struct TransitionCollider {
 pub enum DoorType {
     #[default]
     Door,
-    Teleport
+    Teleport,
+    MilkHouse
 }
 
 #[derive(Component, Clone, Copy)]

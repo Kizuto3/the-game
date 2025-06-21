@@ -123,10 +123,10 @@ pub fn spawn_main_menu(
 
     commands
         .spawn((Node {
-            width: Val::Percent(50.0),
+            width: Val::Percent(70.0),
             height: Val::Percent(25.0),
             top: Val::Percent(35.),
-            left: Val::Percent(25.),
+            left: Val::Percent(15.),
             position_type: PositionType::Absolute,
             justify_content: JustifyContent::Center,
             ..default()
