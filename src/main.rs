@@ -42,7 +42,7 @@ const CWEAMPUFF_DASH_IMPULSE: f32 = 650.;
 pub const CWEAMPUFF_DIAMETER: f32 = 30.;
 pub const CWEAMPUFF_GRAVITY_SCALE: f32 = 1.5;
 
-pub static USE_PROGRAMMER_ART: AtomicBool = AtomicBool::new(false);
+pub static USE_PROGRAMMER_ART: AtomicBool = AtomicBool::new(true);
 
 fn main() {
     let mut app = App::new();
