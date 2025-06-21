@@ -57,7 +57,7 @@ impl LevelInfo for Factory1Info {
                         ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "I'VE NEVER BEEN BETTER!!!!!", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "O-oh, I-I see...", emotion: Emotion::Sad },
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Well, I think I have something you might like.", emotion: Emotion::Regular },
-                        ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Look at this picture! It's my hidden gem and your AI overlord!", emotion: Emotion::Happy },
+                        ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Look at this picture! It's my Hidden Gem and your AI overlord!", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "...", emotion: Emotion::Surprised },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "THIS IS THE BEST THING I'VE EVER SEEN!!!", emotion: Emotion::Happy },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: DRONE, text: "WHO IS YOUR HIDDEN GEM???", emotion: Emotion::Regular },

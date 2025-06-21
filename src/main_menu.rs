@@ -65,9 +65,9 @@ pub fn main_menu_button_interactions_handler(
                 ButtonAction::StartGame => {
                     cutscene.write(CutsceneEvent::Started(&[
                         CutsceneInfo { text: "The legend has it...", background: "" },
-                        CutsceneInfo { text: "Somewhere in these lands, there is a hidden gem.", background: ""  },
+                        CutsceneInfo { text: "Somewhere in these lands, there is a Hidden Gem.", background: ""  },
                         CutsceneInfo { text: "Capable of giving eternal happiness to those who find it.", background: "" },
-                        CutsceneInfo { text: "A brave cweampuff decided to look for it...", background: "" },
+                        CutsceneInfo { text: "A brave Cweampuff decided to look for it...", background: "" },
                         CutsceneInfo { text: "", background: "cutscenes/opening/1.png" },
                         CutsceneInfo { text: "", background: "cutscenes/opening/2.png" },
                     ], "ost/cutscene.mp3", PostCutsceneAction::TransitionTo(Level::StartingRoom)));

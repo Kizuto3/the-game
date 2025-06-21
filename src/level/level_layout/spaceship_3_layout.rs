@@ -75,7 +75,7 @@ impl LevelInfo for Spaceship3Info {
                     conversation: &[
                         ConversationEntry { position: ConversationPosition::Left, npc_name: CWEAMPUFF, text: "Minawan? You're here too?", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Wan! Wan! My mission led me here!", emotion: Emotion::Happy },
-                        ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "I've notified a few Crew members about my rising star's cuteness.", emotion: Emotion::Regular },
+                        ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "I've notified a few Crew members about my Rising Star's cuteness.", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "But I'm having some trouble moving forward.", emotion: Emotion::Regular },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Gravity seems all messed up in this room.", emotion: Emotion::Sad },
                         ConversationEntry { position: ConversationPosition::Right, npc_name: MINAWAN, text: "Up is down, down is up...", emotion: Emotion::Regular },
