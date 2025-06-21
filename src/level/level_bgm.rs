@@ -1,5 +1,5 @@
 use bevy::{audio::Volume, prelude::*};
-
+use crate::asset_loader::load_asset;
 use crate::audio_settings::AudioSettings;
 
 use super::LevelLayout;
@@ -30,7 +30,7 @@ pub fn set_bgm_state(
                 }
 
                 for current_bgm in bgm_query.iter() {
-                    let audio_handle = asset_server.load(format!("ost/{}.mp3", bgm));
+                    let audio_handle = load_asset(&asset_server, format!("ost/{}.mp3", bgm));
                     
                     if current_bgm.0 != audio_handle {
                         next_bgm_state.set(LevelBGMState::Changing);

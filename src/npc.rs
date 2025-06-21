@@ -9,6 +9,7 @@ use conversation_state::ConversationState;
 use dialog_state::DialogState;
 
 use crate::{audio_settings::AudioSettings, cutscene::CutsceneEvent, fade_in_fade_out::FADE_DELTA, interactable::{interaction_state::InteractionState, Interactable}, level::level_layout::{BreakableWall, EntityInfo}, main_menu::DEFAULT_FONT, Cweampuff};
+use crate::asset_loader::load_asset;
 use crate::movement::check_entities;
 
 pub const CWEAMPUFF: &str = "cweampuff";
@@ -262,7 +263,7 @@ pub fn conversation_input_reader(
 
             match current_conversation_info.position {
                 ConversationPosition::Left => {
-                    let new_image_handle = asset_server.load(npc_image_path);
+                    let new_image_handle = load_asset(&asset_server, npc_image_path);
                     
                     if new_image_handle != left_npc_image.image {
                         left_npc_image.color.set_alpha(0.);
@@ -276,7 +277,7 @@ pub fn conversation_input_reader(
                     }
                 },
                 ConversationPosition::Right => {
-                    let new_image_handle = asset_server.load(npc_image_path);
+                    let new_image_handle = load_asset(&asset_server, npc_image_path);
                     
                     if new_image_handle != right_npc_image.image {
                         right_npc_image.color.set_alpha(0.);

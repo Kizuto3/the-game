@@ -2,6 +2,7 @@ use bevy::{audio::{PlaybackMode, Volume}, prelude::*};
 use bevy_rapier2d::prelude::CollisionEvent;
 
 use crate::{audio_settings::AudioSettings, interactable::{interaction_state::InteractionState, Interactable}, npc::NPC, Cweampuff};
+use crate::asset_loader::load_asset;
 use crate::movement::check_entities;
 use super::{level_layout::{DoorCollider, DoorType}, manually_transition_to_level, transition_states::TransitionState, LevelLayout};
 
@@ -57,13 +58,13 @@ pub fn door_start_interaction_input_reader(
         match door.door_type {
             DoorType::Door | DoorType::MilkHouse => {
                 commands.spawn((
-                    AudioPlayer::new(asset_server.load("sfx/door.wav")),
+                    AudioPlayer::new(load_asset(&asset_server, "sfx/door.wav")),
                     playback_settings
                 ));
             },
             DoorType::Teleport => {
                 commands.spawn((
-                    AudioPlayer::new(asset_server.load("sfx/gravity.wav")),
+                    AudioPlayer::new(load_asset(&asset_server, "sfx/gravity.wav")),
                     playback_settings
                 ));
             }

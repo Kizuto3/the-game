@@ -27,6 +27,7 @@ use crate::CWEAMPUFF_GRAVITY_SCALE;
 use crate::{
     camera::get_adjusted_camera_position, interactable::Interactable, npc::NPC, Cweampuff,
 };
+use crate::asset_loader::load_asset;
 
 pub mod cheats;
 pub mod door;
@@ -165,7 +166,7 @@ pub fn spawn_new_level(
         match level_layout.bgm {
             Some(bgm) => {
                 if bgm_query.is_empty() {
-                    let audio_handle = asset_server.load(format!("ost/{}.mp3", bgm));
+                    let audio_handle = load_asset(&asset_server, format!("ost/{}.mp3", bgm));
 
                     let mut playback_settings = PlaybackSettings::default().with_volume(Volume::Linear(0.0));
                     playback_settings.mode = PlaybackMode::Loop;
@@ -177,7 +178,7 @@ pub fn spawn_new_level(
                 }
 
                 for (current_bgm_entity, current_bgm) in bgm_query.iter() {
-                    let audio_handle = asset_server.load(format!("ost/{}.mp3", bgm));
+                    let audio_handle = load_asset(&asset_server, format!("ost/{}.mp3", bgm));
                     
                     if current_bgm.0 != audio_handle {
                         commands.entity(current_bgm_entity).despawn();
@@ -220,11 +221,11 @@ pub fn spawn_new_level(
             }
 
             let tile_handle = match floor.floor_asset {
-                FloorAssetType::Forest => asset_server.load("tiles/Forest.png"),
-                FloorAssetType::CweamcatHouse => asset_server.load("tiles/CweamcatHouse.png"),
-                FloorAssetType::Hell => asset_server.load("tiles/Hell.png"),
-                FloorAssetType::Spaceship => asset_server.load("tiles/Spaceship.png"),
-                FloorAssetType::Factory => asset_server.load("tiles/Factory.png")
+                FloorAssetType::Forest => load_asset(&asset_server, "tiles/Forest.png"),
+                FloorAssetType::CweamcatHouse => load_asset(&asset_server, "tiles/CweamcatHouse.png"),
+                FloorAssetType::Hell => load_asset(&asset_server, "tiles/Hell.png"),
+                FloorAssetType::Spaceship => load_asset(&asset_server, "tiles/Spaceship.png"),
+                FloorAssetType::Factory => load_asset(&asset_server, "tiles/Factory.png")
             };
 
             let mut floor_command = commands.spawn((
@@ -254,11 +255,11 @@ pub fn spawn_new_level(
         }
 
         let background_image_handle = match level_layout.background {
-            FloorAssetType::Forest => asset_server.load("forest.png"),
-            FloorAssetType::Hell => asset_server.load("hell.png"),
-            FloorAssetType::CweamcatHouse => asset_server.load("house.png"),
-            FloorAssetType::Factory => asset_server.load("factory.png"),
-            FloorAssetType::Spaceship => asset_server.load("spaceship.png"),
+            FloorAssetType::Forest => load_asset(&asset_server, "forest.png"),
+            FloorAssetType::Hell => load_asset(&asset_server, "hell.png"),
+            FloorAssetType::CweamcatHouse => load_asset(&asset_server, "house.png"),
+            FloorAssetType::Factory => load_asset(&asset_server, "factory.png"),
+            FloorAssetType::Spaceship => load_asset(&asset_server, "spaceship.png"),
         };
 
         let width = (max_x - min_x).abs();
@@ -294,7 +295,7 @@ pub fn spawn_new_level(
 
         if let Some(npcs) = &level_layout.npc_layout {
             for npc in npcs {
-                let image_handle = asset_server.load(format!("npcs/{}/Model.png", npc.name));
+                let image_handle = load_asset(&asset_server, format!("npcs/{}/Model.png", npc.name));
 
                 let (sprite_size, anchor) = if npc.name == MILK || npc.name == MILK_ASLEEP {
                     (Vec2::new(435., 280.), Vec2::new(0., -0.14))
@@ -334,7 +335,7 @@ pub fn spawn_new_level(
                 match door.door_type {
                     DoorType::Door => (),
                     DoorType::Teleport => {
-                        let texture = asset_server.load("floor_modifications/Teleporter.png");
+                        let texture = load_asset(&asset_server, "floor_modifications/Teleporter.png");
 
                         door_commands.insert(
                             Sprite {
@@ -345,7 +346,7 @@ pub fn spawn_new_level(
                             });
                     },
                     DoorType::MilkHouse => {
-                        let texture = asset_server.load("floor_modifications/House.png");
+                        let texture = load_asset(&asset_server, "floor_modifications/House.png");
 
                         door_commands.insert(
                             Sprite {
@@ -363,7 +364,7 @@ pub fn spawn_new_level(
             for modification in modifications {
                 match modification {
                     FloorModification::JumpPad(jump_pad) => {
-                        let texture = asset_server.load("floor_modifications/Wind_animation.png");
+                        let texture = load_asset(&asset_server, "floor_modifications/Wind_animation.png");
 
                         // the sprite sheet has 3 sprites arranged in a row, and they are all 200px x 200px
                         let layout = TextureAtlasLayout::from_grid(UVec2::splat(200), 3, 1, None, None);
@@ -399,7 +400,7 @@ pub fn spawn_new_level(
                             .insert(ActiveEvents::COLLISION_EVENTS);
                     },
                     FloorModification::TimeTrial(time_trial) => {
-                        let texture = asset_server.load("floor_modifications/Lever1.png");
+                        let texture = load_asset(&asset_server, "floor_modifications/Lever1.png");
 
                         commands
                             .spawn(*time_trial)
@@ -419,11 +420,11 @@ pub fn spawn_new_level(
                     },
                     FloorModification::IllusoryWall(illusory_wall) => {
                         let illusory_wall_handle = match illusory_wall.floor_asset {
-                            FloorAssetType::Forest => asset_server.load("tiles/Forest.png"),
-                            FloorAssetType::CweamcatHouse => asset_server.load("tiles/CweamcatHouse.png"),
-                            FloorAssetType::Hell => asset_server.load("tiles/Hell.png"),
-                            FloorAssetType::Spaceship => asset_server.load("tiles/Spaceship.png"),
-                            FloorAssetType::Factory => asset_server.load("tiles/Factory.png")
+                            FloorAssetType::Forest => load_asset(&asset_server, "tiles/Forest.png"),
+                            FloorAssetType::CweamcatHouse => load_asset(&asset_server, "tiles/CweamcatHouse.png"),
+                            FloorAssetType::Hell => load_asset(&asset_server, "tiles/Hell.png"),
+                            FloorAssetType::Spaceship => load_asset(&asset_server, "tiles/Spaceship.png"),
+                            FloorAssetType::Factory => load_asset(&asset_server, "tiles/Factory.png")
                         };
 
                         commands
@@ -446,7 +447,7 @@ pub fn spawn_new_level(
                             ));
                     },
                     FloorModification::Decoration(decoration) => {
-                        let decoration_handle = asset_server.load(format!("decorations/{}.png", decoration.asset));
+                        let decoration_handle = load_asset(&asset_server, format!("decorations/{}.png", decoration.asset));
 
                         commands
                             .spawn((

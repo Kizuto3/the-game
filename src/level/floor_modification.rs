@@ -4,6 +4,7 @@ use bevy::{audio::{PlaybackMode, Volume}, prelude::*};
 use bevy_rapier2d::{prelude::*, rapier::prelude::CollisionEventFlags};
 
 use crate::{audio_settings::AudioSettings, interactable::{interaction_state::InteractionState, Interactable}, movement::{Jumper, Movable}, npc::NPC, Cweampuff};
+use crate::asset_loader::load_asset;
 use crate::movement::check_entities;
 use super::level_layout::{BreakableWall, DoorCollider, FloorAssetType, FloorCollider, GravityInverter, JumpPad, TimeTrial};
 
@@ -34,7 +35,7 @@ pub fn jump_pad_collision_reader(
                     playback_settings.mode = PlaybackMode::Despawn;
                 
                     commands.spawn((
-                        AudioPlayer::new(asset_server.load("sfx/woosh.wav")),
+                        AudioPlayer::new(load_asset(&asset_server, "sfx/woosh.wav")),
                         playback_settings
                     ));
 
@@ -66,7 +67,7 @@ pub fn gravity_inverter_collision_reader(
                     playback_settings.mode = PlaybackMode::Despawn;
                 
                     commands.spawn((
-                        AudioPlayer::new(asset_server.load("sfx/gravity.wav")),
+                        AudioPlayer::new(load_asset(&asset_server, "sfx/gravity.wav")),
                         playback_settings
                     ));
 
@@ -143,7 +144,7 @@ pub fn time_trial_start_interaction_input_reader(
         playback_settings.mode = PlaybackMode::Despawn;
     
         commands.spawn((
-            AudioPlayer::new(asset_server.load("sfx/lever.wav")),
+            AudioPlayer::new(load_asset(&asset_server, "sfx/lever.wav")),
             playback_settings
         ));
 
@@ -153,7 +154,7 @@ pub fn time_trial_start_interaction_input_reader(
             return;
         }
 
-        let texture = asset_server.load("floor_modifications/Lever2.png");
+        let texture = load_asset(&asset_server, "floor_modifications/Lever2.png");
         time_trial_sprite.image = texture;
 
         commands.spawn(
@@ -162,11 +163,11 @@ pub fn time_trial_start_interaction_input_reader(
 
         for floor in time_trial.floor_infos.iter() {
             let tile_handle = match floor.floor_asset {
-                FloorAssetType::Forest => asset_server.load("tiles/Forest.png"),
-                FloorAssetType::CweamcatHouse => asset_server.load("tiles/CweamcatHouse.png"),
-                FloorAssetType::Hell => asset_server.load("tiles/Hell.png"),
-                FloorAssetType::Spaceship => asset_server.load("tiles/Spaceship.png"),
-                FloorAssetType::Factory => asset_server.load("tiles/Factory.png")
+                FloorAssetType::Forest => load_asset(&asset_server, "tiles/Forest.png"),
+                FloorAssetType::CweamcatHouse => load_asset(&asset_server, "tiles/CweamcatHouse.png"),
+                FloorAssetType::Hell => load_asset(&asset_server, "tiles/Hell.png"),
+                FloorAssetType::Spaceship => load_asset(&asset_server, "tiles/Spaceship.png"),
+                FloorAssetType::Factory => load_asset(&asset_server, "tiles/Factory.png")
             };
 
             let mut floor_command = commands.spawn((
@@ -210,7 +211,7 @@ pub fn tick_timer_trial_timer(
 
         if timer.timer.finished() {
             if let Some((_, mut time_trial_sprite)) = time_trials.iter_mut().find(|f| f.0.id == timer.entity_id) {
-                let texture = asset_server.load("floor_modifications/Lever1.png");
+                let texture = load_asset(&asset_server, "floor_modifications/Lever1.png");
                 time_trial_sprite.image = texture;
             }
 

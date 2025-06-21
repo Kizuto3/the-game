@@ -2,6 +2,7 @@ use bevy::{audio::{PlaybackMode, Volume}, ecs::observer::TriggerTargets, math::b
 use bevy_rapier2d::{prelude::{Collider, CollisionEvent, Velocity}, rapier::prelude::CollisionEventFlags};
 
 use crate::{audio_settings::AudioSettings, camera::CameraUpDownMovable, level::level_layout::CollisionType, Cweampuff, FloorCollider, CWEAMPUFF_DIAMETER};
+use crate::asset_loader::load_asset;
 
 const CWEAMPUFF_SPEED: f32 = 500.0;
 const MAX_CWEAMPUFF_VERTICAL_VELOCITY: f32 = 800.0;
@@ -121,7 +122,7 @@ pub fn cweampuff_jump(
         playback_settings.mode = PlaybackMode::Despawn;
     
         commands.spawn((
-            AudioPlayer::new(asset_server.load("sfx/jump2.wav")),
+            AudioPlayer::new(load_asset(&asset_server, "sfx/jump2.wav")),
             playback_settings
         ));
 
@@ -194,7 +195,7 @@ pub fn cweampuff_dash(
     playback_settings.mode = PlaybackMode::Despawn;
 
     commands.spawn((
-        AudioPlayer::new(asset_server.load("sfx/dash.wav")),
+        AudioPlayer::new(load_asset(&asset_server, "sfx/dash.wav")),
         playback_settings
     ));
 
