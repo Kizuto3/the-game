@@ -213,6 +213,7 @@ pub fn despawn_conversation_resources(
 
 pub fn conversation_input_reader(
     keyboard_input: Res<ButtonInput<KeyCode>>,
+    mouse_input: Res<ButtonInput<MouseButton>>,
     mut cweampuff: Single<&mut Cweampuff, With<Cweampuff>>,
     mut conversation_state: ResMut<NextState<ConversationState>>,
     mut text_query: Query<&mut Text, With<DialogText>>,
@@ -227,7 +228,8 @@ pub fn conversation_input_reader(
     asset_server: Res<AssetServer>
 ) {
     if let Some(mut npc) = npcs_query.iter_mut().find(|f| f.is_active) {
-        let continue_conversation = keyboard_input.any_just_pressed([KeyCode::KeyE, KeyCode::Space, KeyCode::Enter]);
+        let continue_conversation = keyboard_input.any_just_pressed([KeyCode::KeyE, KeyCode::Space, KeyCode::Enter]) ||
+                                          mouse_input.any_just_pressed([MouseButton::Left, MouseButton::Right]);
 
         if !continue_conversation && npc.current_conversation_index != 0 {
             return;
