@@ -34,6 +34,8 @@ use npc::{conversation_input_reader, conversation_state::ConversationState, desp
 use winit::window::Icon;
 use asset_loader::load_asset;
 
+use crate::level::cheats::programmer_art_cheats;
+
 // We set the z-value of Cweampuff to 2 so it renders on top in the case of overlapping sprites.
 pub const CWEAMPUFF_Z_INDEX: f32 = 2.0;
 const CWEAMPUFF_STARTING_POSITION: Vec3 = Vec3::new(0.0, 550.0, CWEAMPUFF_Z_INDEX);
@@ -42,7 +44,7 @@ const CWEAMPUFF_DASH_IMPULSE: f32 = 650.;
 pub const CWEAMPUFF_DIAMETER: f32 = 30.;
 pub const CWEAMPUFF_GRAVITY_SCALE: f32 = 1.5;
 
-pub static USE_PROGRAMMER_ART: AtomicBool = AtomicBool::new(true);
+pub static USE_PROGRAMMER_ART: AtomicBool = AtomicBool::new(false);
 
 fn main() {
     let mut app = App::new();
@@ -75,6 +77,7 @@ fn main() {
         .add_systems(Update, (
             button_visuals_handler,
             main_menu_button_interactions_handler,
+            programmer_art_cheats,
             fade_out_bgm.run_if(in_state(LevelBGMState::Changing))
         ).run_if(in_state(AppState::MainMenu)))
         .add_systems(OnExit(AppState::MainMenu), despawn_main_menu)

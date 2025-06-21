@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{Cweampuff, CWEAMPUFF_Z_INDEX};
+use crate::{Cweampuff, CWEAMPUFF_Z_INDEX, USE_PROGRAMMER_ART};
 
 use super::{
     manually_transition_to_level,
@@ -8,6 +8,15 @@ use super::{
     transition_states::TransitionState,
     Level, LevelLayout,
 };
+
+pub fn programmer_art_cheats(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+) {
+    if keyboard_input.all_pressed([KeyCode::KeyA, KeyCode::KeyR]) && keyboard_input.just_pressed(KeyCode::KeyT) {
+        // Change value here
+        // USE_PROGRAMMER_ART
+    }
+}
 
 pub fn cheat_transition_to(
     keyboard_input: Res<ButtonInput<KeyCode>>,
