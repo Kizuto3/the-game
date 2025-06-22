@@ -115,7 +115,7 @@ fn main() {
         .add_systems(FixedUpdate, fade_out.run_if(in_state(FadeState::FadeOut)))
 
     // LEVEL TRANSITION SYSTEMS
-        .add_systems(OnEnter(TransitionState::Started), (set_fade_in_state, set_bgm_state))
+        .add_systems(OnEnter(TransitionState::Started), (set_fade_in_state, set_bgm_state, kill_momentum))
         .add_systems(FixedUpdate, fade_in_bgm.run_if(in_state(LevelBGMState::Changing)).run_if(in_state(FadeState::FadeIn)))
         .add_systems(FixedUpdate, fade_out_bgm.run_if(in_state(LevelBGMState::Changing)).run_if(in_state(TransitionState::Finished)).run_if(in_state(AppState::InGame)))
         .add_systems(OnEnter(TransitionState::Finished), (set_fade_out_state, reset_abilities).chain())
@@ -128,7 +128,7 @@ fn main() {
             time_trial_start_interaction_input_reader
         ).run_if(in_state(InteractionState::Ready)))
         .add_systems(OnExit(InteractionState::Ready), despawn_interaction_prompt)
-        .add_systems(OnEnter(ConversationState::Started), spawn_conversation_resources)
+        .add_systems(OnEnter(ConversationState::Started), (spawn_conversation_resources, kill_momentum))
         .add_systems(Update,conversation_input_reader.run_if(in_state(ConversationState::Started)))
         .add_systems(FixedUpdate, left_character_talking.run_if(in_state(ConversationState::Started)).run_if(in_state(DialogState::LeftCharacterTalking)))
         .add_systems(FixedUpdate, right_character_talking.run_if(in_state(ConversationState::Started)).run_if(in_state(DialogState::RightCharacterTalking)))

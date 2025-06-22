@@ -308,6 +308,13 @@ pub fn jump_reset(
     }
 }
 
+pub fn kill_momentum(
+    mut cweampuff_velocity: Single<&mut Velocity, With<Cweampuff>>,
+) {
+    cweampuff_velocity.linvel.x = 0.;
+    cweampuff_velocity.linvel.y = 0.;
+}
+
 fn detect_floor_and_wall_collision(
     cweampuff_entity: Entity, 
     cweampuff: &Cweampuff,
@@ -454,14 +461,12 @@ fn detect_floor_and_wall_collision(
                             }
                             else {
                                 floor_collider.currently_touching_side = Some(CollisionType::Ceiling);
-                                cweampuff_velocity.linvel.y = 0.;
                             }
                             
                         },
                         CollisionType::Ceiling => {
                             if !cweampuff_movable.is_upside_down {
                                 floor_collider.currently_touching_side = Some(CollisionType::Ceiling);
-                                cweampuff_velocity.linvel.y = 0.;
                             }
                             else {
                                 floor_collider.currently_touching_side = Some(CollisionType::Floor);
